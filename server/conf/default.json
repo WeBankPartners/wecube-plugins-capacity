@@ -1,0 +1,16 @@
+{
+  "http": {
+    "port": "9096",
+    "token": "default-token-used-in-server-side"
+  },
+  "cache": {
+    "images_dir": ""
+  },
+  "data_source": {
+    "monitor": {
+      "enable": true,
+      "base_url": "",
+      "token": "default-token-used-in-server-side"
+    }
+  }
+}
