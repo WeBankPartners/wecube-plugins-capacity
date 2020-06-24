@@ -3,8 +3,18 @@
     "port": "9096",
     "token": "default-token-used-in-server-side"
   },
+  "mysql": {
+    "server": "127.0.0.1",
+    "port": 3306,
+    "user": "root",
+    "password": "wecube",
+    "database": "capacity",
+    "maxOpen": 20,
+    "maxIdle": 10,
+    "timeout": 60
+  },
   "cache": {
-    "images_dir": ""
+    "workspace_dir": ""
   },
   "data_source": {
     "monitor": {

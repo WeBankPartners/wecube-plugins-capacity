@@ -1,0 +1,8 @@
+args<-commandArgs(T)
+x<-c({x_data})
+y<-c({y_data})
+fit<-lm(y~x)
+summary(fit)
+png(file = "{workspace}/rp%03d.png")
+plot(fit)
+q("no")

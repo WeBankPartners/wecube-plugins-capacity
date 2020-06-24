@@ -1,0 +1,33 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "jpDIAM99cCn4NtVrBtjD2m0tGwk=",
+			"path": "github.com/go-xorm/core",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "f/p93Nb5tRjO9ZLXF8k1L2ZCdu4=",
+			"path": "github.com/go-xorm/xorm",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "4sVmMObLo/w9yhYYvmTa78PWJcI=",
+			"path": "github.com/shopspring/decimal",
+			"revision": "2568a29459476f824f35433dfbef158d6ad8618c",
+			"revisionTime": "2020-04-28T21:23:09Z"
+		},
+		{
+			"checksumSHA1": "LZUjv3PDVpjuKl9gy6+38q+1OKM=",
+			"path": "xorm.io/builder",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "ClUPfdhw02DRdq1lx1bOpiDKcj8=",
+			"path": "xorm.io/core",
+			"revision": ""
+		}
+	],
+	"rootPath": "github.com/WeBankPartners/wecube-plugins-capacity/server"
+}
