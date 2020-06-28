@@ -13,7 +13,7 @@ import (
 
 func MonitorSearchHandler(w http.ResponseWriter,r *http.Request)  {
 	var err error
-	var result []*models.OptionModel
+	var result []models.OptionModel
 	searchText := r.FormValue("search")
 	searchType := r.FormValue("search_type")
 	endpointType := r.FormValue("type")
@@ -47,7 +47,16 @@ func MonitorDataHandler(w http.ResponseWriter,r *http.Request)  {
 }
 
 func RAnalyzeHandler(w http.ResponseWriter,r *http.Request)  {
-
+	var param models.RRequestParam
+	b,_ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	err := json.Unmarshal(b, &param)
+	if err != nil {
+		returnJson(r,w,err,nil)
+		return
+	}
+	err,result := services.RAnalyzeData(param)
+	returnJson(r,w,err,result)
 }
 
 func RPlotImageHandle(w http.ResponseWriter,r *http.Request)  {
@@ -55,10 +64,20 @@ func RPlotImageHandle(w http.ResponseWriter,r *http.Request)  {
 }
 
 func RDataChartHandle(w http.ResponseWriter,r *http.Request)  {
-
+	var param models.RRequestParam
+	b,_ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	err := json.Unmarshal(b, &param)
+	if err != nil {
+		returnJson(r,w,err,nil)
+		return
+	}
+	err,result := services.RChartData(param)
+	returnJson(r,w,err,result)
 }
 
 func returnJson(r *http.Request,w http.ResponseWriter,err error,result interface{})  {
+	w.Header().Set("Content-Type", "application/json")
 	var response models.RespJson
 	if err != nil {
 		log.Printf(" %s  fail,error:%s \n", r.URL.String(), err.Error())
@@ -77,6 +96,5 @@ func returnJson(r *http.Request,w http.ResponseWriter,err error,result interface
 		w.WriteHeader(http.StatusOK)
 	}
 	d,_ := json.Marshal(response)
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(d)
 }

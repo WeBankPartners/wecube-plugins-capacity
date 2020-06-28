@@ -9,21 +9,21 @@ import (
 	"io/ioutil"
 )
 
-func MonitorEndpointSearch(search string) (err error,result []*models.OptionModel) {
+func MonitorEndpointSearch(search string) (err error,result []models.OptionModel) {
 	err,data := requestMonitor(http.MethodGet, fmt.Sprintf("dashboard/search?page=1&size=1000&search=%s", search), nil)
 	if err != nil {
 		return err, result
 	}
-	err = json.Unmarshal(data, result)
+	err = json.Unmarshal(data, &result)
 	return err,result
 }
 
-func MonitorMetricSearch(endpointType string) (err error,result []*models.OptionModel)  {
+func MonitorMetricSearch(endpointType string) (err error,result []models.OptionModel)  {
 	err,data := requestMonitor(http.MethodGet, fmt.Sprintf("dashboard/config/metric/list?type=%s", endpointType), nil)
 	if err != nil {
 		return err, result
 	}
-	err = json.Unmarshal(data, result)
+	err = json.Unmarshal(data, &result)
 	return err,result
 }
 
@@ -32,7 +32,7 @@ func MonitorChart(param []models.ChartConfigObj) (err error,result models.EChart
 	if err != nil {
 		return err,result
 	}
-	err = json.Unmarshal(data, result)
+	err = json.Unmarshal(data, &result)
 	return err,result
 }
 

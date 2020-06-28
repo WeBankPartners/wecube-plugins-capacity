@@ -10,7 +10,7 @@ import (
 )
 
 type HttpConfig struct {
-	Port  string  `json:"port"`
+	Port  int  `json:"port"`
 	Token  string  `json:"token"`
 }
 
@@ -80,9 +80,9 @@ func InitConfig(cfg string) error {
 		return err
 	}
 	lock.Lock()
-	defer lock.Unlock()
 	config = &c
 	log.Println("read config file:", cfg, "successfully")
+	lock.Unlock()
 	initWorkspaceDir()
 	return nil
 }

@@ -28,17 +28,29 @@ type YaxisModel struct {
 	Unit  string  `json:"unit"`
 }
 
-type SerialModel struct {
+type TimeSerialModel struct {
 	Type  string  `json:"type"`
 	Name  string  `json:"name"`
 	Data  [][]float64  `json:"data"`
+}
+
+type DataSerialModel struct {
+	Type  string  `json:"type"`
+	Name  string  `json:"name"`
+	Data  []float64  `json:"data"`
+}
+
+type AxisModel struct {
+	Data  []float64  `json:"data"`
 }
 
 type EChartOption struct {
 	Id     int     `json:"id"`
 	Title  string  `json:"title"`
 	Legend  []string  `json:"legend"`
-	Xaxis  interface{}  `json:"xaxis"`
+	Xaxis  AxisModel  `json:"xaxis"`
 	Yaxis  YaxisModel  `json:"yaxis"`
-	Series []*SerialModel  `json:"series"`
+	Series []*TimeSerialModel  `json:"series"`
+	DataSeries  []*DataSerialModel  `json:"data_series"`
+	IsDataSeries  bool  `json:"is_data_series"`
 }

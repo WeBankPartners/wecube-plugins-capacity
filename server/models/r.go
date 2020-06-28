@@ -37,3 +37,14 @@ type RunScriptResult struct {
 	FuncA      float64  `json:"func_a"`
 	FuncB      float64  `json:"func_b"`
 }
+
+type RRequestParam struct {
+	Guid      string    `json:"guid"`
+	XData  [][]float64  `json:"x_data"`
+	YData  [][]float64  `json:"y_data"`
+	XTime  bool         `json:"x_time"`
+	FuncA      float64  `json:"func_a"`
+	FuncB      float64  `json:"func_b"`
+	AddData  []float64  `json:"add_data"`
+	AddDate    float64  `json:"add_date"`
+}

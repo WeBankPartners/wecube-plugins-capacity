@@ -1,6 +1,6 @@
 {
   "http": {
-    "port": "9096",
+    "port": 9096,
     "token": "default-token-used-in-server-side"
   },
   "mysql": {
@@ -14,12 +14,12 @@
     "timeout": 60
   },
   "cache": {
-    "workspace_dir": ""
+    "workspace_dir": "/tmp/images"
   },
   "data_source": {
     "monitor": {
       "enable": true,
-      "base_url": "",
+      "base_url": "http://127.0.0.1:8080",
       "token": "default-token-used-in-server-side"
     }
   }
