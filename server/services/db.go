@@ -6,6 +6,7 @@ import (
 	"time"
 	"github.com/go-xorm/xorm"
 	"github.com/go-xorm/core"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
 )
 
@@ -56,5 +57,29 @@ func Transaction(actions []*Action) error {
 		err = session.Commit()
 	}
 	session.Close()
+	return err
+}
+
+func SaveRConfig(param models.RWorkTable) error {
+	var actions []*Action
+	actions = append(actions, &Action{Sql:"delete from r_work where guid=?", Param:[]interface{}{param.Guid}})
+	actions = append(actions, &Action{Sql:"insert into r_work value (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.EndpointA,param.EndpointB,param.MetricA,param.MetricB,param.TimeSelect,param.LegendX,param.LegendY,param.Output,param.Expr,param.FuncA,param.FuncB,param.Level}})
+	return Transaction(actions)
+}
+
+func ListRConfig(guid string) (err error, result []*models.RWorkTable) {
+	if guid == "" {
+		err = mysqlEngine.SQL("SELECT * FROM r_work").Find(&result)
+	}else{
+		err = mysqlEngine.SQL("SELECT * FROM r_work WHERE guid=?", guid).Find(&result)
+	}
+	if len(result) == 0 {
+		result = []*models.RWorkTable{}
+	}
+	return err,result
+}
+
+func DeleteRConfig(guid string) error {
+	_,err := mysqlEngine.Exec("DELETE FROM r_work WHERE guid=?", guid)
 	return err
 }

@@ -17,88 +17,142 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 		return err,result
 	}
 	var x,y []float64
-	yIndex := len(param.YData[0])-1
-	for _,v := range param.YData {
-		if param.XTime {
-			x = append(x, v[0])
+	var eChartData models.EChartOption
+	if len(param.Monitor.Config) > 0 {
+		err,eChartData = MonitorChart(param.Monitor.Config)
+		if err != nil {
+			return err,result
 		}
-		y = append(y, v[yIndex])
-	}
-	if !param.XTime {
-		xIndex := len(param.XData[0])-1
-		for _,v := range param.XData {
-			x = append(x, v[xIndex])
+		var xData,yData [][]float64
+		for i,v := range eChartData.Legend {
+			if v == param.Monitor.LegendX {
+				xData = eChartData.Series[i].Data
+			}
+			if v == param.Monitor.LegendY {
+				yData = eChartData.Series[i].Data
+			}
 		}
+		for i,v := range yData {
+			if param.Monitor.XTime {
+				x = append(x, float64(i)+1)
+			}
+			y = append(y, v[1])
+		}
+		if !param.Monitor.XTime {
+			for _,v := range xData {
+				x = append(x, v[1])
+			}
+		}
+	}else{
+		x = param.XData
+		y = param.YData
 	}
 	err,result = runRscript(x,y,param.Guid)
+	if err != nil {
+		return err,result
+	}
+	param.FuncA = result.FuncA
+	param.FuncB = result.FuncB
+	err,chart := RChartData(param, eChartData)
+	result.Chart = chart
 	return err,result
 }
 
-func RImageData()  {
-
-}
-
-func RChartData(param models.RRequestParam) (err error,result models.EChartOption) {
+func RChartData(param models.RRequestParam,chart models.EChartOption) (err error,result models.EChartOption) {
 	err = checkRParam(param)
 	if err != nil {
 		return err,result
 	}
-	if param.XTime {
-		if param.AddDate > 0 && len(param.YData) < 2 {
-			err = fmt.Errorf("param y data length < 2, can not find the step")
-			return err,result
-		}
-		var series,newSeries models.TimeSerialModel
-		for _,v := range param.YData {
-			series.Data = append(series.Data, v)
-			newSeries.Data = append(newSeries.Data, []float64{v[0], param.FuncA*v[0] + param.FuncB})
-		}
-		if param.AddDate > 0 {
-			tmpStep := param.YData[1][0] - param.YData[0][0]
-			if param.AddDate < tmpStep {
-				err = fmt.Errorf("param add date less then y data step")
-				return err,result
+	result.IsDataSeries = true
+	result.Legend = []string{"real", "fun(y)"}
+	var series,newSeries models.TimeSerialModel
+	var xAxis models.AxisModel
+	var yAxis,newAxis models.DataSerialModel
+	if len(param.Monitor.Config) > 0 {
+		var eChartData models.EChartOption
+		if len(chart.Legend) > 0 {
+			eChartData = chart
+		}else {
+			err, eChartData = MonitorChart(param.Monitor.Config)
+			if err != nil {
+				return err, result
 			}
-			tmpLastDate := param.YData[len(param.YData)-1][0]
-			tmpMaxDate := tmpLastDate + param.AddDate
-			for {
-				tmpLastDate = tmpLastDate + tmpStep
-				if tmpLastDate > tmpMaxDate {
-					break
+		}
+		var xData,yData [][]float64
+		for i,v := range eChartData.Legend {
+			if v == param.Monitor.LegendX {
+				xData = eChartData.Series[i].Data
+			}
+			if v == param.Monitor.LegendY {
+				yData = eChartData.Series[i].Data
+			}
+		}
+		if param.Monitor.XTime {
+			for i,v := range yData {
+				series.Data = append(series.Data, v)
+				newSeries.Data = append(newSeries.Data, []float64{v[0], param.FuncA*(float64(i)+1) + param.FuncB})
+			}
+			if param.AddDate > 0 {
+				tmpStep := yData[1][0] - yData[0][0]
+				if param.AddDate < tmpStep {
+					err = fmt.Errorf("param add date less then y data step")
+					return err,result
 				}
-				newSeries.Data = append(newSeries.Data, []float64{tmpLastDate, param.FuncA*tmpLastDate + param.FuncB})
+				tmpLastDate := yData[len(yData)-1][0]
+				tmpMaxDate := tmpLastDate + param.AddDate
+				countIndex := len(yData)
+				for {
+					tmpLastDate = tmpLastDate + tmpStep
+					if tmpLastDate > tmpMaxDate {
+						break
+					}
+					countIndex += 1
+					newSeries.Data = append(newSeries.Data, []float64{tmpLastDate, param.FuncA*float64(countIndex) + param.FuncB})
+				}
+				result.IsDataSeries = false
 			}
+			series.Name = "real"
+			series.Type = "line"
+			newSeries.Name = "fun(y)"
+			newSeries.Type = "line"
+			result.Series = []*models.TimeSerialModel{&series, &newSeries}
+		}else{
+			for _,v := range xData {
+				xAxis.Data = append(xAxis.Data, v[1])
+				newAxis.Data = append(newAxis.Data, param.FuncA*v[1] + param.FuncB)
+			}
+			for _,v := range yData {
+				yAxis.Data = append(yAxis.Data, v[1])
+			}
+			for _,v := range param.AddData {
+				xAxis.Data = append(xAxis.Data, v)
+				newAxis.Data = append(newAxis.Data, param.FuncA*v + param.FuncB)
+			}
+			result.Xaxis = xAxis
+			yAxis.Name = "real"
+			yAxis.Type = "line"
+			newAxis.Name = "fun(y)"
+			newAxis.Type = "line"
+			result.DataSeries = []*models.DataSerialModel{&yAxis, &newAxis}
 		}
-		series.Name = "real"
-		series.Type = "line"
-		newSeries.Name = "fun(y)"
-		newSeries.Type = "line"
-		result.Series = []*models.TimeSerialModel{&series, &newSeries}
-		result.Legend = []string{"real", "fun(y)"}
-		result.IsDataSeries = false
 	}else{
-		index := len(param.YData[0])-1
-		var xAxis models.AxisModel
-		var yAxis,newAxis models.DataSerialModel
 		for _,v := range param.XData {
-			xAxis.Data = append(xAxis.Data, v[index])
-			newAxis.Data = append(newAxis.Data, param.FuncA*v[index] + param.FuncB)
+			xAxis.Data = append(xAxis.Data, v)
+			newAxis.Data = append(newAxis.Data, param.FuncA*v + param.FuncB)
 		}
 		for _,v := range param.YData {
-			yAxis.Data = append(yAxis.Data, v[index])
+			yAxis.Data = append(yAxis.Data, v)
 		}
 		for _,v := range param.AddData {
 			xAxis.Data = append(xAxis.Data, v)
 			newAxis.Data = append(newAxis.Data, param.FuncA*v + param.FuncB)
 		}
+		result.Xaxis = xAxis
 		yAxis.Name = "real"
 		yAxis.Type = "line"
 		newAxis.Name = "fun(y)"
 		newAxis.Type = "line"
-		result.Xaxis = xAxis
 		result.DataSeries = []*models.DataSerialModel{&yAxis, &newAxis}
-		result.Legend = []string{"real", "fun(y)"}
-		result.IsDataSeries = true
 	}
 	return err,result
 }
@@ -210,16 +264,8 @@ func getEstimate(s string) (estimate float64, level int) {
 
 func checkRParam(param models.RRequestParam) error {
 	var err error
-	if len(param.YData) == 0 {
-		err = fmt.Errorf("param validate fail,param y data is empty")
-		return err
-	}
-	if !param.XTime && len(param.XData) == 0 {
-		err = fmt.Errorf("param validate fail,param x data is empty")
-		return err
-	}
-	if param.XTime && len(param.YData[0]) < 2 {
-		err = fmt.Errorf("param validate fail,param y data need double data when xTime is true")
+	if len(param.Monitor.Config) == 0 && (len(param.YData) == 0 || len(param.XData) == 0 ) {
+		err = fmt.Errorf("param validate fail,monitor config and data is empty")
 		return err
 	}
 	return nil
