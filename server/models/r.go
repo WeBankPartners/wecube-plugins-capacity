@@ -34,7 +34,7 @@ type RunScriptResult struct {
 	Output     string  `json:"output"`
 	Images     []string `json:"images"`
 	FuncExpr   string  `json:"func_expr"`
-	FuncA      float64  `json:"func_a"`
+	FuncX      []*FuncXObj  `json:"func_x"`
 	FuncB      float64  `json:"func_b"`
 	Chart      EChartOption `json:"chart"`
 }
@@ -42,19 +42,18 @@ type RunScriptResult struct {
 type RRequestMonitor struct {
 	Config  []ChartConfigObj
 	LegendY   string    `json:"legend_y"`
-	LegendX   string    `json:"legend_x"`
-	XTime     bool      `json:"x_time"`
+	LegendX   []string    `json:"legend_x"`
+	RemoveList  []float64  `json:"remove_list"`
 }
 
 type RRequestParam struct {
 	Guid      string    `json:"guid"`
 	Monitor   RRequestMonitor `json:"monitor"`
-	XData    []float64  `json:"x_data"`
+	XData    [][]float64  `json:"x_data"`
 	YData    []float64  `json:"y_data"`
-	FuncA      float64  `json:"func_a"`
+	FuncX    []*FuncXObj  `json:"func_x"`
 	FuncB      float64  `json:"func_b"`
 	AddData  []float64  `json:"add_data"`
-	AddDate    float64  `json:"add_date"`
 }
 
 type RWorkTable struct {
@@ -74,4 +73,32 @@ type RWorkTable struct {
 	FuncB      string  `json:"func_b"`
 	Level      int     `json:"level"`
 	UpdateAt   time.Time  `json:"update_at"`
+}
+
+type FuncXObj struct {
+	PValue  float64
+	Estimate float64
+	Level    int
+	Index    int
+	FuncName  string
+	Data     []float64
+}
+
+type FuncXSortList []*FuncXObj
+
+func (s FuncXSortList) Len() int {
+	return len(s)
+}
+
+func (s FuncXSortList) Swap(i,j int)  {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s FuncXSortList) Less(i,j int) bool {
+	return s[i].PValue < s[j].PValue
+}
+
+type YXDataObj struct {
+	Legend  []string  `json:"legend"`
+	Data  [][]float64 `json:"data"`
 }

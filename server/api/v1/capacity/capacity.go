@@ -46,6 +46,19 @@ func MonitorDataHandler(w http.ResponseWriter,r *http.Request)  {
 	returnJson(r,w,err,result)
 }
 
+func RJustifyDataHandler(w http.ResponseWriter,r *http.Request)  {
+	var param models.RRequestMonitor
+	b,_ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	err := json.Unmarshal(b, &param)
+	if err != nil {
+		returnJson(r,w,err,nil)
+		return
+	}
+	err,result := services.AutoJustifyData(param)
+	returnJson(r,w,err,result)
+}
+
 func RAnalyzeHandler(w http.ResponseWriter,r *http.Request)  {
 	var param models.RRequestParam
 	b,_ := ioutil.ReadAll(r.Body)

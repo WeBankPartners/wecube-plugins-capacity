@@ -16,6 +16,7 @@ type HttpConfig struct {
 
 type CacheConfig struct {
 	WorkspaceDir  string  `json:"workspace_dir"`
+	CleanInterval  int  `json:"clean_interval"`
 }
 
 type MonitorConfig struct {

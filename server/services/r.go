@@ -9,6 +9,8 @@ import (
 	"strings"
 	"github.com/shopspring/decimal"
 	"strconv"
+	"sort"
+	"math"
 )
 
 func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScriptResult) {
@@ -16,31 +18,25 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 	if err != nil {
 		return err,result
 	}
-	var x,y []float64
-	var eChartData models.EChartOption
+	var x [][]float64
+	var y []float64
 	if len(param.Monitor.Config) > 0 {
-		err,eChartData = MonitorChart(param.Monitor.Config)
+		err,yXData := AutoJustifyData(param.Monitor)
 		if err != nil {
 			return err,result
 		}
-		var xData,yData [][]float64
-		for i,v := range eChartData.Legend {
-			if v == param.Monitor.LegendX {
-				xData = eChartData.Series[i].Data
-			}
-			if v == param.Monitor.LegendY {
-				yData = eChartData.Series[i].Data
-			}
-		}
-		for i,v := range yData {
-			if param.Monitor.XTime {
-				x = append(x, float64(i)+1)
-			}
-			y = append(y, v[1])
-		}
-		if !param.Monitor.XTime {
-			for _,v := range xData {
-				x = append(x, v[1])
+		for _,v := range yXData.Data {
+			for vi,vv := range v {
+				if vi == 1 {
+					y = append(y, vv)
+				}
+				if vi >= 2 {
+					if len(x) < (vi-1) {
+						x = append(x, []float64{vv})
+					}else{
+						x[vi-2] = append(x[vi-2], vv)
+					}
+				}
 			}
 		}
 	}else{
@@ -51,113 +47,59 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 	if err != nil {
 		return err,result
 	}
-	param.FuncA = result.FuncA
+	param.FuncX = result.FuncX
 	param.FuncB = result.FuncB
-	err,chart := RChartData(param, eChartData)
+	err,chart := RChartData(param, x, y)
 	result.Chart = chart
 	return err,result
 }
 
-func RChartData(param models.RRequestParam,chart models.EChartOption) (err error,result models.EChartOption) {
-	err = checkRParam(param)
-	if err != nil {
-		return err,result
-	}
-	result.IsDataSeries = true
-	result.Legend = []string{"real", "fun(y)"}
-	var series,newSeries models.TimeSerialModel
+func RChartData(param models.RRequestParam,x [][]float64,y []float64) (err error,result models.EChartOption) {
 	var xAxis models.AxisModel
 	var yAxis,newAxis models.DataSerialModel
-	if len(param.Monitor.Config) > 0 {
-		var eChartData models.EChartOption
-		if len(chart.Legend) > 0 {
-			eChartData = chart
-		}else {
-			err, eChartData = MonitorChart(param.Monitor.Config)
-			if err != nil {
-				return err, result
-			}
-		}
-		var xData,yData [][]float64
-		for i,v := range eChartData.Legend {
-			if v == param.Monitor.LegendX {
-				xData = eChartData.Series[i].Data
-			}
-			if v == param.Monitor.LegendY {
-				yData = eChartData.Series[i].Data
-			}
-		}
-		if param.Monitor.XTime {
-			for i,v := range yData {
-				series.Data = append(series.Data, v)
-				newSeries.Data = append(newSeries.Data, []float64{v[0], param.FuncA*(float64(i)+1) + param.FuncB})
-			}
-			if param.AddDate > 0 {
-				tmpStep := yData[1][0] - yData[0][0]
-				if param.AddDate < tmpStep {
-					err = fmt.Errorf("param add date less then y data step")
-					return err,result
-				}
-				tmpLastDate := yData[len(yData)-1][0]
-				tmpMaxDate := tmpLastDate + param.AddDate
-				countIndex := len(yData)
-				for {
-					tmpLastDate = tmpLastDate + tmpStep
-					if tmpLastDate > tmpMaxDate {
-						break
-					}
-					countIndex += 1
-					newSeries.Data = append(newSeries.Data, []float64{tmpLastDate, param.FuncA*float64(countIndex) + param.FuncB})
-				}
-				result.IsDataSeries = false
-			}
-			series.Name = "real"
-			series.Type = "line"
-			newSeries.Name = "fun(y)"
-			newSeries.Type = "line"
-			result.Series = []*models.TimeSerialModel{&series, &newSeries}
-		}else{
-			for _,v := range xData {
-				xAxis.Data = append(xAxis.Data, v[1])
-				newAxis.Data = append(newAxis.Data, param.FuncA*v[1] + param.FuncB)
-			}
-			for _,v := range yData {
-				yAxis.Data = append(yAxis.Data, v[1])
-			}
-			for _,v := range param.AddData {
-				xAxis.Data = append(xAxis.Data, v)
-				newAxis.Data = append(newAxis.Data, param.FuncA*v + param.FuncB)
-			}
-			result.Xaxis = xAxis
-			yAxis.Name = "real"
-			yAxis.Type = "line"
-			newAxis.Name = "fun(y)"
-			newAxis.Type = "line"
-			result.DataSeries = []*models.DataSerialModel{&yAxis, &newAxis}
-		}
-	}else{
-		for _,v := range param.XData {
-			xAxis.Data = append(xAxis.Data, v)
-			newAxis.Data = append(newAxis.Data, param.FuncA*v + param.FuncB)
-		}
-		for _,v := range param.YData {
-			yAxis.Data = append(yAxis.Data, v)
-		}
-		for _,v := range param.AddData {
-			xAxis.Data = append(xAxis.Data, v)
-			newAxis.Data = append(newAxis.Data, param.FuncA*v + param.FuncB)
-		}
-		result.Xaxis = xAxis
-		yAxis.Name = "real"
-		yAxis.Type = "line"
-		newAxis.Name = "fun(y)"
-		newAxis.Type = "line"
-		result.DataSeries = []*models.DataSerialModel{&yAxis, &newAxis}
+	var newYData []float64
+	result.IsDataSeries = true
+	result.Legend = []string{"real", "fun(y)"}
+	for i,_ := range y {
+		xAxis.Data = append(xAxis.Data, float64(i+1))
 	}
+	yAxis.Data = y
+	yAxis.Name = "real"
+	yAxis.Type = "line"
+	for i,v := range param.FuncX {
+		param.FuncX[i].Data = x[v.Index-1]
+	}
+	for _,v := range param.FuncX {
+		if len(newYData) == 0 {
+			for _,vv := range v.Data {
+				newYData = append(newYData, v.Estimate*vv)
+			}
+		}else{
+			for i,vv := range v.Data {
+				newYData[i] = newYData[i] + v.Estimate*vv
+			}
+		}
+	}
+	if param.FuncB > 0 {
+		if len(newYData) == 0 {
+			for i:=0;i<len(y);i++ {
+				newYData = append(newYData, param.FuncB)
+			}
+		}else {
+			for i,_ := range newYData {
+				newYData[i] = newYData[i] + param.FuncB
+			}
+		}
+	}
+	newAxis.Data = newYData
+	newAxis.Name = "fun(y)"
+	newAxis.Type = "line"
+	result.DataSeries = []*models.DataSerialModel{&yAxis, &newAxis}
+	result.Xaxis = xAxis
 	return err,result
 }
 
-func runRscript(x,y []float64,guid string) (err error,result models.RunScriptResult)  {
+func runRscript(x [][]float64,y []float64,guid string) (err error,result models.RunScriptResult)  {
 	var b []byte
 	// build workspace
 	if guid == "" {
@@ -178,15 +120,19 @@ func runRscript(x,y []float64,guid string) (err error,result models.RunScriptRes
 		log.Printf("replace %s/template.r data,read file fail,error:%v \n", result.Workspace, err)
 		return err,result
 	}
-	if len(x) != len(y) {
-		if len(x) > len(y) {
-			x = x[:len(y)]
-		}else{
-			y = y[:len(x)]
+	var xDataString,xExpr string
+	for i,v := range x {
+		if i == len(x)-1 {
+			xDataString = xDataString + fmt.Sprintf("x%d<-c(%s)", i+1, turnFloatListToString(v))
+			xExpr = xExpr + fmt.Sprintf("x%d", i+1)
+		}else {
+			xDataString = xDataString + fmt.Sprintf("x%d<-c(%s)\n", i+1, turnFloatListToString(v))
+			xExpr = xExpr + fmt.Sprintf("x%d+", i+1)
 		}
 	}
-	tData := strings.Replace(string(b), "{x_data}", turnFloatListToString(x), -1)
+	tData := strings.Replace(string(b), "{x_data}", xDataString, -1)
 	tData = strings.Replace(tData, "{y_data}", turnFloatListToString(y), -1)
+	tData = strings.Replace(tData, "{x_expr}", xExpr, -1)
 	tData = strings.Replace(tData, "{workspace}", result.Workspace, -1)
 	err = ioutil.WriteFile(result.Workspace+"/template.r", []byte(tData), 0666)
 	if err != nil {
@@ -201,7 +147,7 @@ func runRscript(x,y []float64,guid string) (err error,result models.RunScriptRes
 		return err,result
 	}
 	output := dealWithScriptOutput(string(b))
-	result.FuncA = output.FuncA
+	result.FuncX = output.FuncX
 	result.FuncB = output.FuncB
 	result.FuncExpr = output.FuncExpr
 	result.Output = output.Output
@@ -223,43 +169,91 @@ func turnFloatListToString(data []float64) string {
 
 func dealWithScriptOutput(output string) models.RunScriptResult {
 	var result models.RunScriptResult
+	var funcBLevel int
+	var sortFuncList models.FuncXSortList
+	expr := "y="
+	xCount := 0
 	for _,v := range strings.Split(output, "\n") {
 		if strings.HasPrefix(v, "(Intercept)") {
-			result.FuncB,_ = getEstimate(v)
+			result.FuncB,_,funcBLevel = getEstimate(v)
 			continue
 		}
 		if strings.HasPrefix(v, "x") {
-			result.FuncA,result.Level = getEstimate(v)
+			xCount = xCount + 1
+			tmpEstimate,tmpP,tmpL := getEstimate(v)
+			if tmpL > 0 {
+				sortFuncList = append(sortFuncList, &models.FuncXObj{PValue:tmpP, Estimate:tmpEstimate, FuncName:fmt.Sprintf("x%d", xCount), Level:tmpL, Index:xCount})
+			}
 		}
 	}
+	sort.Sort(sortFuncList)
 	result.Output = strings.Replace(output, "\n", "<br/>", -1)
-	result.FuncExpr = fmt.Sprintf("y=%.4fx+(%.4f)", result.FuncA, result.FuncB)
+	for i,v := range sortFuncList {
+		if i == 0 {
+			result.Level = v.Level
+		}
+		expr += fmt.Sprintf("%.4f%s+", v.Estimate, v.FuncName)
+		result.FuncX = append(result.FuncX, v)
+	}
+	if funcBLevel > 0 {
+		expr += fmt.Sprintf("(%.4f)", result.FuncB)
+	}else{
+		result.FuncB = 0
+		if len(sortFuncList) > 0 {
+			expr = expr[:len(expr)-1]
+		}else{
+			expr += "?"
+		}
+	}
+	result.FuncExpr = expr
 	return result
 }
 
-func getEstimate(s string) (estimate float64, level int) {
+func getEstimate(s string) (estimate,pValue float64, level int) {
 	level = strings.Count(s, "*")
-	var eStr string
+	var eStr,pStr string
 	var err error
-	for i,v := range strings.Split(s, " ") {
-		if i > 1 && v != "" {
+	count := 0
+	for _,v := range strings.Split(s, " ") {
+		if v != "" {
+			count = count + 1
+		}
+		if count == 2 && eStr == "" {
 			eStr = v
-			break
+		}
+		if count == 5 {
+			if strings.Contains(v, "<") || strings.Contains(v, ">") {
+				pStr = v[1:]
+			}else {
+				pStr = v
+			}
 		}
 	}
 	if strings.Contains(eStr, "e") {
 		decimalNum,err := decimal.NewFromString(eStr)
 		if err != nil {
-			log.Printf("decimal error: %v \n", err)
+			log.Printf("decimal estimate error: %v \n", err)
 		}else{
 			eStr = decimalNum.String()
 		}
 	}
 	estimate,err = strconv.ParseFloat(eStr, 64)
 	if err != nil {
-		log.Printf("parse float error: %v \n", err)
+		log.Printf("parse estimate float error: %v \n", err)
 	}
-	return estimate,level
+	if strings.Contains(pStr, "e") {
+		decimalNum,err := decimal.NewFromString(pStr)
+		if err != nil {
+			log.Printf("decimal p value error: %v \n", err)
+		}else{
+			pStr = decimalNum.String()
+		}
+	}
+	pValue,err = strconv.ParseFloat(pStr, 64)
+	if err != nil {
+		log.Printf("parse p value float error: %v \n", err)
+	}
+	return estimate,pValue,level
 }
 
 func checkRParam(param models.RRequestParam) error {
@@ -269,4 +263,129 @@ func checkRParam(param models.RRequestParam) error {
 		return err
 	}
 	return nil
+}
+
+func AutoJustifyData(param models.RRequestMonitor) (err error, result models.YXDataObj) {
+	if param.LegendY == "" || len(param.LegendX) == 0 {
+		return fmt.Errorf("param validate fail,legendY and legendX can not empty"), result
+	}
+	err,eChartData := MonitorChart(param.Config)
+	if err != nil {
+		return err,result
+	}
+	result.Legend = []string{"timestamp", param.LegendY}
+	var xData [][][]float64
+	var yData [][]float64
+	for i,v := range eChartData.Legend {
+		if v == param.LegendY {
+			yData = eChartData.Series[i].Data
+			break
+		}
+		for _,vv := range param.LegendX {
+			if v == vv {
+				xData = append(xData, eChartData.Series[i].Data)
+				result.Legend = append(result.Legend, vv)
+				break
+			}
+		}
+	}
+	if len(yData) < 2 {
+		return fmt.Errorf("data Y length=%d is too short! ", len(yData)),result
+	}
+	yStep,yData := clearYXData(yData)
+	var xMapList []map[float64][]float64
+	for i,v := range xData {
+		if len(v) < 2 {
+			return fmt.Errorf("data X %s length=%d is too short! ", param.LegendX[i], len(v)),result
+		}else {
+			tmpXStep,tmpXData := clearYXData(v)
+			if tmpXStep != yStep {
+				return fmt.Errorf("data X %s step=%.1f is diff from Y step=%.1f ", tmpXStep, yStep),result
+			}
+			xMapList = append(xMapList, offsetYXData(yData, tmpXData, tmpXStep))
+		}
+	}
+	for _,v := range yData {
+		removeFlag := false
+		for _,vv := range param.RemoveList {
+			if v[0] == vv {
+				removeFlag = true
+				break
+			}
+		}
+		if removeFlag {
+			continue
+		}
+		illegalFlag := false
+		tmpXList := []float64{v[0], v[1]}
+		for _,vv := range xMapList {
+			if _,b:=vv[v[0]];!b{
+				illegalFlag = true
+				break
+			}else{
+				tmpXList = append(tmpXList, vv[v[0]][1])
+			}
+		}
+		if !illegalFlag {
+			result.Data = append(result.Data, tmpXList)
+		}
+	}
+	return err,result
+}
+
+func clearYXData(data [][]float64) (step float64, newData [][]float64) {
+	step = 60
+	dataLength := len(data)
+	for i,v := range data {
+		if i < dataLength-1 {
+			if step < (data[i+1][0]-v[0]) {
+				step = data[i+1][0]-v[0]
+			}
+		}
+	}
+	for i,v := range data {
+		if i < dataLength-1 {
+			if (data[i+1][0]-v[0]) == step {
+				newData = append(newData, v)
+			}
+		}else{
+			if (v[0]-data[i-1][0]) == step {
+				newData = append(newData, v)
+			}
+		}
+	}
+	return step,newData
+}
+
+func offsetYXData(yData,xData [][]float64,step float64) map[float64][]float64 {
+	newXData := make(map[float64][]float64)
+	var offset float64 = 0
+	if yData[0][0] != xData[0][0] {
+		for _, v := range yData {
+			fetchFlag := false
+			for i, vv := range xData {
+				if math.Abs(v[0]-vv[0]) < step {
+					fetchFlag = true
+					if i == len(xData)-1 {
+						offset = v[0] - vv[0]
+						continue
+					}
+					if math.Abs(v[0]-vv[0]) < math.Abs(v[0]-xData[i+1][0]) {
+						offset = v[0] - vv[0]
+					} else {
+						offset = v[0] - xData[i+1][0]
+					}
+					break
+				}
+			}
+			if fetchFlag {
+				break
+			}
+		}
+	}
+	for _,v :=range xData {
+		newT := v[0]+offset
+		newXData[newT] = []float64{newT, v[1]}
+	}
+	return newXData
 }

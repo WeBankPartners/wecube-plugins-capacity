@@ -14,7 +14,8 @@
     "timeout": 60
   },
   "cache": {
-    "workspace_dir": "/tmp/images"
+    "workspace_dir": "/tmp/images",
+    "clean_interval": 1440
   },
   "data_source": {
     "monitor": {
