@@ -81,7 +81,7 @@ func RDataChartHandle(w http.ResponseWriter,r *http.Request)  {
 		returnJson(r,w,err,nil)
 		return
 	}
-	err,result := services.RChartData(param, models.EChartOption{})
+	err,result := services.RChartData(param, [][]float64{}, []float64{})
 	returnJson(r,w,err,result)
 }
 
