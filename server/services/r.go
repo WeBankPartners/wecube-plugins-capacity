@@ -192,7 +192,7 @@ func dealWithScriptOutput(output string) models.RunScriptResult {
 		if i == 0 {
 			result.Level = v.Level
 		}
-		expr += fmt.Sprintf("%.4f%s+", v.Estimate, v.FuncName)
+		expr += fmt.Sprintf("%.4f*%s+", v.Estimate, v.FuncName)
 		result.FuncX = append(result.FuncX, v)
 	}
 	if funcBLevel > 0 {
@@ -279,7 +279,6 @@ func AutoJustifyData(param models.RRequestMonitor) (err error, result models.YXD
 	for i,v := range eChartData.Legend {
 		if v == param.LegendY {
 			yData = eChartData.Series[i].Data
-			break
 		}
 		for _,vv := range param.LegendX {
 			if v == vv {
@@ -334,11 +333,11 @@ func AutoJustifyData(param models.RRequestMonitor) (err error, result models.YXD
 }
 
 func clearYXData(data [][]float64) (step float64, newData [][]float64) {
-	step = 60
+	step = 60000
 	dataLength := len(data)
 	for i,v := range data {
 		if i < dataLength-1 {
-			if step < (data[i+1][0]-v[0]) {
+			if step > (data[i+1][0]-v[0]) {
 				step = data[i+1][0]-v[0]
 			}
 		}
@@ -354,6 +353,7 @@ func clearYXData(data [][]float64) (step float64, newData [][]float64) {
 			}
 		}
 	}
+	log.Printf("clear data --> len(data)=%d len(newData)=%d step=%.1f \n", dataLength, len(newData), step)
 	return step,newData
 }
 
