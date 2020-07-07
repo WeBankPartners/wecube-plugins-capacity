@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"sort"
 	"math"
+	"os"
 )
 
 func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScriptResult) {
@@ -47,6 +48,9 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 	if err != nil {
 		return err,result
 	}
+	for i,v := range result.FuncX {
+		result.FuncX[i].Legend = param.Monitor.LegendX[v.Index]
+	}
 	param.FuncX = result.FuncX
 	param.FuncB = result.FuncB
 	err,chart := RChartData(param, x, y)
@@ -59,7 +63,7 @@ func RChartData(param models.RRequestParam,x [][]float64,y []float64) (err error
 	var yAxis,newAxis models.DataSerialModel
 	var newYData []float64
 	result.IsDataSeries = true
-	result.Legend = []string{"real", "fun(y)"}
+	result.Legend = []string{"real", "func(y)"}
 	for i,_ := range y {
 		xAxis.Data = append(xAxis.Data, float64(i+1))
 	}
@@ -92,7 +96,7 @@ func RChartData(param models.RRequestParam,x [][]float64,y []float64) (err error
 		}
 	}
 	newAxis.Data = newYData
-	newAxis.Name = "fun(y)"
+	newAxis.Name = "func(y)"
 	newAxis.Type = "line"
 	result.DataSeries = []*models.DataSerialModel{&yAxis, &newAxis}
 	result.Xaxis = xAxis
@@ -388,4 +392,168 @@ func offsetYXData(yData,xData [][]float64,step float64) map[float64][]float64 {
 		newXData[newT] = []float64{newT, v[1]}
 	}
 	return newXData
+}
+
+func SaveRWork(param models.SaveWorkParam) error {
+	var err error
+	workTable := models.RWorkTable{Guid:param.Guid, Name:param.Name, Workspace:param.Workspace, Output:param.Output, Expr:param.FuncExpr, FuncB:fmt.Sprintf("%.4f",param.FuncB), Level:param.Level}
+	var workFuncX,workFuncXName []string
+	for _,v := range param.FuncX {
+		workFuncX = append(workFuncX, fmt.Sprintf("%.4f", v.Estimate))
+		workFuncXName = append(workFuncXName, v.Legend)
+	}
+	workTable.FuncX = strings.Join(workFuncX, ",")
+	workTable.FuncXName = strings.Join(workFuncXName, "^")
+	err = saveRWorkTable(workTable)
+	if err != nil {
+		return err
+	}
+	chartTable := models.RChartTable{Guid:param.Guid, YReal:param.YReal, YFunc:param.YFunc}
+	err = saveRChartTable(chartTable)
+	if err != nil {
+		return err
+	}
+	var imagesTable []*models.RImagesTable
+	for i:=1;i<=4;i++ {
+		tmpFilePath := fmt.Sprintf("%s/rp00%d.png", param.Workspace, i)
+		_,tmpError := os.Stat(tmpFilePath)
+		if os.IsNotExist(tmpError) {
+			err = fmt.Errorf("image file %s not exist ", tmpFilePath)
+			break
+		}
+		b,_ := ioutil.ReadFile(tmpFilePath)
+		imagesTable = append(imagesTable, &models.RImagesTable{Guid:param.Guid, Workspace:param.Workspace, Data:b})
+	}
+	if err != nil {
+		return err
+	}
+	err = saveRImagesTable(imagesTable)
+	return err
+}
+
+func GetRWork(guid string) (err error,result models.RunScriptResult) {
+	err,rWorkTables := ListRConfig(guid)
+	if err != nil {
+		return err,result
+	}
+	if len(rWorkTables) == 0 {
+		return fmt.Errorf("there is no record in r_work with guid=%s ", guid), result
+	}
+	result.Guid = guid
+	result.Workspace = rWorkTables[0].Workspace
+	result.Output = rWorkTables[0].Output
+	result.FuncExpr = rWorkTables[0].Expr
+	result.Level = rWorkTables[0].Level
+	for _,v := range strings.Split(rWorkTables[0].FuncXName, "^") {
+		result.FuncX = append(result.FuncX, &models.FuncXObj{Legend:v})
+	}
+	isNeedCreateImage := false
+	for i:=1;i<=4;i++ {
+		tmpFilePath := fmt.Sprintf("%s/rp00%d.png", result.Workspace, i)
+		_,tmpError := os.Stat(tmpFilePath)
+		if os.IsNotExist(tmpError) {
+			isNeedCreateImage = true
+			break
+		}
+	}
+	if isNeedCreateImage {
+		err,imagesTable := getRImagesTable(guid)
+		if err != nil {
+			return err,result
+		}
+		exec.Command("bash", "-c", fmt.Sprintf("rm -f %s/*png", result.Workspace)).Run()
+		for i,v := range imagesTable {
+			tmpErr := ioutil.WriteFile(fmt.Sprintf("%s/rp00%d.png", result.Workspace, i), v.Data, 0644)
+			if tmpErr != nil {
+				log.Printf("write images file=%s/rp00%d.png error %v \n", result.Workspace, i, tmpErr)
+			}
+		}
+	}
+	err,chartTables := getRChartTable(guid)
+	if err != nil {
+		return err,result
+	}
+	if len(chartTables) == 0 {
+		return fmt.Errorf("there is no chart data in r_chart with guid=%s ", guid), result
+	}
+	var chartOption models.EChartOption
+	var yReal,yFunc models.DataSerialModel
+	yReal.Name = "real"
+	yReal.Type = "line"
+	yReal.Data = chartTables[0].YReal
+	yFunc.Name = "func(y)"
+	yFunc.Type = "line"
+	yFunc.Data = chartTables[0].YFunc
+	chartOption.DataSeries = []*models.DataSerialModel{&yReal, &yFunc}
+	chartOption.IsDataSeries = true
+	chartOption.Legend = []string{"real", "func(y)"}
+	var xAxis models.AxisModel
+	for i,_ := range chartTables[0].YReal {
+		xAxis.Data = append(xAxis.Data, float64(i+1))
+	}
+	chartOption.Xaxis = xAxis
+	result.Chart = chartOption
+	return err,result
+}
+
+func RCalcData(param models.RCalcParam) (err error,result models.RCalcResult) {
+	result.Guid = param.Guid
+	err,rWorkTables := ListRConfig(param.Guid)
+	if err != nil {
+		return err,result
+	}
+	if len(rWorkTables) == 0 {
+		return fmt.Errorf("there is no record in r_work with guid=%s ", param.Guid), result
+	}
+	var yXTable models.YXDataObj
+	var estimate,yList []float64
+	for _,v := range strings.Split(rWorkTables[0].FuncX, ",") {
+		tmpEstimate,_ := strconv.ParseFloat(v, 64)
+		estimate = append(estimate, tmpEstimate)
+	}
+	yXTable.Legend = strings.Split(rWorkTables[0].FuncXName, "^")
+	yXTable.Legend = append(yXTable.Legend, "func(y)")
+	funcB,_ := strconv.ParseFloat(rWorkTables[0].FuncB, 64)
+	for i,v := range param.AddData {
+		if len(v) != len(estimate) {
+			err = fmt.Errorf("add_data row index %d is validate,length != len(estimate) ", i)
+			break
+		}
+		var tmpY float64
+		for j,vv := range v {
+			tmpY += estimate[j]*vv
+		}
+		tmpY += funcB
+		yList = append(yList, tmpY)
+		yXTable.Data = append(yXTable.Data, append(v, tmpY))
+	}
+	if err != nil {
+		return err,result
+	}
+	result.Table = yXTable
+	err,chartTables := getRChartTable(param.Guid)
+	if err != nil {
+		return err,result
+	}
+	if len(chartTables) == 0 {
+		return fmt.Errorf("there is no chart data in r_chart with guid=%s ", param.Guid), result
+	}
+	var chartOption models.EChartOption
+	var yReal,yFunc models.DataSerialModel
+	yReal.Name = "real"
+	yReal.Type = "line"
+	yReal.Data = chartTables[0].YReal
+	yFunc.Name = "func(y)"
+	yFunc.Type = "line"
+	yFunc.Data = append(chartTables[0].YFunc, yList...)
+	chartOption.DataSeries = []*models.DataSerialModel{&yReal, &yFunc}
+	chartOption.IsDataSeries = true
+	chartOption.Legend = []string{"real", "func(y)"}
+	var xAxis models.AxisModel
+	for i,_ := range yFunc.Data {
+		xAxis.Data = append(xAxis.Data, float64(i+1))
+	}
+	chartOption.Xaxis = xAxis
+	result.Chart = chartOption
+	return err,result
 }

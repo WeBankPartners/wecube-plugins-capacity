@@ -20,7 +20,6 @@ type ChartConfigObj struct {
 	Metric   string    `form:"metric" json:"metric"`
 	Start  string  `form:"start" json:"start"`
 	End  string  `form:"end" json:"end"`
-	Time  string  `form:"time" json:"time"`
 	Aggregate  string  `form:"aggregate" json:"aggregate"`
 }
 

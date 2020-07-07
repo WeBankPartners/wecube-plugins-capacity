@@ -72,8 +72,8 @@ func RAnalyzeHandler(w http.ResponseWriter,r *http.Request)  {
 	returnJson(r,w,err,result)
 }
 
-func RDataChartHandle(w http.ResponseWriter,r *http.Request)  {
-	var param models.RRequestParam
+func RCalcDataHandle(w http.ResponseWriter,r *http.Request)  {
+	var param models.RCalcParam
 	b,_ := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	err := json.Unmarshal(b, &param)
@@ -81,12 +81,17 @@ func RDataChartHandle(w http.ResponseWriter,r *http.Request)  {
 		returnJson(r,w,err,nil)
 		return
 	}
-	err,result := services.RChartData(param, [][]float64{}, []float64{})
+	if len(param.AddData) == 0 || param.Guid == "" {
+		err = fmt.Errorf("Param validate fail,add_data and guid can not empty ")
+		returnJson(r,w,err,nil)
+		return
+	}
+	err, result := services.RCalcData(param)
 	returnJson(r,w,err,result)
 }
 
 func SaveAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
-	var param models.RWorkTable
+	var param models.SaveWorkParam
 	b,_ := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	err := json.Unmarshal(b, &param)
@@ -97,9 +102,15 @@ func SaveAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
 	if param.Guid == "" || param.Name == "" || param.Workspace == "" {
 		err = fmt.Errorf("Param validate fail,guid name workspace can not empty ")
 	}else {
-		err = services.SaveRConfig(param)
+		err = services.SaveRWork(param)
 	}
 	returnJson(r,w,err,nil)
+}
+
+func GetAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
+	guid := r.FormValue("guid")
+	err,result := services.GetRWork(guid)
+	returnJson(r,w,err,result)
 }
 
 func ListAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {

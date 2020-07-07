@@ -60,18 +60,47 @@ func Transaction(actions []*Action) error {
 	return err
 }
 
-func SaveRConfig(param models.RWorkTable) error {
+func saveRWorkTable(param models.RWorkTable) error {
 	var actions []*Action
 	actions = append(actions, &Action{Sql:"delete from r_work where guid=?", Param:[]interface{}{param.Guid}})
-	actions = append(actions, &Action{Sql:"insert into r_work value (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.EndpointA,param.EndpointB,param.MetricA,param.MetricB,param.TimeSelect,param.LegendX,param.LegendY,param.Output,param.Expr,param.FuncA,param.FuncB,param.Level}})
+	actions = append(actions, &Action{Sql:"insert into r_work value (?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.Output,param.Expr,param.FuncX,param.FuncXName,param.FuncB,param.Level}})
+	return Transaction(actions)
+}
+
+func getRImagesTable(guid string) (err error, result []*models.RImagesTable) {
+	err = mysqlEngine.SQL("select * from r_images where guid=?", guid).Find(&result)
+	return err,result
+}
+
+func saveRImagesTable(params []*models.RImagesTable) error {
+	if len(params) == 0 {
+		return fmt.Errorf("save images fail,no data input ")
+	}
+	var actions []*Action
+	actions = append(actions, &Action{Sql:"delete from r_images where guid=?", Param:[]interface{}{params[0].Guid}})
+	for _,v := range params {
+		actions = append(actions, &Action{Sql: "insert into r_images(guid,workspace,data) value (?,?,?)", Param: []interface{}{v.Guid, v.Workspace, v.Data}})
+	}
+	return Transaction(actions)
+}
+
+func getRChartTable(guid string) (err error, result []*models.RChartTable) {
+	err = mysqlEngine.SQL("select * from r_chart where guid=?", guid).Find(&result)
+	return err,result
+}
+
+func saveRChartTable(param models.RChartTable) error {
+	var actions []*Action
+	actions = append(actions, &Action{Sql:"delete from r_chart where guid=?", Param:[]interface{}{param.Guid}})
+	actions = append(actions, &Action{Sql:"insert into r_chart(guid,y_real,y_func) value (?,?,?)", Param: []interface{}{param.Guid, param.YReal, param.YFunc}})
 	return Transaction(actions)
 }
 
 func ListRConfig(guid string) (err error, result []*models.RWorkTable) {
 	if guid == "" {
-		err = mysqlEngine.SQL("SELECT * FROM r_work").Find(&result)
+		err = mysqlEngine.SQL("select * from r_work").Find(&result)
 	}else{
-		err = mysqlEngine.SQL("SELECT * FROM r_work WHERE guid=?", guid).Find(&result)
+		err = mysqlEngine.SQL("select * from r_work where guid=?", guid).Find(&result)
 	}
 	if len(result) == 0 {
 		result = []*models.RWorkTable{}
@@ -80,6 +109,9 @@ func ListRConfig(guid string) (err error, result []*models.RWorkTable) {
 }
 
 func DeleteRConfig(guid string) error {
-	_,err := mysqlEngine.Exec("DELETE FROM r_work WHERE guid=?", guid)
-	return err
+	var actions []*Action
+	actions = append(actions, &Action{Sql:"delete from r_work where guid=?", Param:[]interface{}{guid}})
+	actions = append(actions, &Action{Sql:"delete from r_images where guid=?", Param:[]interface{}{guid}})
+	actions = append(actions, &Action{Sql:"delete from r_chart where guid=?", Param:[]interface{}{guid}})
+	return Transaction(actions)
 }

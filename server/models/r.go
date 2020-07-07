@@ -53,34 +53,57 @@ type RRequestParam struct {
 	YData    []float64  `json:"y_data"`
 	FuncX    []*FuncXObj  `json:"func_x"`
 	FuncB      float64  `json:"func_b"`
-	AddData  []float64  `json:"add_data"`
+}
+
+type SaveWorkParam struct{
+	Guid       string  `json:"guid"`
+	Name       string  `json:"name"`
+	Workspace  string  `json:"workspace"`
+	Level      int     `json:"level"`
+	Output     string  `json:"output"`
+	Images     []string `json:"images"`
+	FuncExpr   string  `json:"func_expr"`
+	FuncX      []*FuncXObj  `json:"func_x"`
+	FuncB      float64  `json:"func_b"`
+	YReal      []float64 `json:"y_real"`
+	YFunc      []float64 `json:"y_func"`
 }
 
 type RWorkTable struct {
 	Guid  string  `json:"guid"`
 	Name  string  `json:"name"`
 	Workspace  string  `json:"workspace"`
-	EndpointA  string  `json:"endpoint_a"`
-	EndpointB  string  `json:"endpoint_b"`
-	MetricA    string  `json:"metric_a"`
-	MetricB    string  `json:"metric_b"`
-	TimeSelect string  `json:"time_select"`
-	LegendX    string  `json:"legend_x"`
-	LegendY    string  `json:"legend_y"`
 	Output     string  `json:"output"`
 	Expr       string  `json:"expr"`
-	FuncA      string  `json:"func_a"`
+	FuncX      string  `json:"func_x"`
+	FuncXName  string  `json:"func_x_name"`
 	FuncB      string  `json:"func_b"`
 	Level      int     `json:"level"`
 	UpdateAt   time.Time  `json:"update_at"`
 }
 
+type RImagesTable struct {
+	Id    int     `json:"id"`
+	Guid  string  `json:"guid"`
+	Workspace  string  `json:"workspace"`
+	Data     []uint8  `json:"data"`
+	UpdateAt   time.Time  `json:"update_at"`
+}
+
+type RChartTable struct {
+	Guid  string  `json:"guid"`
+	YReal  []float64  `json:"y_real"`
+	YFunc  []float64  `json:"y_func"`
+	UpdateAt   time.Time  `json:"update_at"`
+}
+
 type FuncXObj struct {
-	PValue  float64
+	PValue   float64
 	Estimate float64
 	Level    int
 	Index    int
-	FuncName  string
+	FuncName string
+	Legend   string
 	Data     []float64
 }
 
@@ -101,4 +124,15 @@ func (s FuncXSortList) Less(i,j int) bool {
 type YXDataObj struct {
 	Legend  []string  `json:"legend"`
 	Data  [][]float64 `json:"data"`
+}
+
+type RCalcParam struct {
+	Guid  string  `json:"guid"`
+	AddData  [][]float64  `json:"add_data"`
+}
+
+type RCalcResult struct {
+	Guid  string  `json:"guid"`
+	Chart EChartOption `json:"chart"`
+	Table YXDataObj `json:"table"`
 }
