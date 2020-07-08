@@ -8,6 +8,8 @@ import (
 	"github.com/go-xorm/core"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
+	"strings"
+	"strconv"
 )
 
 var mysqlEngine *xorm.Engine
@@ -84,15 +86,38 @@ func saveRImagesTable(params []*models.RImagesTable) error {
 	return Transaction(actions)
 }
 
-func getRChartTable(guid string) (err error, result []*models.RChartTable) {
-	err = mysqlEngine.SQL("select * from r_chart where guid=?", guid).Find(&result)
+func getRChartTable(guid string) (err error, result []*models.RChartTableInput) {
+	var data []*models.RChartTable
+	err = mysqlEngine.SQL("select * from r_chart where guid=?", guid).Find(&data)
+	if err != nil {
+		return err,result
+	}
+	for _,v := range data {
+		var yReal,yFunc []float64
+		for _,vv := range strings.Split(v.YReal, ",") {
+			tmpV,_ := strconv.ParseFloat(vv, 64)
+			yReal = append(yReal, tmpV)
+		}
+		for _,vv := range strings.Split(v.YFunc, ",") {
+			tmpV,_ := strconv.ParseFloat(vv, 64)
+			yFunc = append(yFunc, tmpV)
+		}
+		result = append(result, &models.RChartTableInput{Guid:v.Guid,YReal:yReal,YFunc:yFunc,UpdateAt:v.UpdateAt})
+	}
 	return err,result
 }
 
-func saveRChartTable(param models.RChartTable) error {
+func saveRChartTable(param models.RChartTableInput) error {
 	var actions []*Action
 	actions = append(actions, &Action{Sql:"delete from r_chart where guid=?", Param:[]interface{}{param.Guid}})
-	actions = append(actions, &Action{Sql:"insert into r_chart(guid,y_real,y_func) value (?,?,?)", Param: []interface{}{param.Guid, param.YReal, param.YFunc}})
+	var yReal,yFunc []string
+	for _,v := range param.YReal {
+		yReal = append(yReal, fmt.Sprintf("%f", v))
+	}
+	for _,v := range param.YFunc {
+		yFunc = append(yFunc, fmt.Sprintf("%f", v))
+	}
+	actions = append(actions, &Action{Sql:"insert into r_chart(guid,y_real,y_func) value (?,?,?)", Param: []interface{}{param.Guid, strings.Join(yReal, ","), strings.Join(yFunc, ",")}})
 	return Transaction(actions)
 }
 

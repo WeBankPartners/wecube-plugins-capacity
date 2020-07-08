@@ -14,7 +14,7 @@
     "timeout": 60
   },
   "cache": {
-    "workspace_dir": "/tmp/images",
+    "workspace_dir": "public/r_images",
     "clean_interval": 1440
   },
   "data_source": {

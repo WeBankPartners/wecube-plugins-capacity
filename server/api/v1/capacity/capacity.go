@@ -55,6 +55,11 @@ func RJustifyDataHandler(w http.ResponseWriter,r *http.Request)  {
 		returnJson(r,w,err,nil)
 		return
 	}
+	if len(param.Config) == 0 || param.LegendY == "" || len(param.LegendX) == 0 {
+		err = fmt.Errorf("Param validate fail,config legendY legendX can not empty ")
+		returnJson(r,w,err,nil)
+		return
+	}
 	err,result := services.AutoJustifyData(param)
 	returnJson(r,w,err,result)
 }

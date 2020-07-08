@@ -49,7 +49,7 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 		return err,result
 	}
 	for i,v := range result.FuncX {
-		result.FuncX[i].Legend = param.Monitor.LegendX[v.Index]
+		result.FuncX[i].Legend = param.Monitor.LegendX[v.Index-1]
 	}
 	param.FuncX = result.FuncX
 	param.FuncB = result.FuncB
@@ -156,7 +156,8 @@ func runRscript(x [][]float64,y []float64,guid string) (err error,result models.
 	result.FuncExpr = output.FuncExpr
 	result.Output = output.Output
 	result.Level = output.Level
-	result.Images = []string{result.Workspace+"/rp001.png",result.Workspace+"/rp002.png",result.Workspace+"/rp003.png",result.Workspace+"/rp004.png"}
+	pngDir := strings.Replace(result.Workspace, "public/", "", -1)
+	result.Images = []string{pngDir+"/rp001.png",pngDir+"/rp002.png",pngDir+"/rp003.png",pngDir+"/rp004.png"}
 	return err,result
 }
 
@@ -408,7 +409,7 @@ func SaveRWork(param models.SaveWorkParam) error {
 	if err != nil {
 		return err
 	}
-	chartTable := models.RChartTable{Guid:param.Guid, YReal:param.YReal, YFunc:param.YFunc}
+	chartTable := models.RChartTableInput{Guid:param.Guid, YReal:param.YReal, YFunc:param.YFunc}
 	err = saveRChartTable(chartTable)
 	if err != nil {
 		return err
@@ -444,6 +445,8 @@ func GetRWork(guid string) (err error,result models.RunScriptResult) {
 	result.Output = rWorkTables[0].Output
 	result.FuncExpr = rWorkTables[0].Expr
 	result.Level = rWorkTables[0].Level
+	pngDir := strings.Replace(result.Workspace, "public/", "", -1)
+	result.Images = []string{pngDir+"/rp001.png",pngDir+"/rp002.png",pngDir+"/rp003.png",pngDir+"/rp004.png"}
 	for _,v := range strings.Split(rWorkTables[0].FuncXName, "^") {
 		result.FuncX = append(result.FuncX, &models.FuncXObj{Legend:v})
 	}
@@ -461,7 +464,7 @@ func GetRWork(guid string) (err error,result models.RunScriptResult) {
 		if err != nil {
 			return err,result
 		}
-		exec.Command("bash", "-c", fmt.Sprintf("rm -f %s/*png", result.Workspace)).Run()
+		exec.Command("bash", "-c", fmt.Sprintf("mkdir -p %s && rm -f %s/*png", result.Workspace, result.Workspace)).Run()
 		for i,v := range imagesTable {
 			tmpErr := ioutil.WriteFile(fmt.Sprintf("%s/rp00%d.png", result.Workspace, i), v.Data, 0644)
 			if tmpErr != nil {
@@ -500,7 +503,7 @@ func RCalcData(param models.RCalcParam) (err error,result models.RCalcResult) {
 	result.Guid = param.Guid
 	err,rWorkTables := ListRConfig(param.Guid)
 	if err != nil {
-		return err,result
+		return fmt.Errorf("list r config error -> %v \n", err),result
 	}
 	if len(rWorkTables) == 0 {
 		return fmt.Errorf("there is no record in r_work with guid=%s ", param.Guid), result
@@ -528,12 +531,12 @@ func RCalcData(param models.RCalcParam) (err error,result models.RCalcResult) {
 		yXTable.Data = append(yXTable.Data, append(v, tmpY))
 	}
 	if err != nil {
-		return err,result
+		return fmt.Errorf("calc add data to funcY error -> %v \n", err),result
 	}
 	result.Table = yXTable
 	err,chartTables := getRChartTable(param.Guid)
 	if err != nil {
-		return err,result
+		return fmt.Errorf("get r chart table error -> %v \n", err),result
 	}
 	if len(chartTables) == 0 {
 		return fmt.Errorf("there is no chart data in r_chart with guid=%s ", param.Guid), result

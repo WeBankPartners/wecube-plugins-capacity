@@ -90,21 +90,28 @@ type RImagesTable struct {
 	UpdateAt   time.Time  `json:"update_at"`
 }
 
-type RChartTable struct {
+type RChartTableInput struct {
 	Guid  string  `json:"guid"`
 	YReal  []float64  `json:"y_real"`
 	YFunc  []float64  `json:"y_func"`
 	UpdateAt   time.Time  `json:"update_at"`
 }
 
+type RChartTable struct {
+	Guid  string  `json:"guid"`
+	YReal  string  `json:"y_real"`
+	YFunc  string  `json:"y_func"`
+	UpdateAt   time.Time  `json:"update_at"`
+}
+
 type FuncXObj struct {
-	PValue   float64
-	Estimate float64
-	Level    int
-	Index    int
-	FuncName string
-	Legend   string
-	Data     []float64
+	PValue   float64  `json:"p_value"`
+	Estimate float64  `json:"estimate"`
+	Level    int      `json:"level"`
+	Index    int      `json:"index"`
+	FuncName string   `json:"func_name"`
+	Legend   string   `json:"legend"`
+	Data     []float64 `json:"data"`
 }
 
 type FuncXSortList []*FuncXObj
