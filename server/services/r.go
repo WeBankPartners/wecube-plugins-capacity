@@ -12,6 +12,7 @@ import (
 	"sort"
 	"math"
 	"os"
+	"time"
 )
 
 func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScriptResult) {
@@ -559,4 +560,47 @@ func RCalcData(param models.RCalcParam) (err error,result models.RCalcResult) {
 	chartOption.Xaxis = xAxis
 	result.Chart = chartOption
 	return err,result
+}
+
+func AutoCleanWorkspace()  {
+	log.Println("start auto clean useless workspace cron job")
+	t := time.NewTicker(time.Duration(60)*time.Minute).C
+	for {
+		<- t
+		workspaceDir := models.Config().Cache.WorkspaceDir
+		fs,err := ioutil.ReadDir(workspaceDir)
+		if err != nil {
+			log.Printf("clean workspace job fail with read dir:%s error:%v \n", workspaceDir, err)
+			continue
+		}
+		err,saveList := ListRConfig("")
+		if err != nil {
+			log.Printf("clean workspace job fail with get saved list error:%v \n", err)
+			continue
+		}
+		tn := time.Now()
+		for _,v := range fs {
+			if !strings.HasPrefix(v.Name(), "R_") {
+				continue
+			}
+			isSave := false
+			for _,vv := range saveList {
+				if vv.Guid == v.Name() {
+					isSave = true
+					break
+				}
+			}
+			if isSave {
+				continue
+			}
+			if tn.Sub(v.ModTime()).Minutes() > 60 {
+				err = exec.Command("/bin/sh", "-c", fmt.Sprintf("rm -rf %s/%s", workspaceDir, v.Name())).Run()
+				if err != nil {
+					log.Printf("clean workspace job -> sub:%s fail,error:%v \n", v.Name(), err)
+				}else{
+					log.Printf("clean workspace useless dir %s success \n", v.Name())
+				}
+			}
+		}
+	}
 }

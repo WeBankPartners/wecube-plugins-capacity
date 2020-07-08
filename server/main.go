@@ -17,5 +17,6 @@ func main() {
 		return
 	}
 	services.InitDbEngine()
+	go services.AutoCleanWorkspace()
 	api.InitHttpServer(models.Config().Http.Port)
 }
