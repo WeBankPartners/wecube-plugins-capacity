@@ -1,15 +1,26 @@
 {
   "http": {
-    "port": "9096",
+    "port": 9096,
     "token": "default-token-used-in-server-side"
   },
+  "mysql": {
+    "server": "127.0.0.1",
+    "port": 3306,
+    "user": "root",
+    "password": "wecube",
+    "database": "capacity",
+    "maxOpen": 20,
+    "maxIdle": 10,
+    "timeout": 60
+  },
   "cache": {
-    "images_dir": ""
+    "workspace_dir": "public/r_images",
+    "clean_interval": 1440
   },
   "data_source": {
     "monitor": {
       "enable": true,
-      "base_url": "",
+      "base_url": "http://127.0.0.1:8080",
       "token": "default-token-used-in-server-side"
     }
   }

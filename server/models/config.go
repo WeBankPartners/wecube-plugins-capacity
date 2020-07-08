@@ -10,12 +10,13 @@ import (
 )
 
 type HttpConfig struct {
-	Port  string  `json:"port"`
+	Port  int  `json:"port"`
 	Token  string  `json:"token"`
 }
 
 type CacheConfig struct {
-	ImagesDir  string  `json:"images_dir"`
+	WorkspaceDir  string  `json:"workspace_dir"`
+	CleanInterval  int  `json:"clean_interval"`
 }
 
 type MonitorConfig struct {
@@ -28,8 +29,21 @@ type DataSourceConfig struct {
 	Monitor  MonitorConfig  `json:"monitor"`
 }
 
+type MysqlConfig struct {
+	Type  string  `json:"type"`
+	Server  string  `json:"server"`
+	Port  int     `json:"port"`
+	User  string  `json:"user"`
+	Password   string  `json:"password"`
+	DataBase  string  `json:"database"`
+	MaxOpen  int  `json:"maxOpen"`
+	MaxIdle  int  `json:"maxIdle"`
+	Timeout  int  `json:"timeout"`
+}
+
 type GlobalConfig struct {
 	Http  *HttpConfig  `json:"http"`
+	Mysql  MysqlConfig  `json:"mysql"`
 	Cache  CacheConfig  `json:"cache"`
 	DataSource  DataSourceConfig  `json:"data_source"`
 }
@@ -67,8 +81,9 @@ func InitConfig(cfg string) error {
 		return err
 	}
 	lock.Lock()
-	defer lock.Unlock()
 	config = &c
 	log.Println("read config file:", cfg, "successfully")
+	lock.Unlock()
+	initWorkspaceDir()
 	return nil
 }
