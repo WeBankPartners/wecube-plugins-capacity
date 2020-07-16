@@ -137,6 +137,7 @@ func DeleteAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
 
 func returnJson(r *http.Request,w http.ResponseWriter,err error,result interface{})  {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 	var response models.RespJson
 	if err != nil {
 		log.Printf(" %s  fail,error:%s \n", r.URL.String(), err.Error())
