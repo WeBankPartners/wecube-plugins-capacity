@@ -1,0 +1,10 @@
+{
+  "common": {
+    "changeLanguage": "English"
+  },
+  "menu": {
+    "systemName": "WeCube-Plugins-Capacity (Demo Version)",
+    "capacityModeling": "Capacity Modeling",
+    "capacityForecast": "Capacity Forecast"
+  }
+}
