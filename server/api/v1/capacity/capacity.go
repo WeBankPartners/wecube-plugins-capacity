@@ -12,8 +12,6 @@ import (
 )
 
 func MonitorSearchHandler(w http.ResponseWriter,r *http.Request)  {
-	var err error
-	var result []models.OptionModel
 	searchText := r.FormValue("search")
 	searchType := r.FormValue("search_type")
 	endpointType := r.FormValue("type")
@@ -26,11 +24,12 @@ func MonitorSearchHandler(w http.ResponseWriter,r *http.Request)  {
 			returnJson(r,w,fmt.Errorf("validate fail,param type can not empty "),nil)
 			return
 		}
-		err,result = services.MonitorMetricSearch(endpointType)
+		err,result := services.MonitorMetricSearch(endpointType)
+		returnJson(r,w,err,result)
 	}else {
-		err, result = services.MonitorEndpointSearch(searchText)
+		err, result := services.MonitorEndpointSearch(searchText)
+		returnJson(r,w,err,result)
 	}
-	returnJson(r,w,err,result)
 }
 
 func MonitorDataHandler(w http.ResponseWriter,r *http.Request)  {
