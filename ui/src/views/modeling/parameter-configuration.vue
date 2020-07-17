@@ -1,15 +1,15 @@
 <template>
   <div class="parameter-configuration">
     <Row>
-        <Col span="3">
-          <span class="param-title">指标配置</span>
-        </Col>
-        <Col span="21">
-        <Form :label-width="60">
-          <FormItem class="param-inline" label="对象">
+      <Col span="3">
+        <span class="param-title">对象与指标</span>
+      </Col>
+      <Col span="21">
+        <Form :label-width="20">
+          <FormItem class="param-inline">
             <Select
-              style="width:270px;"
-              placeholder="请选择对象"
+              style="width:320px;"
+              :placeholder="$t('placeholder.endpointSearch')"
               v-model="endpoint"
               filterable
               remote
@@ -21,49 +21,47 @@
               <Option value="moreTips" disabled>{{$t('tips.requestMoreData')}}</Option>
             </Select>
           </FormItem>
-          <FormItem class="param-inline" label="指标">
-            <Select v-model="metric" @on-open-change="getMetric" style="width:270px" placeholder="请选择指标" filterable>
+          <FormItem class="param-inline">
+            <Select v-model="metric" @on-open-change="getMetric" style="width:320px" :placeholder="$t('placeholder.metric')" filterable>
               <Option v-for="item in metricList" :value="item.metric" :key="item.metric">{{ item.metric }}</Option>
             </Select>
           </FormItem>
           <FormItem class="param-inline">
-              <button class="btn btn-confirm-f">增加</button>
-            </FormItem>
+            <button @click="addParams()" :disabled="!endpoint || !metric" type="button" class="btn btn-confirm-skeleton-f">增加</button>
+          </FormItem>
+          <div v-if="endpointWithMetric.length" class="params-display">
+            <div v-for="(tag, tagIndex) in endpointWithMetric" :key="tagIndex" class="params-display-single">
+              <Tag type="border" @on-close="removeTag(tagIndex)" closable color="primary">{{tag.endpoint}}:{{tag.metric}}</Tag>
+            </div>
+          </div>
         </Form>
-        </Col>
+      </Col>
     </Row>
-    <!-- <Row>
+    <Row>
       <Col span="3">
         <span class="param-title">时间区间</span>
       </Col>
       <Col span="21">
-      <Form :label-width="60">
-        <FormItem class="param-inline" label="对象">
-          <Select
-            style="width:270px;"
-            placeholder="请选择对象"
-            v-model="endpoint"
-            filterable
-            remote
-            clearable
-            @on-clear="getEndpointList('.')"
-            :remote-method="getEndpointList"
-            >
-            <Option v-for="(option, index) in endpointList" :value="option.option_value" :key="index">{{option.option_text}}</Option>
-            <Option value="moreTips" disabled>{{$t('tips.requestMoreData')}}</Option>
-          </Select>
-        </FormItem>
-        <FormItem class="param-inline" label="指标">
-          <Select v-model="metric" @on-open-change="getMetric" style="width:270px" placeholder="请选择指标" filterable>
-            <Option v-for="item in metricList" :value="item.metric" :key="item.metric">{{ item.metric }}</Option>
-          </Select>
-        </FormItem>
+      <Form :label-width="20">
         <FormItem class="param-inline">
-            <button class="btn btn-confirm-f">增加</button>
-          </FormItem>
+          <DatePicker 
+            type="datetimerange" 
+            :value="dateRange" 
+            @on-change="datePick"
+            format="yyyy-MM-dd HH:mm:ss" 
+            placement="bottom-start" 
+            :placeholder="$t('placeholder.datePicker')" 
+            style="width: 320px">
+          </DatePicker>
+        </FormItem>
       </Form>
       </Col>
-    </Row> -->
+    </Row>
+    <Row>
+      <Col span="21" offset="3">
+        <button :disabled="endpointWithMetric.length && !dateRange[0]" @click="getChart" type="button" class="btn btn-confirm-f margin-left">查询视图</button>
+      </Col>
+    </Row>
   </div>
 </template>
 
@@ -77,7 +75,12 @@ export default {
       endpointList: [],
 
       metric: '',
-      metricList: []
+      metricList: [],
+
+      endpointWithMetric: [],
+      dateRange: ['', ''],
+
+      chartData: null
     }
   },
   watch: {
@@ -89,7 +92,49 @@ export default {
     this.getEndpointList('.')
   },
   methods: {
+    getChart () {
+      if (this.dateRange[0] === this.dateRange[1]) {
+        this.dateRange[1] = this.dateRange[1].replace('00:00:00', '23:59:59')
+      }
+      const start = Date.parse(this.dateRange[0])/1000 + ''
+      const end = Date.parse(this.dateRange[1])/1000 + ''
+      console.log(start, end)
+      let params = []
+      this.endpointWithMetric.forEach(single => {
+        params.push({
+          ...single,
+          start,
+          end
+        })
+      })
+      console.log(params)
+      this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.getChart, params, (responseData) => {
+        this.chartData = responseData.data
+        
+      })
+    },
+    addParams () {
+      if (this.endpointObject && this.metric) {
+        this.endpointWithMetric.push({
+          endpoint: this.endpointObject.option_value,
+          metric: this.metric
+        })
+        this.endpointObject = null
+        this.metric = ''
+        this.endpoint = ''
+        this.endpointList = []
+        this.getEndpointList('.')
+        this.$Message.success('OK')
+      } else {
+        this.$Message.error('error')
+      }
+    },
+    removeTag (index) {
+      this.endpointWithMetric.splice(index, 1)
+    },
     getEndpointList(query) {
+      this.metric = ''
+      this.metricList = []
       let params = {
         search: query,
         search_type: 'endpoint'
@@ -111,6 +156,9 @@ export default {
       this.$root.$httpRequestEntrance.httpRequestEntrance('GET', this.$root.apiCenter.getEndpoint, params, (responseData) => {
         this.metricList = responseData.data
       })
+    },
+    datePick (data) {
+      this.dateRange = data
     }
   },
   components: {},
@@ -121,13 +169,25 @@ export default {
 .parameter-configuration {
   padding: 32px 40px;
 }
+.margin-left {
+  margin-left: 20px;
+}
 .ivu-form-item {
-  margin-bottom: 10px;
+  margin-bottom: 24px;
 }
 .param-title {
-  line-height: 40px;
+  line-height: 32px;
 }
 .param-inline {
   display: inline-block;
+}
+.params-display {
+  border: 1px solid #dbdbdb;
+  margin-bottom: 24px;
+  margin-left: 20px;
+  width: 74%;
+}
+.params-display-single {
+  padding: 4px;
 }
 </style>

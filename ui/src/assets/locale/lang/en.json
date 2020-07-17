@@ -15,5 +15,11 @@
     "selectData": " Please select data first!",
     "selectDate": "Please select date!",
     "requestMoreData": "For more objects, please enter a query ..."
+  },
+  "placeholder": {
+    "input": "Please input",
+    "endpointSearch": "Please input",
+    "metric": "Select metric",
+    "datePicker": "Please select"
   }
 }

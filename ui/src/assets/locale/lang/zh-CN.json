@@ -15,5 +15,11 @@
     "selectData": " 请先选择数据!",
     "selectDate": "请选择时间区间!",
     "requestMoreData": "更多对象请输入名称匹配查询..."
+  },
+  "placeholder": {
+    "input": "请输入",
+    "endpointSearch": "请输入后选择对象",
+    "metric": "请选择指标",
+    "datePicker": "请选择日期"
   }
 }

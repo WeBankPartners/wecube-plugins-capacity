@@ -1,3 +1,4 @@
 {
-  "getEndpoint": "monitor/search"
+  "getEndpoint": "monitor/search",
+  "getChart": "monitor/chart"
 }
