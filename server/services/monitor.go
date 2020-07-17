@@ -18,7 +18,7 @@ func MonitorEndpointSearch(search string) (err error,result []models.OptionModel
 	return err,result
 }
 
-func MonitorMetricSearch(endpointType string) (err error,result []models.OptionModel)  {
+func MonitorMetricSearch(endpointType string) (err error,result []models.MetricOptionModel)  {
 	err,data := requestMonitor(http.MethodGet, fmt.Sprintf("dashboard/config/metric/list?type=%s", endpointType), nil)
 	if err != nil {
 		return err, result

@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT EXISTS capacity;
-
+use capacity;
 DROP TABLE IF EXISTS `r_work`;
 CREATE TABLE `r_work` (
   `guid` VARCHAR(255) NOT NULL,

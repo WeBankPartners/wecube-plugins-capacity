@@ -9,6 +9,12 @@ type OptionModel struct {
 	OptionTypeName  string  `json:"option_type_name"`
 }
 
+type MetricOptionModel struct {
+	Id  int  `json:"id"`
+	Metric  string  `json:"metric"`
+	PromQl  string  `json:"prom_ql"`
+}
+
 type RespJson struct {
 	Code  int  `json:"code"`
 	Msg   string    `json:"msg"`
