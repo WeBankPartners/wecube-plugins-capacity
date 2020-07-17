@@ -6,7 +6,6 @@ import (
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
 	"encoding/json"
 	"log"
-	"strings"
 	"fmt"
 	"io/ioutil"
 )
@@ -135,25 +134,24 @@ func DeleteAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
 }
 
 func returnJson(r *http.Request,w http.ResponseWriter,err error,result interface{})  {
+	log.Println("return json")
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+	//w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Origin, Content-Length, Content-Type, Authorization, authorization, Token, X-Auth-Token")
+	w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
 	var response models.RespJson
 	if err != nil {
-		log.Printf(" %s  fail,error:%s \n", r.URL.String(), err.Error())
+		log.Printf(" %s  fail,error:%v \n", r.URL.String(), err)
 		response.Code = 1
 		response.Msg = err.Error()
-		if strings.Contains(response.Msg, "validate") {
-			w.WriteHeader(http.StatusBadRequest)
-		}else {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
 	}else{
 		log.Printf(" %s success! \n", r.URL.String())
 		response.Code = 0
 		response.Msg = "success"
-		response.Data = result
-		w.WriteHeader(http.StatusOK)
 	}
+	response.Data = result
+	w.WriteHeader(http.StatusOK)
 	d,_ := json.Marshal(response)
 	w.Write(d)
 }
