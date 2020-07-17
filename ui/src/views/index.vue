@@ -18,7 +18,7 @@ export default {
   },
   mounted() {
     watermark({
-      watermark_txt: 'Open-Monitor ' + localStorage.getItem('username'),
+      watermark_txt: 'WeCube-Plugins-Capacity ',
       watermark_fontsize: '14px',
       watermark_x_space: 300,
       watermark_y_space: 100,
@@ -42,6 +42,6 @@ export default {
 .content {
   height: calc(100vh - 210px);
   margin: 0 auto;
-  padding: 10px;
+  background: #f0f2f5;
 }
 </style>

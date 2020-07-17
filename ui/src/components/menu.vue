@@ -83,18 +83,4 @@ export default {
     margin: 0 10px;
   }
 }
-.set-theme {
-  float: right;
-  width: 22px;
-  height: 22px;
-  border-radius: 4px;
-  cursor: pointer;
-  i {
-    font-size: 18px;
-  }
-}
-.menu-right {
-  float: right;
-  margin-right: 30px;
-}
 </style>

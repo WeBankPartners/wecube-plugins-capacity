@@ -17,7 +17,7 @@ const router = new Router({
         {
           path: "/capacityModeling",
           name: "capacityModeling",
-          component: () => import("@/views/capacity-forecast"),
+          component: () => import("@/views/capacity-modeling"),
           title: "capacityModeling"
         },
         {
