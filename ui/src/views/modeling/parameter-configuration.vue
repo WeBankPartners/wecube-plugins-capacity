@@ -62,10 +62,13 @@
         <button :disabled="endpointWithMetric.length && !dateRange[0]" @click="getChart" type="button" class="btn btn-confirm-f margin-left">查询视图</button>
       </Col>
     </Row>
+    <div :id="elId" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:40px"></div>
   </div>
 </template>
 
 <script>
+import {generateUuid} from '@/assets/js/utils'
+import {readyToDraw} from  '@/assets/config/chart-rely'
 export default {
   name: '',
   data() {
@@ -80,8 +83,14 @@ export default {
       endpointWithMetric: [],
       dateRange: ['', ''],
 
-      chartData: null
+      chartData: null,
+      elId: '',
     }
+  },
+  created (){
+    generateUuid().then((elId)=>{
+      this.elId =  `id_${elId}`
+    })
   },
   watch: {
     endpoint: function(val) {
@@ -110,7 +119,9 @@ export default {
       console.log(params)
       this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.getChart, params, (responseData) => {
         this.chartData = responseData.data
-        
+        const chartConfig = {eye: false,clear:true, zoomCallback: true}
+        readyToDraw(this,responseData.data, 1, chartConfig)
+
       })
     },
     addParams () {
