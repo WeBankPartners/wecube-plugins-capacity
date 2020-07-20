@@ -85,6 +85,8 @@ export default {
 
       chartData: null,
       elId: '',
+
+      params: null
     }
   },
   created (){
@@ -116,12 +118,20 @@ export default {
           end
         })
       })
-      console.log(params)
+      this.$parent.params = params
       this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.getChart, params, (responseData) => {
         this.chartData = responseData.data
         const chartConfig = {eye: false,clear:true, zoomCallback: true}
         readyToDraw(this,responseData.data, 1, chartConfig)
-
+        let xyAxis = []
+        responseData.data.legend.forEach(_ => {
+          xyAxis.push({
+            label: _,
+            value: _,
+          })
+        })
+        console.log(xyAxis)
+        this.$parent.xyAxis = xyAxis
       })
     },
     addParams () {

@@ -20,28 +20,33 @@
       <div class="operation-zone">
         <template v-if="current === 0">
           <ParameterConfiguration></ParameterConfiguration>
-          <!-- <button class="btn btn-confirm-f" @click="generateFormula">下一步</button> -->
+          <div class="step-control">
+            <!-- <button type="button" class="btn btn-cancle-f">上一步</button> -->
+            <button type="button" class="btn btn-confirm-f" @click="current = 1">下一步</button>
+          </div>
         </template>
         <template v-if="current === 1">
-          222222
-          <button class="btn btn-confirm-f" @click="showResult">下一步</button>
+          <DataClean :params="params" :xyAxis="xyAxis"></DataClean>
         </template>
         <template v-if="current === 2">
           333333
         </template>
       </div>
     </div>
-    
   </div>
 </template>
 
 <script>
 import ParameterConfiguration from '@/views/modeling/parameter-configuration'
+import DataClean from '@/views/modeling/data-clean'
 export default {
   name: '',
   data() {
     return {
-      current: 0
+      current: 0,
+
+      params: null,
+      xyAxis: null
     }
   },
   methods: {
@@ -60,7 +65,8 @@ export default {
     }
   },
   components: {
-    ParameterConfiguration
+    ParameterConfiguration,
+    DataClean
   },
 }
 </script>
@@ -95,5 +101,17 @@ export default {
   height: calc(~"100vh - 140px");
   margin: 0 auto;
   background: #ffffff;
+}
+.step-control {
+  position: fixed;
+  bottom: 0;
+  height: 100px;
+  width: 1100px;
+  padding: 34px 68px;
+  border-top: 1px solid #dbe3e4;
+  box-shadow: 0 -4px 4px -2px #e4e9f0;
+}
+button:last-child {
+  float: right;
 }
 </style>
