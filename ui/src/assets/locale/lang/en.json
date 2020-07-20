@@ -6,5 +6,20 @@
     "systemName": "WeCube-Plugins-Capacity (Demo Version)",
     "capacityModeling": "Capacity Modeling",
     "capacityForecast": "Capacity Forecast"
+  },
+  "tips": {
+    "required": " Required!",
+    "inputRequired": "Required,2-60",
+    "success": " Success!",
+    "failed": " Failed!",
+    "selectData": " Please select data first!",
+    "selectDate": "Please select date!",
+    "requestMoreData": "For more objects, please enter a query ..."
+  },
+  "placeholder": {
+    "input": "Please input",
+    "endpointSearch": "Please input",
+    "metric": "Select metric",
+    "datePicker": "Please select"
   }
 }
