@@ -339,7 +339,7 @@ func AutoJustifyData(param models.RRequestMonitor) (err error, result models.YXD
 }
 
 func clearYXData(data [][]float64) (step float64, newData [][]float64) {
-	step = 60000
+	step = 3600000
 	dataLength := len(data)
 	for i,v := range data {
 		if i < dataLength-1 {
