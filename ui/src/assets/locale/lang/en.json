@@ -20,6 +20,8 @@
     "input": "Please input",
     "endpointSearch": "Please input",
     "metric": "Select metric",
-    "datePicker": "Please select"
+    "datePicker": "Please select",
+    "xAxis": "Select X axis data",
+    "yAxis": "Select Y axis data"
   }
 }
