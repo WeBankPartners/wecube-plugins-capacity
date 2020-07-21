@@ -1,23 +1,41 @@
 <template>
   <div class="display-result">
-    <Row>
+    <Row style="margin-bottom:16px">
       <Col span="3">
         <span class="param-title">Level</span>
       </Col>
       <Col span="21">
+        <RadioGroup v-model="result.level" type="button">
+          <Radio label="0">无</Radio>
+          <Radio label="1">低</Radio>
+          <Radio label="2">中 </Radio>
+          <Radio label="3">高</Radio>
+        </RadioGroup>
       </Col>
     </Row>
-    <!-- <div>level: {{result.level}}</div> -->
-    <!-- <div>output: 
-      <div v-html="result.output"></div>
+    <Row style="margin-bottom:16px">
+      <Col span="3">
+        <span class="param-title">Output</span>
+      </Col>
+      <Col span="21">
+        <div  style="height: 200px;overflow: auto;background: skyblue;padding:8px">
+          <div v-html="result.output"></div>
+        </div>
+      </Col>
+    </Row>
+    <Row style="margin-bottom:16px">
+      <Col span="3">
+        <span class="param-title">公式</span>
+      </Col>
+      <Col span="21">
+        {{result.func_expr}}
+      </Col>
+    </Row>
+    <div style="text-align: center">
+      <template v-for="(img) in result.images">
+        <img :src="'http://129.204.99.160:19696/capacity/'+ img" :key="img" alt="">
+      </template>
     </div>
-    <div>func_expr: {{result.func_expr}}</div> -->
-    <!-- <div>
-      <img src="http://129.204.99.160:19696/capacity/r_images/R_1595313716221396518/rp001.png" alt="">
-      <img src="http://129.204.99.160:19696/capacity/r_images/R_1595313716221396518/rp002.png" alt="">
-      <img src="http://129.204.99.160:19696/capacity/r_images/R_1595313716221396518/rp003.png" alt="">
-      <img src="http://129.204.99.160:19696/capacity/r_images/R_1595313716221396518/rp004.png" alt="">
-    </div> -->
     <div>
       <div id="graph" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:40px"></div>
     </div>
@@ -48,7 +66,7 @@ export default {
         "remove_list":[]
       },
       result: {
-        level: null
+        level: '1'
       }
     }
   },
@@ -63,6 +81,8 @@ export default {
       }
       this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.getRAnalyze, params, (responseData) => {
         this.result = responseData.data
+        this.result.level = responseData.data.level + ''
+        console.log()
         this.drawChart(responseData.data.chart)
       })
     },

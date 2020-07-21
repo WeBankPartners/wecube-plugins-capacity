@@ -107,7 +107,7 @@ export default {
 }
 .operation-zone {
   width: 1100px;
-  height: calc(~"100vh - 140px");
+  min-height: calc(~"100vh - 140px");
   margin: 0 auto;
   background: #ffffff;
 }
