@@ -11,6 +11,9 @@
           <Radio label="2">中 </Radio>
           <Radio label="3">高</Radio>
         </RadioGroup>
+        <span style="float:right">
+          <button type="button" class="btn btn-confirm-f" @click="saveFormula" :disabled="result.level === '0'">保存</button>
+        </span>
       </Col>
     </Row>
     <Row style="margin-bottom:16px">
@@ -39,6 +42,16 @@
     <div>
       <div id="graph" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:40px"></div>
     </div>
+    <Modal
+      v-model="modal1"
+      title="保存名称"
+      @on-ok="save">
+      <Form :model="formInline" :rules="ruleInline" :label-width="80">
+        <FormItem label="名称" prop="name">
+          <Input v-model="formInline.name" placeholder="Enter something..."></Input>
+        </FormItem>
+      </Form>
+    </Modal>
   </div>
 </template>
 
@@ -49,32 +62,57 @@ export default {
   name: '',
   data() {
     return {
-      formulaParams: {
-        "config":[
-          {
-            "end":"1594828800",
-            "endpoint":"VM_0_16_centos_192.168.0.16_host",
-            "metric":"mem.used.percent",
-            "start":"1594742400",
-            "agg":"p95"
-          }
-        ],
-        "legend_x":[
-          "VM_0_16_centos_192.168.0.16_host:mem.used.percent"
-        ],
-        "legend_y":"VM_0_16_centos_192.168.0.16_host:mem.used.percent",
-        "remove_list":[]
-      },
+      // formulaParams: {
+      //   "config":[
+      //     {
+      //       "end":"1594828800",
+      //       "endpoint":"VM_0_16_centos_192.168.0.16_host",
+      //       "metric":"mem.used.percent",
+      //       "start":"1594742400",
+      //       "agg":"p95"
+      //     }
+      //   ],
+      //   "legend_x":[
+      //     "VM_0_16_centos_192.168.0.16_host:mem.used.percent"
+      //   ],
+      //   "legend_y":"VM_0_16_centos_192.168.0.16_host:mem.used.percent",
+      //   "remove_list":[]
+      // },
       result: {
         level: '1'
+      },
+
+      modal1: false,
+      formInline: {
+        name: ''
+      },
+      ruleInline: {
+        name: [
+          { required: true, message: 'Please fill in the name', trigger: 'blur' }
+        ]
       }
     }
   },
-  // props: ['formulaParams'],
+  props: ['formulaParams'],
   mounted () {
     this.getRAnalyze()
   },
   methods: {
+    saveFormula () {
+      this.modal1 = true
+    },
+    save () {
+      this.result.level = Number(this.result.level)
+      let params = {
+        ...this.result,
+        name: this.formInline.name,
+        y_real: this.result.chart.data_series[0].data,
+        y_func: this.result.chart.data_series[1].data,
+      }
+       this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.saveRAnalyze, params, () => {
+        this.$Message.success('Success!')
+      })
+    },
     getRAnalyze () {
       let params = {
         monitor: this.formulaParams
@@ -87,25 +125,7 @@ export default {
       })
     },
     drawChart (config) {
-      console.log(config)
       let myChart = echarts.init(document.getElementById('graph'))
-      // let option = {
-      //   xAxis: {
-      //     data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-      //   },
-      //   yAxis: {
-      //   },
-      //   series: [{
-      //     data: [820, 932, 901, 934, 1290, 1330, 1320],
-      //     type: 'line',
-      //     smooth: true
-      //   },
-      //   {
-      //     data: [820, 32, 901, 34, 90, 1330, 320],
-      //     type: 'line',
-      //     smooth: true
-      //   }]
-      // }
       let option = {
         legend: {
           bottom: 5,
@@ -117,7 +137,6 @@ export default {
         },
         series: config.data_series
       }
-      console.log(option)
       myChart.setOption(option)
     }
   },
