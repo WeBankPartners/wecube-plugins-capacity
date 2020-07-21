@@ -27,9 +27,13 @@
         </template>
         <template v-if="current === 1">
           <DataClean :params="params" :xyAxis="xyAxis"></DataClean>
+          <div class="step-control">
+            <!-- <button type="button" class="btn btn-cancle-f">上一步</button> -->
+            <button type="button" class="btn btn-confirm-f" @click="current = 2">生成公式</button>
+          </div>
         </template>
         <template v-if="current === 2">
-          333333
+          <DisplayResult :formulaParams="formulaParams"></DisplayResult>
         </template>
       </div>
     </div>
@@ -39,6 +43,7 @@
 <script>
 import ParameterConfiguration from '@/views/modeling/parameter-configuration'
 import DataClean from '@/views/modeling/data-clean'
+import DisplayResult from '@/views/modeling/display-result'
 export default {
   name: '',
   data() {
@@ -46,7 +51,10 @@ export default {
       current: 0,
 
       params: null,
-      xyAxis: null
+      xyAxis: null,
+
+      formulaParams: null,
+      removeList: []
     }
   },
   methods: {
@@ -66,7 +74,8 @@ export default {
   },
   components: {
     ParameterConfiguration,
-    DataClean
+    DataClean,
+    DisplayResult
   },
 }
 </script>

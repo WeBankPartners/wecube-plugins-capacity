@@ -22,6 +22,7 @@
     "metric": "请选择指标",
     "datePicker": "请选择日期",
     "xAxis": "选择X轴数据",
-    "yAxis": "选择Y轴数据"
+    "yAxis": "选择Y轴数据",
+    "aggregate": "选择聚合类型"
   }
 }

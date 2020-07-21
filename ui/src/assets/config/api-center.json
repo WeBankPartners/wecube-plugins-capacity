@@ -1,5 +1,6 @@
 {
   "getEndpoint": "monitor/search",
   "getChart": "monitor/chart",
-  "getRData": "r/data"
+  "getRData": "r/data",
+  "getRAnalyze": "r/analyze"
 }
