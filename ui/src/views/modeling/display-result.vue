@@ -79,7 +79,7 @@ export default {
       //   "remove_list":[]
       // },
       result: {
-        level: '1'
+        level: ''
       },
 
       modal1: false,
@@ -120,7 +120,6 @@ export default {
       this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.getRAnalyze, params, (responseData) => {
         this.result = responseData.data
         this.result.level = responseData.data.level + ''
-        console.log()
         this.drawChart(responseData.data.chart)
       })
     },

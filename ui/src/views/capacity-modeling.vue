@@ -114,11 +114,12 @@ export default {
 .step-control {
   position: fixed;
   bottom: 0;
-  height: 100px;
+  height: 80px;
   width: 1100px;
-  padding: 34px 68px;
+  padding: 24px 68px;
   border-top: 1px solid #dbe3e4;
   box-shadow: 0 -4px 4px -2px #e4e9f0;
+  background: white;
 }
 button:last-child {
   float: right;

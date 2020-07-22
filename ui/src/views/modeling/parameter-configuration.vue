@@ -109,7 +109,6 @@ export default {
       }
       const start = Date.parse(this.dateRange[0])/1000 + ''
       const end = Date.parse(this.dateRange[1])/1000 + ''
-      console.log(start, end)
       let params = []
       this.endpointWithMetric.forEach(single => {
         params.push({
@@ -130,7 +129,6 @@ export default {
             value: _,
           })
         })
-        console.log(xyAxis)
         this.$parent.xyAxis = xyAxis
       })
     },
