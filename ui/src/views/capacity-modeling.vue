@@ -5,17 +5,17 @@
         <Steps :current="current">
           <Step>
             <span slot="title" class="step-title">
-              指标配置
+              {{$t(steps[0])}}
             </span>
           </Step>
           <Step>
             <span slot="title" class="step-title">
-              数据清洗
+              {{$t(steps[1])}}
             </span>
           </Step>
           <Step>
             <span slot="title" class="step-title">
-              结果展示
+              {{$t(steps[2])}}
             </span>
           </Step>
         </Steps>
@@ -23,30 +23,13 @@
     </div>
     <div class="operation">
       <div class="operation-zone">
-        <!-- <template v-if="current === 0">
-          <ParameterConfiguration></ParameterConfiguration>
-          <div class="step-control">
-            <button type="button" class="btn btn-cancle-f">上一步</button>
-            <button type="button" class="btn btn-confirm-f" @click="current = 1">下一步：数据清洗</button>
-          </div>
-        </template>
-        <template v-if="current === 1">
-          <DataClean :params="params" :xyAxis="xyAxis"></DataClean>
-          <div class="step-control">
-            <button type="button" class="btn btn-cancle-f" @click="current = 0">上一步</button>
-            <button type="button" class="btn btn-confirm-f" @click="current = 2">下一步：结果展示</button>
-          </div>
-        </template>
-        <template v-if="current === 2">
-          <DisplayResult :formulaParams="formulaParams"></DisplayResult>
-        </template> -->
         <keep-alive :include="whiteList" :exclude="blackList">
           <component :is="currentComponent"></component>
         </keep-alive>
         
         <div class="step-control">
-          <button v-if="current != 0" @click="upStep"  type="button" class="btn btn-cancle-f">上一步</button>
-          <button v-if="current != 2" @click="downStep" type="button" class="btn btn-confirm-f">下一步</button>
+          <button v-if="current != 0" @click="upStep"  type="button" class="btn btn-cancle-f">{{$t('previous')}}:{{$t(steps[current-1])}}</button>
+          <button v-if="current != 2" @click="downStep" type="button" class="btn btn-confirm-f">{{$t('nextStep')}}:{{$t(steps[current+1])}}</button>
         </div>
       </div>
     </div>
@@ -65,6 +48,7 @@ export default {
       whiteList: ['ParameterConfiguration', 'DataClean', 'DisplayResult'],
       blackList: [],
       currentComponent: 'ParameterConfiguration',
+      steps:['indicatorConfiguration', 'dataCleaning', 'resultDisplay'],
 
       params: null,
       xyAxis: null,

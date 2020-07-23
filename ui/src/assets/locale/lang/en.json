@@ -24,5 +24,26 @@
     "xAxis": "Select X axis data",
     "yAxis": "Select Y axis data",
     "aggregate": "Select aggregate type"
-  }
+  },
+  "indicatorConfiguration": "Indicator Configuration",
+  "dataCleaning": "Data Cleaning",
+  "resultDisplay": "Result Display",
+  "previous": "Previous",
+  "nextStep": "Next Step",
+  "endpointAndMetric": "Endpoint & Metric",
+  "add": "Add",
+  "save": "Save",
+  "search": "Search",
+  "timeInterval": "Time Interval",
+  "queryView": "Search",
+  "axisCoordinates": "Axis Coordinates",
+  "searchData": "Search",
+  "level0": "None",
+  "level1": "Low Level",
+  "level2": "Middle Level",
+  "level3": "High Level",
+  "favorite": "Favorite prediction results",
+  "name": "Name",
+  "favoritesList": "Favorites List",
+  "formula": "Formula"
 }

@@ -2,7 +2,7 @@
   <div class="parameter-configuration">
     <Row>
       <Col span="3">
-        <span class="param-title">对象与指标</span>
+        <span class="param-title">{{$t('endpointAndMetric')}}</span>
       </Col>
       <Col span="21">
         <Form :label-width="20">
@@ -34,7 +34,7 @@
             </Select>
           </FormItem>
           <FormItem class="param-inline">
-            <button @click="addParams()" :disabled="!endpoint || !metric" type="button" class="btn btn-confirm-skeleton-f">增加</button>
+            <button @click="addParams()" :disabled="!endpoint || !metric" type="button" class="btn btn-confirm-skeleton-f">{{$t('add')}}</button>
           </FormItem>
           <div v-if="endpointWithMetric.length" class="params-display">
             <div v-for="(tag, tagIndex) in endpointWithMetric" :key="tagIndex" class="params-display-single">
@@ -46,7 +46,7 @@
     </Row>
     <Row>
       <Col span="3">
-        <span class="param-title">时间区间</span>
+        <span class="param-title">{{$t('timeInterval')}}</span>
       </Col>
       <Col span="21">
       <Form :label-width="20">
@@ -62,7 +62,7 @@
           </DatePicker>
         </FormItem>
         <FormItem class="param-inline">
-          <button :disabled="endpointWithMetric.length && !dateRange[0]" @click="getChart" type="button" class="btn btn-confirm-f">查询视图</button>
+          <button :disabled="endpointWithMetric.length && !dateRange[0]" @click="getChart" type="button" class="btn btn-confirm-f">{{$t('queryView')}}</button>
         </FormItem>
       </Form>
       </Col>
@@ -173,7 +173,7 @@ export default {
     getMetric (val) {
       if (!val) return
       if (!this.endpointObject) {
-        this.$Message.error('请先选择对象！')
+        this.$Message.error(this.$t('tips.selectData'))
         return
       }
       let params = {

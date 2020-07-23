@@ -24,5 +24,26 @@
     "xAxis": "选择X轴数据",
     "yAxis": "选择Y轴数据",
     "aggregate": "选择聚合类型"
-  }
+  },
+  "indicatorConfiguration": "指标配置",
+  "dataCleaning": "数据清洗",
+  "resultDisplay": "结果展示",
+  "previous": "上一步",
+  "nextStep": "下一步",
+  "endpointAndMetric": "对象与指标",
+  "add": "增加",
+  "save": "保存",
+  "search": "查询",
+  "timeInterval": "时间区间",
+  "queryView": "查询视图",
+  "axisCoordinates": "选择坐标轴",
+  "searchData": "查询数据",
+  "level0": "无",
+  "level1": "低",
+  "level2": "中",
+  "level3": "高",
+  "favorite": "收藏预测结果",
+  "name": "名称",
+  "favoritesList": "收藏列表",
+  "formula": "公式"
 }

@@ -6,13 +6,13 @@
       </Col>
       <Col span="21">
         <RadioGroup v-model="result.level" type="button">
-          <Radio label="0" :disabled="result.level!='0'">无</Radio>
-          <Radio label="1" :disabled="result.level!='1'">低</Radio>
-          <Radio label="2" :disabled="result.level!='2'">中 </Radio>
-          <Radio label="3" :disabled="result.level!='3'">高</Radio>
+          <Radio label="0" :disabled="result.level!='0'">{{$t('level0')}}</Radio>
+          <Radio label="1" :disabled="result.level!='1'">{{$t('level1')}}</Radio>
+          <Radio label="2" :disabled="result.level!='2'">{{$t('level2')}}</Radio>
+          <Radio label="3" :disabled="result.level!='3'">{{$t('level3')}}</Radio>
         </RadioGroup>
         <span style="float:right">
-          <button type="button" class="btn btn-confirm-f" @click="saveFormula" :disabled="result.level === '0'">保存</button>
+          <button type="button" class="btn btn-confirm-f" @click="saveFormula" :disabled="result.level === '0'">{{$t('save')}}</button>
         </span>
       </Col>
     </Row>
@@ -44,10 +44,10 @@
     </div>
     <Modal
       v-model="modal1"
-      title="保存名称"
+      :title="$t('favorite')"
       @on-ok="save">
       <Form :model="formInline" :rules="ruleInline" :label-width="80">
-        <FormItem label="名称" prop="name">
+        <FormItem :label="$t('name')" prop="name">
           <Input v-model="formInline.name" placeholder="Enter something..."></Input>
         </FormItem>
       </Form>

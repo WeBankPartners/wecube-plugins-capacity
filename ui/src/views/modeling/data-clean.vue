@@ -2,7 +2,7 @@
   <div class="data-clean">
     <Row>
       <Col span="3">
-        <span class="param-title">选择轴坐标</span>
+        <span class="param-title">{{$t('axisCoordinates')}}</span>
       </Col>
       <Col span="21">
         <Form :label-width="20">
@@ -32,7 +32,7 @@
     </Row>
     <Row>
       <Col span="21" offset="3">
-        <button :disabled="!(xValue.length && yValue)" @click="getData" type="button" class="btn btn-confirm-f margin-left">查询数据</button>
+        <button :disabled="!(xValue.length && yValue)" @click="getData" type="button" class="btn btn-confirm-f margin-left">{{$t('searchData')}}</button>
       </Col>
     </Row>
     <div style="height:500px;margin-top:20px;margin-bottom:125px">

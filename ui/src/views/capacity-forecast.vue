@@ -3,7 +3,7 @@
     <div class="modeling-steps">
       <Row style="text-align: center">
         <Col span="3">
-          <span class="step-title">容量预测</span>
+          <span class="step-title">{{$t('menu.capacityForecast')}}</span>
         </Col>
       </Row>
     </div>
@@ -11,7 +11,7 @@
       <div class="operation-zone">
         <Row>
           <Col span="3">
-            <span class="param-title">收藏列表</span>
+            <span class="param-title">{{$t('favoritesList')}}</span>
           </Col>
           <Col span="21">
             <Form>
@@ -21,7 +21,7 @@
                 </Select>
               </FormItem>
               <FormItem class="param-inline">
-                <button @click="getFavoriteDetail()" :disabled="!favorite" type="button" class="btn btn-confirm-skeleton-f">查询</button>
+                <button @click="getFavoriteDetail()" :disabled="!favorite" type="button" class="btn btn-confirm-skeleton-f">{{$t('search')}}</button>
               </FormItem>
             </Form>
           </Col>
@@ -34,10 +34,10 @@
             </Col>
             <Col span="21">
               <RadioGroup v-model="result.level" type="button">
-                <Radio label="0" :disabled="result.level!='0'">无</Radio>
-                <Radio label="1" :disabled="result.level!='1'">低</Radio>
-                <Radio label="2" :disabled="result.level!='2'">中 </Radio>
-                <Radio label="3" :disabled="result.level!='3'">高</Radio>
+                <Radio label="0" :disabled="result.level!='0'">{{$t('level0')}}</Radio>
+                <Radio label="1" :disabled="result.level!='1'">{{$t('level1')}}</Radio>
+                <Radio label="2" :disabled="result.level!='2'">{{$t('level2')}}</Radio>
+                <Radio label="3" :disabled="result.level!='3'">{{$t('level3')}}</Radio>
               </RadioGroup>
             </Col>
           </Row>
@@ -53,7 +53,7 @@
           </Row>
           <Row style="margin-bottom:16px">
             <Col span="3">
-              <span class="param-title">公式</span>
+              <span class="param-title">{{$t('formula')}}</span>
             </Col>
             <Col span="21">
               {{result.func_expr}}
