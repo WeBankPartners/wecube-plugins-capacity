@@ -93,8 +93,9 @@ export default {
       }
     }
   },
-  props: ['formulaParams'],
-  mounted () {
+  // props: ['formulaParams'],
+  activated () {
+    this.formulaParams = this.$parent.formulaParams
     this.getRAnalyze()
   },
   methods: {
@@ -146,6 +147,7 @@ export default {
 <style scoped lang="less">
 .display-result {
   padding: 32px 40px;
+  padding-bottom: 120px;
 }
 .ivu-form-item {
   margin-bottom: 24px;

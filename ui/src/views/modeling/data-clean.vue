@@ -58,16 +58,8 @@ export default {
   name: '',
   data() {
     return {
-      // xyAxis: [{
-      //   label: 'VM_0_16_centos_192.168.0.16_host:mem.used.percent',
-      //   value: 'VM_0_16_centos_192.168.0.16_host:mem.used.percent'
-      // }],
-      // params: [{
-      //   end: '1594828800',
-      //   endpoint: 'VM_0_16_centos_192.168.0.16_host',
-      //   metric: 'mem.used.percent',
-      //   start: '1594742400'
-      // }],
+      xyAxis: [],
+      params: [],
 
       xValue: [],
       xOptions: [],
@@ -89,8 +81,9 @@ export default {
       selectedData: []
     }
   },
-  props: ['params', 'xyAxis'],
-  created () {
+  activated () {
+    this.xyAxis = this.$parent.xyAxis
+    this.params = this.$parent.params
     this.xOptions = JSON.parse(JSON.stringify(this.xyAxis))
     this.yOptions = JSON.parse(JSON.stringify(this.xyAxis))
   },

@@ -23,23 +23,31 @@
     </div>
     <div class="operation">
       <div class="operation-zone">
-        <template v-if="current === 0">
+        <!-- <template v-if="current === 0">
           <ParameterConfiguration></ParameterConfiguration>
           <div class="step-control">
-            <!-- <button type="button" class="btn btn-cancle-f">上一步</button> -->
+            <button type="button" class="btn btn-cancle-f">上一步</button>
             <button type="button" class="btn btn-confirm-f" @click="current = 1">下一步：数据清洗</button>
           </div>
         </template>
         <template v-if="current === 1">
           <DataClean :params="params" :xyAxis="xyAxis"></DataClean>
           <div class="step-control">
-            <!-- <button type="button" class="btn btn-cancle-f" @click="current = 0">上一步</button> -->
+            <button type="button" class="btn btn-cancle-f" @click="current = 0">上一步</button>
             <button type="button" class="btn btn-confirm-f" @click="current = 2">下一步：结果展示</button>
           </div>
         </template>
         <template v-if="current === 2">
           <DisplayResult :formulaParams="formulaParams"></DisplayResult>
-        </template>
+        </template> -->
+        <keep-alive :include="whiteList" :exclude="blackList">
+          <component :is="currentComponent"></component>
+        </keep-alive>
+        
+        <div class="step-control">
+          <button v-if="current != 0" @click="upStep"  type="button" class="btn btn-cancle-f">上一步</button>
+          <button v-if="current != 2" @click="downStep" type="button" class="btn btn-confirm-f">下一步</button>
+        </div>
       </div>
     </div>
   </div>
@@ -54,6 +62,9 @@ export default {
   data() {
     return {
       current: 0,
+      whiteList: ['ParameterConfiguration', 'DataClean', 'DisplayResult'],
+      blackList: [],
+      currentComponent: 'ParameterConfiguration',
 
       params: null,
       xyAxis: null,
@@ -69,12 +80,13 @@ export default {
     showResult () {
       this.current++
     },
-    next () {
-      if (this.current == 2) {
-        this.current = 0
-      } else {
-        this.current += 1
-      }
+    upStep () {
+      this.current--
+      this.currentComponent = this.whiteList[this.current]
+    },
+    downStep () {
+      this.current++
+      this.currentComponent = this.whiteList[this.current]
     }
   },
   components: {
