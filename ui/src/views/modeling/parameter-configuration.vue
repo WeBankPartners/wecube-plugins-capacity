@@ -22,8 +22,15 @@
             </Select>
           </FormItem>
           <FormItem class="param-inline">
-            <Select v-model="metric" @on-open-change="getMetric" style="width:320px" :placeholder="$t('placeholder.metric')" filterable>
-              <Option v-for="item in metricList" :value="item.metric" :key="item.metric">{{ item.metric }}</Option>
+            <Select 
+              v-model="metric" 
+              @on-open-change="getMetric" 
+              style="width:320px" 
+              :placeholder="$t('placeholder.metric')" 
+              filterable
+              clearable
+              @on-clear="clearMetric">
+                <Option v-for="item in metricList" :value="item.metric" :key="item.metric">{{ item.metric }}</Option>
             </Select>
           </FormItem>
           <FormItem class="param-inline">
@@ -54,15 +61,13 @@
             style="width: 320px">
           </DatePicker>
         </FormItem>
+        <FormItem class="param-inline">
+          <button :disabled="endpointWithMetric.length && !dateRange[0]" @click="getChart" type="button" class="btn btn-confirm-f">查询视图</button>
+        </FormItem>
       </Form>
       </Col>
     </Row>
-    <Row>
-      <Col span="21" offset="3">
-        <button :disabled="endpointWithMetric.length && !dateRange[0]" @click="getChart" type="button" class="btn btn-confirm-f margin-left">查询视图</button>
-      </Col>
-    </Row>
-    <div :id="elId" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:40px"></div>
+    <div :id="elId" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:20px;margin-bottom:80px;"></div>
   </div>
 </template>
 
@@ -161,6 +166,9 @@ export default {
       this.$root.$httpRequestEntrance.httpRequestEntrance('GET', this.$root.apiCenter.getEndpoint, params, (responseData) => {
         this.endpointList = responseData.data
       })
+    },
+    clearMetric () {
+      this.metric = ''
     },
     getMetric (val) {
       if (!val) return

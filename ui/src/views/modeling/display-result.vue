@@ -6,10 +6,10 @@
       </Col>
       <Col span="21">
         <RadioGroup v-model="result.level" type="button">
-          <Radio label="0">无</Radio>
-          <Radio label="1">低</Radio>
-          <Radio label="2">中 </Radio>
-          <Radio label="3">高</Radio>
+          <Radio label="0" :disabled="result.level!='0'">无</Radio>
+          <Radio label="1" :disabled="result.level!='1'">低</Radio>
+          <Radio label="2" :disabled="result.level!='2'">中 </Radio>
+          <Radio label="3" :disabled="result.level!='3'">高</Radio>
         </RadioGroup>
         <span style="float:right">
           <button type="button" class="btn btn-confirm-f" @click="saveFormula" :disabled="result.level === '0'">保存</button>

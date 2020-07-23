@@ -12,7 +12,13 @@
             </Select>
           </FormItem>
           <FormItem class="param-inline">
-            <Select v-model="yValue" style="width:320px" :placeholder="$t('placeholder.yAxis')" filterable>
+            <Select 
+              v-model="yValue" 
+              style="width:320px" 
+              :placeholder="$t('placeholder.yAxis')" 
+              filterable
+              clearable
+              @on-clear="clearYValue">
               <Option v-for="item in yOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
             </Select>
           </FormItem>
@@ -29,9 +35,10 @@
         <button :disabled="!(xValue.length && yValue)" @click="getData" type="button" class="btn btn-confirm-f margin-left">查询数据</button>
       </Col>
     </Row>
-    <div>
+    <div style="height:500px;margin-top:20px;margin-bottom:125px">
       <Table 
         border 
+        size="small"
         ref="selection" 
         :columns="columns" 
         @on-select="selectData"
@@ -132,6 +139,9 @@ export default {
       this.selectedData.splice(index, 1)
       this.getDataParams.remove_list = this.selectedData
       this.$parent.formulaParams = this.getDataParams
+    },
+    clearYValue () {
+      this.yValue = ''
     }
   },
   components: {},

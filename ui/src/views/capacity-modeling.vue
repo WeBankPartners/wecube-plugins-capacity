@@ -1,19 +1,24 @@
 <template>
   <div class="modeling-container">
     <div class="modeling-steps">
-      <Row style="text-align: center">
-        <Col span="8">
-          <Icon type="ios-cog" class="step-icon"/>
-          <span class="step-title">指标配置</span>
-        </Col>
-        <Col span="8">
-          <Icon type="ios-construct-outline" class="step-icon"/>
-          <span class="step-title">生成公式</span>
-        </Col>
-        <Col span="8">
-          <Icon type="md-stats" class="step-icon"/>
-          <span class="step-title">结果展示</span>
-        </Col>
+      <Row>
+        <Steps :current="current">
+          <Step>
+            <span slot="title" class="step-title">
+              指标配置
+            </span>
+          </Step>
+          <Step>
+            <span slot="title" class="step-title">
+              数据清洗
+            </span>
+          </Step>
+          <Step>
+            <span slot="title" class="step-title">
+              结果展示
+            </span>
+          </Step>
+        </Steps>
       </Row>
     </div>
     <div class="operation">
@@ -22,14 +27,14 @@
           <ParameterConfiguration></ParameterConfiguration>
           <div class="step-control">
             <!-- <button type="button" class="btn btn-cancle-f">上一步</button> -->
-            <button type="button" class="btn btn-confirm-f" @click="current = 1">下一步</button>
+            <button type="button" class="btn btn-confirm-f" @click="current = 1">下一步：数据清洗</button>
           </div>
         </template>
         <template v-if="current === 1">
           <DataClean :params="params" :xyAxis="xyAxis"></DataClean>
           <div class="step-control">
-            <!-- <button type="button" class="btn btn-cancle-f">上一步</button> -->
-            <button type="button" class="btn btn-confirm-f" @click="current = 2">生成公式</button>
+            <!-- <button type="button" class="btn btn-cancle-f" @click="current = 0">上一步</button> -->
+            <button type="button" class="btn btn-confirm-f" @click="current = 2">下一步：结果展示</button>
           </div>
         </template>
         <template v-if="current === 2">
@@ -86,20 +91,15 @@ export default {
 }
 .modeling-steps {
   background: #f1f1f1;
-  width: 1180px;
+  width: 1100px;
   margin: 0 auto;
   padding: 16px 0;
   background: white;
 }
-.step-icon {
-  padding: 4px;
-  border-radius: 50%;
-  border: 1px solid #3ba3ff;
-  color: #3ba3ff;
-}
 .step-title {
   padding: 8px;
-  font-weight: 400;
+  font-size: 18px;
+  font-weight: 500;
 }
 .operation {
   background: #f0f2f5;
@@ -107,7 +107,7 @@ export default {
 }
 .operation-zone {
   width: 1100px;
-  min-height: calc(~"100vh - 140px");
+  min-height: calc(~"100vh - 145px");
   margin: 0 auto;
   background: #ffffff;
 }

@@ -14,7 +14,7 @@
             <span class="param-title">收藏列表</span>
           </Col>
           <Col span="21">
-            <Form :label-width="20">
+            <Form>
               <FormItem class="param-inline">
                 <Select v-model="favorite" style="width:320px" :placeholder="$t('placeholder.metric')" filterable>
                   <Option v-for="item in favoritesList" :value="item.guid" :key="item.guid">{{ item.name }}</Option>
@@ -34,10 +34,10 @@
             </Col>
             <Col span="21">
               <RadioGroup v-model="result.level" type="button">
-                <Radio label="0">无</Radio>
-                <Radio label="1">低</Radio>
-                <Radio label="2">中 </Radio>
-                <Radio label="3">高</Radio>
+                <Radio label="0" :disabled="result.level!='0'">无</Radio>
+                <Radio label="1" :disabled="result.level!='1'">低</Radio>
+                <Radio label="2" :disabled="result.level!='2'">中 </Radio>
+                <Radio label="3" :disabled="result.level!='3'">高</Radio>
               </RadioGroup>
             </Col>
           </Row>
@@ -67,14 +67,15 @@
           <div>
             <div id="graph" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:40px"></div>
           </div>
-          123123
-          <Table 
-            border 
-            ref="selection" 
-            :columns="columns" 
-            :data="tableData">
-          </Table>
-          <Row style="margin-top:16px">
+          <div v-if="tableData.length" style="margin: 16px 20px 16px 0">
+            <Table 
+              border 
+              ref="selection" 
+              :columns="columns" 
+              :data="tableData">
+            </Table>
+          </div>
+          <Row v-if="result.level" style="margin-top:16px">
             <Col span="3">
               <span class="param-title">输入预测值</span>
             </Col>
@@ -83,7 +84,7 @@
                 <template v-for="(key, keyIndex) in Object.keys(item)">
                   <InputNumber :min="1" :step="0.1" v-model="item[key]" :key="key + intemIndex + keyIndex" class="user-input"></InputNumber>
                 </template>
-                <Icon type="md-trash" @click="deleteRow(intemIndex)" class="operation-icon-delete" />
+                <Icon type="md-trash" @click="deleteRow(intemIndex)" v-if="inputArray.length != 1" class="operation-icon-delete" />
                 <Icon type="ios-add" @click="addRow" v-if="intemIndex + 1 === inputArray.length" class="operation-icon-add" />
               </div>
               <button @click="prediction" type="button" style="margin-top:8px" class="btn btn-confirm-skeleton-f">预测</button>
@@ -170,9 +171,17 @@ export default {
     },
     prediction () {
       let array_ = []
-      this.inputArray.forEach(item => {
+      
+      for (let item of this.inputArray) {
+        const tmp = Object.values(item).some(i => {
+          return i === null
+        })
+        if (tmp) {
+          this.$Message.warning('预测参数不允许为空！')
+          return
+        }
         array_.push(Object.values(item))
-      })
+      }
       let params = {
         guid: this.favorite,
         add_data: array_
@@ -262,6 +271,7 @@ export default {
   width: 30px;
   line-height: 30px;
   margin: 6px;
+  vertical-align: middle;
 }
 .operation-icon-add {
   font-size: 24px;
@@ -271,5 +281,6 @@ export default {
   width: 30px;
   line-height: 30px;
   margin: 6px;
+  vertical-align: middle;
 }
 </style>
