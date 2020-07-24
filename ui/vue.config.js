@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-	assetsDir: process.env.PLUGIN === 'plugin'? '':'wecube-monitor',
+	assetsDir: process.env.PLUGIN === 'plugin'? '':'capacity',
 	outputDir: process.env.PLUGIN === 'plugin'? 'plugin':'dist',
 	productionSourceMap: process.env.PLUGIN !== 'plugin',
 	chainWebpack: config => {
