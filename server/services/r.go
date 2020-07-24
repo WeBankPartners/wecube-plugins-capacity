@@ -467,7 +467,7 @@ func GetRWork(guid string) (err error,result models.RunScriptResult) {
 		}
 		exec.Command("bash", "-c", fmt.Sprintf("mkdir -p %s && rm -f %s/*png", result.Workspace, result.Workspace)).Run()
 		for i,v := range imagesTable {
-			tmpErr := ioutil.WriteFile(fmt.Sprintf("%s/rp00%d.png", result.Workspace, i), v.Data, 0644)
+			tmpErr := ioutil.WriteFile(fmt.Sprintf("%s/rp00%d.png", result.Workspace, i+1), v.Data, 0644)
 			if tmpErr != nil {
 				log.Printf("write images file=%s/rp00%d.png error %v \n", result.Workspace, i, tmpErr)
 			}
