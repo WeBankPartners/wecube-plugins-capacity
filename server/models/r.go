@@ -128,6 +128,11 @@ func (s FuncXSortList) Less(i,j int) bool {
 	return s[i].PValue < s[j].PValue
 }
 
+type YXDataTable struct {
+	Title  []string  `json:"title"`
+	Data   []map[string]string `json:"data"`
+}
+
 type YXDataObj struct {
 	Legend  []string  `json:"legend"`
 	Data  [][]float64 `json:"data"`
@@ -141,5 +146,5 @@ type RCalcParam struct {
 type RCalcResult struct {
 	Guid  string  `json:"guid"`
 	Chart EChartOption `json:"chart"`
-	Table YXDataObj `json:"table"`
+	Table YXDataTable `json:"table"`
 }

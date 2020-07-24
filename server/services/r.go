@@ -509,27 +509,30 @@ func RCalcData(param models.RCalcParam) (err error,result models.RCalcResult) {
 	if len(rWorkTables) == 0 {
 		return fmt.Errorf("there is no record in r_work with guid=%s ", param.Guid), result
 	}
-	var yXTable models.YXDataObj
+	var yXTable models.YXDataTable
 	var estimate,yList []float64
 	for _,v := range strings.Split(rWorkTables[0].FuncX, ",") {
 		tmpEstimate,_ := strconv.ParseFloat(v, 64)
 		estimate = append(estimate, tmpEstimate)
 	}
-	yXTable.Legend = strings.Split(rWorkTables[0].FuncXName, "^")
-	yXTable.Legend = append(yXTable.Legend, "func(y)")
+	yXTable.Title = strings.Split(rWorkTables[0].FuncXName, "^")
+	yXTable.Title = append(yXTable.Title, "func(y)")
 	funcB,_ := strconv.ParseFloat(rWorkTables[0].FuncB, 64)
 	for i,v := range param.AddData {
 		if len(v) != len(estimate) {
 			err = fmt.Errorf("add_data row index %d is validate,length != len(estimate) ", i)
 			break
 		}
+		tmpTableMap := make(map[string]string)
 		var tmpY float64
 		for j,vv := range v {
 			tmpY += estimate[j]*vv
+			tmpTableMap[yXTable.Title[j]] = fmt.Sprintf("%.4f", vv)
 		}
 		tmpY += funcB
+		tmpTableMap["func(y)"] = fmt.Sprintf("%.4f", tmpY)
 		yList = append(yList, tmpY)
-		yXTable.Data = append(yXTable.Data, append(v, tmpY))
+		yXTable.Data = append(yXTable.Data, tmpTableMap)
 	}
 	if err != nil {
 		return fmt.Errorf("calc add data to funcY error -> %v \n", err),result

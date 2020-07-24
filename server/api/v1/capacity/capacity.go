@@ -8,6 +8,7 @@ import (
 	"log"
 	"fmt"
 	"io/ioutil"
+	"time"
 )
 
 func MonitorSearchHandler(w http.ResponseWriter,r *http.Request)  {
@@ -59,7 +60,31 @@ func RJustifyDataHandler(w http.ResponseWriter,r *http.Request)  {
 		return
 	}
 	err,result := services.AutoJustifyData(param)
-	returnJson(r,w,err,result)
+	if err != nil {
+		returnJson(r,w,err,result)
+		return
+	}
+	var tableData models.YXDataTable
+	tableData.Title = []string{"time"}
+	for i,v := range result.Legend {
+		if i == 0 {
+			continue
+		}
+		tableData.Title = append(tableData.Title, v)
+	}
+	for _,v := range result.Data {
+		tmpMap := make(map[string]string)
+		for i,vv := range v {
+			if i == 0 {
+				tmpMap["time"] = time.Unix(int64(vv/1000), 0).Format("2006-01-02 15:04:05")
+				tmpMap[result.Legend[i]] = fmt.Sprintf("%.0f", vv)
+			}else {
+				tmpMap[result.Legend[i]] = fmt.Sprintf("%.4f", vv)
+			}
+		}
+		tableData.Data = append(tableData.Data, tmpMap)
+	}
+	returnJson(r,w,err,tableData)
 }
 
 func RAnalyzeHandler(w http.ResponseWriter,r *http.Request)  {

@@ -26,7 +26,7 @@ type ChartConfigObj struct {
 	Metric   string    `form:"metric" json:"metric"`
 	Start  string  `form:"start" json:"start"`
 	End  string  `form:"end" json:"end"`
-	Aggregate  string  `form:"aggregate" json:"aggregate"`
+	Aggregate  string  `form:"aggregate" json:"agg"`
 }
 
 type YaxisModel struct {
