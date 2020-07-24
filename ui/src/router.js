@@ -13,6 +13,7 @@ const router = new Router({
       name: "index",
       component: () => import("@/views/index"),
       title: "测试首页",
+      redirect: 'capacityModeling',
       children: [
         {
           path: "/capacityModeling",

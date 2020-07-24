@@ -46,7 +46,7 @@
               <span class="param-title">Output</span>
             </Col>
             <Col span="21">
-              <div  style="height: 200px;overflow: auto;background: skyblue;padding:8px">
+              <div  style="height: 200px;overflow: auto;padding:8px;background: #586b73;color:white">
                 <div v-html="result.output"></div>
               </div>
             </Col>
@@ -61,7 +61,7 @@
           </Row>
           <div style="text-align: center">
             <template v-for="(img) in result.images">
-              <img :src="'http://129.204.99.160:19696/capacity/'+ img" :key="img" alt="">
+              <img :src="'/capacity/'+ img" :key="img" alt="">
             </template>
           </div>
           <div>

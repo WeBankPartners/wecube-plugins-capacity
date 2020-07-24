@@ -27,12 +27,10 @@ window.addOptions({
 })
 
 const implicitRoute = {
-  'monitorConfigIndex/groupManagement': {'zh-CN': '监控', 'en-US': 'Monitor'},
-  'viewConfig': {'zh-CN': '监控', 'en-US': 'Monitor'},
 }
 window.addImplicitRoute(implicitRoute)
-window.addRoutersWithoutPermission(routerP, 'open-monitor')
-window.addRoutes(router, 'open-monitor')
+window.addRoutersWithoutPermission(routerP, 'capacity')
+window.addRoutes(router, 'capacity')
 
 import PageTable from '@/components/table-page/page'
 import ModalComponent from '@/components/modal'
