@@ -63,7 +63,7 @@ export default {
   data() {
     return {
       result: {
-        level: ''
+        level: '0'
       },
 
       modal1: false,

@@ -43,6 +43,8 @@
         :columns="columns" 
         @on-select="selectData"
         @on-select-cancel="selectCancle"
+        @on-select-all="selectAllData"
+        @on-select-all-cancel="selectAllCancle"
         :data="data"></Table>
       <div style="float: right;padding: 12px">
         <Page 
@@ -138,6 +140,24 @@ export default {
       this.selectedData.splice(index, 1)
       this.getDataParams.remove_list = this.selectedData
       this.$parent.formulaParams = this.getDataParams
+    },
+    selectAllData (selection) {
+      let arr = []
+      selection.forEach(item => {
+        arr.push(item.timestamp)
+      })
+      let aa = new Set(this.selectedData)
+      let bb = new Set(arr)
+      this.selectedData = Array.from(new Set([...aa, ...bb]))
+      this.getDataParams.remove_list = this.selectedData
+    },
+    selectAllCancle () {
+      this.data.forEach(item => {
+        const index = this.selectedData.findIndex(i => {
+          return i === item.timestamp
+        })
+        this.selectedData.splice(index, 1)
+      })
     },
     clearYValue () {
       this.yValue = ''

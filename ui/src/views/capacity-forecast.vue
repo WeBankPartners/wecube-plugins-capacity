@@ -110,7 +110,7 @@ export default {
 
       showResult:false,
       result: {
-        level: ''
+        level: '0'
       },
 
       inputTmp: null,
