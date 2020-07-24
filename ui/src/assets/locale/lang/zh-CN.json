@@ -14,7 +14,8 @@
     "failed": " 失败!",
     "selectData": " 请先选择数据!",
     "selectDate": "请选择时间区间!",
-    "requestMoreData": "更多对象请输入名称匹配查询..."
+    "requestMoreData": "更多对象请输入名称匹配查询...",
+    "forecastEmpty": "预测参数不允许为空!"
   },
   "placeholder": {
     "input": "请输入",
@@ -45,5 +46,7 @@
   "favorite": "收藏预测结果",
   "name": "名称",
   "favoritesList": "收藏列表",
-  "formula": "公式"
+  "formula": "公式",
+  "predictedValue": "输入预测值",
+  "prediction": "预测"
 }

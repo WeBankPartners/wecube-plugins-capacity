@@ -14,7 +14,8 @@
     "failed": " Failed!",
     "selectData": " Please select data first!",
     "selectDate": "Please select date!",
-    "requestMoreData": "For more objects, please enter a query ..."
+    "requestMoreData": "For more objects, please enter a query ...",
+    "forecastEmpty": "Forecast parameters cannot be empty!"
   },
   "placeholder": {
     "input": "Please input",
@@ -45,5 +46,7 @@
   "favorite": "Favorite prediction results",
   "name": "Name",
   "favoritesList": "Favorites List",
-  "formula": "Formula"
+  "formula": "Formula",
+  "predictedValue": "Enter predicted value",
+  "prediction": "Prediction"
 }

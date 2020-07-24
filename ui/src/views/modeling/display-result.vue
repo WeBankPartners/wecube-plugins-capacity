@@ -62,22 +62,6 @@ export default {
   name: '',
   data() {
     return {
-      // formulaParams: {
-      //   "config":[
-      //     {
-      //       "end":"1594828800",
-      //       "endpoint":"VM_0_16_centos_192.168.0.16_host",
-      //       "metric":"mem.used.percent",
-      //       "start":"1594742400",
-      //       "agg":"p95"
-      //     }
-      //   ],
-      //   "legend_x":[
-      //     "VM_0_16_centos_192.168.0.16_host:mem.used.percent"
-      //   ],
-      //   "legend_y":"VM_0_16_centos_192.168.0.16_host:mem.used.percent",
-      //   "remove_list":[]
-      // },
       result: {
         level: ''
       },
@@ -93,7 +77,6 @@ export default {
       }
     }
   },
-  // props: ['formulaParams'],
   activated () {
     this.formulaParams = this.$parent.formulaParams
     this.getRAnalyze()

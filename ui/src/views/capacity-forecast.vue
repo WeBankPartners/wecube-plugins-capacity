@@ -70,6 +70,7 @@
           <div v-if="tableData.length" style="margin: 16px 20px 16px 0">
             <Table 
               border 
+              size="small"
               ref="selection" 
               :columns="columns" 
               :data="tableData">
@@ -77,7 +78,7 @@
           </div>
           <Row v-if="result.level" style="margin-top:16px">
             <Col span="3">
-              <span class="param-title">输入预测值</span>
+              <span class="param-title">{{$t('predictedValue')}}</span>
             </Col>
             <Col span="21">
               <div v-for="(item, intemIndex) in inputArray" :key="intemIndex" class="user-array">
@@ -87,7 +88,7 @@
                 <Icon type="md-trash" @click="deleteRow(intemIndex)" v-if="inputArray.length != 1" class="operation-icon-delete" />
                 <Icon type="ios-add" @click="addRow" v-if="intemIndex + 1 === inputArray.length" class="operation-icon-add" />
               </div>
-              <button @click="prediction" type="button" style="margin-top:8px" class="btn btn-confirm-skeleton-f">预测</button>
+              <button @click="prediction" type="button" style="margin-top:8px" class="btn btn-confirm-skeleton-f">{{$t('prediction')}}</button>
             </Col>
           </Row>
         </div>
@@ -177,7 +178,7 @@ export default {
           return i === null
         })
         if (tmp) {
-          this.$Message.warning('预测参数不允许为空！')
+          this.$Message.warning(this.$t('tips.forecastEmpty'))
           return
         }
         array_.push(Object.values(item))
