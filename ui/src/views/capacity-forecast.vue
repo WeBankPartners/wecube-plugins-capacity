@@ -1,11 +1,13 @@
 <template>
   <div class="modeling-container">
-    <div class="modeling-steps">
-      <Row style="text-align: center">
-        <Col span="3">
-          <span class="step-title">{{$t('menu.capacityForecast')}}</span>
-        </Col>
-      </Row>
+    <div style="background:white">
+      <div class="modeling-steps">
+        <Row style="text-align: center">
+          <Col span="3">
+            <span class="step-title">{{$t('menu.capacityForecast')}}</span>
+          </Col>
+        </Row>
+      </div>
     </div>
     <div class="operation">
       <div class="operation-zone">
@@ -83,7 +85,7 @@
             <Col span="21">
               <div v-for="(item, intemIndex) in inputArray" :key="intemIndex" class="user-array">
                 <template v-for="(key, keyIndex) in Object.keys(item)">
-                  <InputNumber :min="1" :step="0.1" v-model="item[key]" :key="key + intemIndex + keyIndex" class="user-input"></InputNumber>
+                  <InputNumber :min="0" :step="0.1" v-model="item[key]" :key="key + intemIndex + keyIndex" class="user-input"></InputNumber>
                 </template>
                 <Icon type="md-trash" @click="deleteRow(intemIndex)" v-if="inputArray.length != 1" class="operation-icon-delete" />
                 <Icon type="ios-add" @click="addRow" v-if="intemIndex + 1 === inputArray.length" class="operation-icon-add" />
@@ -211,11 +213,9 @@ export default {
   font-size: 16px;
 }
 .modeling-steps {
-  background: #f1f1f1;
   width: 1180px;
   margin: 0 auto;
   padding: 16px 0;
-  background: white;
 }
 .step-icon {
   padding: 4px;

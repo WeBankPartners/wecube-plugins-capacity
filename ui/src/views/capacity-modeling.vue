@@ -1,25 +1,27 @@
 <template>
   <div class="modeling-container">
-    <div class="modeling-steps">
-      <Row>
-        <Steps :current="current">
-          <Step>
-            <span slot="title" class="step-title">
-              {{$t(steps[0])}}
-            </span>
-          </Step>
-          <Step>
-            <span slot="title" class="step-title">
-              {{$t(steps[1])}}
-            </span>
-          </Step>
-          <Step>
-            <span slot="title" class="step-title">
-              {{$t(steps[2])}}
-            </span>
-          </Step>
-        </Steps>
-      </Row>
+    <div style="background:white">
+      <div class="modeling-steps">
+        <Row>
+          <Steps :current="current">
+            <Step>
+              <span slot="title" class="step-title">
+                {{$t(steps[0])}}
+              </span>
+            </Step>
+            <Step>
+              <span slot="title" class="step-title">
+                {{$t(steps[1])}}
+              </span>
+            </Step>
+            <Step>
+              <span slot="title" class="step-title">
+                {{$t(steps[2])}}
+              </span>
+            </Step>
+          </Steps>
+        </Row>
+      </div>
     </div>
     <div class="operation">
       <div class="operation-zone">
@@ -86,11 +88,9 @@ export default {
   font-size: 16px;
 }
 .modeling-steps {
-  background: #f1f1f1;
   width: 1100px;
   margin: 0 auto;
   padding: 16px 0;
-  background: white;
 }
 .step-title {
   padding: 8px;
