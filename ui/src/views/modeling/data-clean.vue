@@ -119,6 +119,12 @@ export default {
     },
     changePage (current) {
       this.data = this.originData.slice((current -1) * 10, current * 10)
+      this.data.forEach(row => {
+        row._checked = false
+        if (this.selectedData.includes(row.timestamp)) {
+          row._checked = true
+        }
+      })
     },
     selectData (selection, row) {
       this.selectedData.push(row.timestamp)
