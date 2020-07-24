@@ -2,3 +2,6 @@
 .idea
 ui/node_modules/*
 ui/package-lock.json
+server/public/r_images/*
+server/server
+server/app.log
