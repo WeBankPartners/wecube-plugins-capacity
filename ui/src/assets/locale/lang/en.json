@@ -26,6 +26,10 @@
     "yAxis": "Select Y axis data",
     "aggregate": "Select aggregate type"
   },
+  "photoTipsOne": "The horizontal axis of this picture is the y value, and the vertical axis is the residual error (the difference between the actual value and the estimated value). What you want to see is a uniformly distributed residual error (the line is relatively straight, and the points are more evenly distributed from left to right online On both sides, the professional point is the normal distribution) If the line of this graph appears to be an arc, it is very likely to be a quadratic relationship (the quadratic equation is an arc...)",
+  "photoTipsTwo": "The function of this picture is similar to the first picture. It is to see whether the residuals are normally distributed, but the angle is different. This picture almost ranks the residuals in order, and some special points can be seen (if the Normal distribution, then the points on this graph should be close to y=x, like a standard diagonal line)",
+  "photoTipsThree": "The difference between this picture and the first picture is that the residuals are replaced by variance. The judgment method is similar to that of the first picture. It is best that the red line is horizontal, and the points on the line are more evenly distributed.",
+  "photoTipsFour": "The significance of this picture is to find the extreme points in the data. The meaning of this picture is more complicated. Intuitively, there will be several dotted lines on the picture, marked with values of 0.5 and 1, which is similar to a contour. Line, generally speaking, points within 0.5 line are worth noting. It means that these points are influential points, which will greatly affect the reliability of the model.",
   "indicatorConfiguration": "Indicator Configuration",
   "dataCleaning": "Data Cleaning",
   "resultDisplay": "Result Display",
