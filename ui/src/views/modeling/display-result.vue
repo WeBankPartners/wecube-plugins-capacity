@@ -35,8 +35,13 @@
       </Col>
     </Row>
     <div style="text-align: center">
-      <template v-for="(img) in result.images">
-        <img :src="'/capacity/'+ img" :key="img" alt="">
+      <template v-for="(img, index) in result.images">
+        <Tooltip placement="top" :key="index">
+          <img :src="'/capacity/'+ img" :key="img" alt="">
+          <div slot="content" style="white-space:normal">
+            {{$t(imgTips[index])}}
+          </div>
+        </Tooltip>
       </template>
     </div>
     <div>
@@ -66,6 +71,7 @@ export default {
         level: '0'
       },
 
+      imgTips: ['photoTipsOne', 'photoTipsTwo', 'photoTipsThree', 'photoTipsFour'],
       modal1: false,
       formInline: {
         name: ''
