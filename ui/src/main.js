@@ -21,9 +21,7 @@ Vue.prototype.$validate = validate
 Vue.prototype.$tableUtil = tableUtil
 Vue.prototype.apiCenter = apiCenter
 
-import PageTable from '@/components/table-page/page'
 import ModalComponent from '@/components/modal'
-Vue.component('PageTable', PageTable)
 Vue.component('ModalComponent', ModalComponent)
 Vue.use(VeeValidate)
 
