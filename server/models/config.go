@@ -41,8 +41,18 @@ type MysqlConfig struct {
 	Timeout  int  `json:"timeout"`
 }
 
+type LogConfig struct {
+	Level   string  `json:"level"`
+	File    string  `json:"file"`
+	ArchiveMaxSize int `json:"archive_max_size"`
+	ArchiveMaxBackup int `json:"archive_max_backup"`
+	ArchiveMaxDay int `json:"archive_max_day"`
+	Compress  bool  `json:"compress"`
+}
+
 type GlobalConfig struct {
-	Http  *HttpConfig  `json:"http"`
+	Http  HttpConfig  `json:"http"`
+	Log   LogConfig     `json:"log"`
 	Mysql  MysqlConfig  `json:"mysql"`
 	Cache  CacheConfig  `json:"cache"`
 	DataSource  DataSourceConfig  `json:"data_source"`

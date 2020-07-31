@@ -2,12 +2,12 @@ package services
 
 import (
 	"fmt"
-	"log"
 	"time"
 	"github.com/go-xorm/xorm"
 	"github.com/go-xorm/core"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
+	"github.com/WeBankPartners/wecube-plugins-capacity/server/util/log"
 	"strings"
 	"strconv"
 )
@@ -19,7 +19,7 @@ func InitDbEngine() (err error) {
 		models.Config().Mysql.User, models.Config().Mysql.Password, "tcp", models.Config().Mysql.Server, models.Config().Mysql.Port, models.Config().Mysql.DataBase)
 	mysqlEngine,err = xorm.NewEngine("mysql", connectStr)
 	if err != nil {
-		log.Printf("init mysql fail with connect: %s error: %v \n", connectStr, err)
+		log.Logger.Error("Init mysql fail", log.String("connectStr",connectStr), log.Error(err))
 	}else{
 		mysqlEngine.SetMaxIdleConns(models.Config().Mysql.MaxIdle)
 		mysqlEngine.SetMaxOpenConns(models.Config().Mysql.MaxOpen)
@@ -27,7 +27,7 @@ func InitDbEngine() (err error) {
 		mysqlEngine.Charset("utf8")
 		// 使用驼峰式映射
 		mysqlEngine.SetMapper(core.SnakeMapper{})
-		log.Println("init mysql success ")
+		log.Logger.Info("Init mysql success")
 	}
 	return err
 }

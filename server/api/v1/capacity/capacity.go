@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/services"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
+	"github.com/WeBankPartners/wecube-plugins-capacity/server/util/log"
 	"encoding/json"
-	"log"
 	"fmt"
 	"io/ioutil"
 	"time"
@@ -159,7 +159,6 @@ func DeleteAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
 }
 
 func returnJson(r *http.Request,w http.ResponseWriter,err error,result interface{})  {
-	log.Println("return json")
 	w.Header().Set("Content-Type", "application/json")
 	//w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -167,11 +166,10 @@ func returnJson(r *http.Request,w http.ResponseWriter,err error,result interface
 	w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
 	var response models.RespJson
 	if err != nil {
-		log.Printf(" %s  fail,error:%v \n", r.URL.String(), err)
+		log.Logger.Error("Request fail", log.String("url", r.URL.String()), log.Error(err))
 		response.Code = 1
 		response.Msg = err.Error()
 	}else{
-		log.Printf(" %s success! \n", r.URL.String())
 		response.Code = 0
 		response.Msg = "success"
 	}

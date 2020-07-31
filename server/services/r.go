@@ -1,10 +1,8 @@
 package services
 
 import (
-	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
 	"os/exec"
 	"fmt"
-	"log"
 	"io/ioutil"
 	"strings"
 	"github.com/shopspring/decimal"
@@ -13,6 +11,8 @@ import (
 	"math"
 	"os"
 	"time"
+	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
+	"github.com/WeBankPartners/wecube-plugins-capacity/server/util/log"
 )
 
 func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScriptResult) {
@@ -115,14 +115,14 @@ func runRscript(x [][]float64,y []float64,guid string) (err error,result models.
 	result.Workspace = fmt.Sprintf("%s/%s", models.WorkspaceDir, result.Guid)
 	b,err = exec.Command("/bin/sh", "-c", fmt.Sprintf("mkdir -p %s && /bin/cp -f conf/template.r %s/template.r", result.Workspace, result.Workspace)).Output()
 	if err != nil {
-		log.Printf("build tmp workspace:%s fail,output:%s error:%v \n", result.Workspace, string(b), err)
+		log.Logger.Error("Build tmp workspace fail", log.String("workspace", result.Workspace), log.String("output", string(b)), log.Error(err))
 		return err,result
 	}
 
 	// replace data
 	b,err = ioutil.ReadFile(result.Workspace+"/template.r")
 	if err != nil {
-		log.Printf("replace %s/template.r data,read file fail,error:%v \n", result.Workspace, err)
+		log.Logger.Error(fmt.Sprintf("Replace %s/template.r data,read file fail",result.Workspace), log.Error(err))
 		return err,result
 	}
 	var xDataString,xExpr string
@@ -141,14 +141,14 @@ func runRscript(x [][]float64,y []float64,guid string) (err error,result models.
 	tData = strings.Replace(tData, "{workspace}", result.Workspace, -1)
 	err = ioutil.WriteFile(result.Workspace+"/template.r", []byte(tData), 0666)
 	if err != nil {
-		log.Printf("replace %s/template.r data,write file fail,error:%v \n", result.Workspace, err)
+		log.Logger.Error(fmt.Sprintf("Replace %s/template.r data,write file fail", result.Workspace), log.Error(err))
 		return err,result
 	}
 
 	// run script
 	b,err = exec.Command("/bin/sh", "-c", fmt.Sprintf("Rscript %s/template.r", result.Workspace)).Output()
 	if err != nil {
-		log.Printf("run Rscript %s/template.r fail,output:%s error:%v \n", result.Workspace, string(b), err)
+		log.Logger.Error(fmt.Sprintf("Run Rscript %s/template.r fail", result.Workspace), log.String("output", string(b)), log.Error(err))
 		return err,result
 	}
 	output := dealWithScriptOutput(string(b))
@@ -238,26 +238,26 @@ func getEstimate(s string) (estimate,pValue float64, level int) {
 	if strings.Contains(eStr, "e") {
 		decimalNum,err := decimal.NewFromString(eStr)
 		if err != nil {
-			log.Printf("decimal estimate error: %v \n", err)
+			log.Logger.Error("Decimal estimate error", log.Error(err))
 		}else{
 			eStr = decimalNum.String()
 		}
 	}
 	estimate,err = strconv.ParseFloat(eStr, 64)
 	if err != nil {
-		log.Printf("parse estimate float error: %v \n", err)
+		log.Logger.Error("Parse estimate float error", log.Error(err))
 	}
 	if strings.Contains(pStr, "e") {
 		decimalNum,err := decimal.NewFromString(pStr)
 		if err != nil {
-			log.Printf("decimal p value error: %v \n", err)
+			log.Logger.Error("Decimal p value error", log.Error(err))
 		}else{
 			pStr = decimalNum.String()
 		}
 	}
 	pValue,err = strconv.ParseFloat(pStr, 64)
 	if err != nil {
-		log.Printf("parse p value float error: %v \n", err)
+		log.Logger.Error("Parse p value float error", log.Error(err))
 	}
 	return estimate,pValue,level
 }
@@ -359,7 +359,7 @@ func clearYXData(data [][]float64) (step float64, newData [][]float64) {
 			}
 		}
 	}
-	log.Printf("clear data --> len(data)=%d len(newData)=%d step=%.1f \n", dataLength, len(newData), step)
+	log.Logger.Debug(fmt.Sprintf("Clear data --> len(data)=%d len(newData)=%d step=%.1f \n", dataLength, len(newData), step))
 	return step,newData
 }
 
@@ -469,7 +469,7 @@ func GetRWork(guid string) (err error,result models.RunScriptResult) {
 		for i,v := range imagesTable {
 			tmpErr := ioutil.WriteFile(fmt.Sprintf("%s/rp00%d.png", result.Workspace, i+1), v.Data, 0644)
 			if tmpErr != nil {
-				log.Printf("write images file=%s/rp00%d.png error %v \n", result.Workspace, i, tmpErr)
+				log.Logger.Error(fmt.Sprintf("Write images file=%s/rp00%d.png error", result.Workspace, i), log.Error(tmpErr))
 			}
 		}
 	}
@@ -566,19 +566,19 @@ func RCalcData(param models.RCalcParam) (err error,result models.RCalcResult) {
 }
 
 func AutoCleanWorkspace()  {
-	log.Println("start auto clean useless workspace cron job")
+	log.Logger.Info("Start auto clean useless workspace cron job")
 	t := time.NewTicker(time.Duration(60)*time.Minute).C
 	for {
 		<- t
 		workspaceDir := models.Config().Cache.WorkspaceDir
 		fs,err := ioutil.ReadDir(workspaceDir)
 		if err != nil {
-			log.Printf("clean workspace job fail with read dir:%s error:%v \n", workspaceDir, err)
+			log.Logger.Error("Clean workspace job fail with read dir error", log.String("dir",workspaceDir), log.Error(err))
 			continue
 		}
 		err,saveList := ListRConfig("")
 		if err != nil {
-			log.Printf("clean workspace job fail with get saved list error:%v \n", err)
+			log.Logger.Error("Clean workspace job fail with get saved list error", log.Error(err))
 			continue
 		}
 		tn := time.Now()
@@ -599,9 +599,9 @@ func AutoCleanWorkspace()  {
 			if tn.Sub(v.ModTime()).Minutes() > 60 {
 				err = exec.Command("/bin/sh", "-c", fmt.Sprintf("rm -rf %s/%s", workspaceDir, v.Name())).Run()
 				if err != nil {
-					log.Printf("clean workspace job -> sub:%s fail,error:%v \n", v.Name(), err)
+					log.Logger.Error("Clean workspace job error", log.String("subDir",v.Name()), log.Error(err))
 				}else{
-					log.Printf("clean workspace useless dir %s success \n", v.Name())
+					log.Logger.Info("Clean workspace useless dir success", log.String("subDir",v.Name()))
 				}
 			}
 		}
