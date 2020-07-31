@@ -1,1 +1,3 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+kill -9 `pidof server`

@@ -22,7 +22,8 @@ type CacheConfig struct {
 type MonitorConfig struct {
 	Enable  bool  `json:"enable"`
 	BaseUrl  string  `json:"base_url"`
-	Token  string  `json:"token"`
+	TokenKey  string  `json:"token_key"`
+	TokenValue string  `json:"token_value"`
 }
 
 type DataSourceConfig struct {
@@ -32,7 +33,7 @@ type DataSourceConfig struct {
 type MysqlConfig struct {
 	Type  string  `json:"type"`
 	Server  string  `json:"server"`
-	Port  int     `json:"port"`
+	Port  string     `json:"port"`
 	User  string  `json:"user"`
 	Password   string  `json:"password"`
 	DataBase  string  `json:"database"`

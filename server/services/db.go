@@ -15,7 +15,7 @@ import (
 var mysqlEngine *xorm.Engine
 
 func InitDbEngine() (err error) {
-	connectStr := fmt.Sprintf("%s:%s@%s(%s:%d)/%s?collation=utf8mb4_unicode_ci&allowNativePasswords=true",
+	connectStr := fmt.Sprintf("%s:%s@%s(%s:%s)/%s?collation=utf8mb4_unicode_ci&allowNativePasswords=true",
 		models.Config().Mysql.User, models.Config().Mysql.Password, "tcp", models.Config().Mysql.Server, models.Config().Mysql.Port, models.Config().Mysql.DataBase)
 	mysqlEngine,err = xorm.NewEngine("mysql", connectStr)
 	if err != nil {

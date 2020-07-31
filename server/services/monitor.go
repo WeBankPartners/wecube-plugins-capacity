@@ -45,7 +45,7 @@ func requestMonitor(method,url string,postData interface{}) (err error,bodyData 
 		}
 	}
 	request,_ := http.NewRequest(method, fmt.Sprintf("%s/wecube-monitor/api/v1/%s", models.Config().DataSource.Monitor.BaseUrl, url), bytes.NewBuffer(postBytes))
-	request.Header.Set("X-Auth-Token", models.Config().DataSource.Monitor.Token)
+	request.Header.Set(models.Config().DataSource.Monitor.TokenKey, models.Config().DataSource.Monitor.TokenValue)
 	request.Header.Set("Content-Type", "application/json")
 	response,err := http.DefaultClient.Do(request)
 	if err != nil {
