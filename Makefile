@@ -21,7 +21,7 @@ image: build
 package: image
 	cp build/register.xml ./
 	cp doc/init.sql ./
-	sed -i "s~{{PLUGIN_VERSION}}~$PLUGIN_VERSION~g" ./register.xml
+	sed -i "s~{{PLUGIN_VERSION}}~$(version)~g" ./register.xml
 	docker save -o image.tar $(project_name):$(version)
 	zip  $(project_name)-$(version).zip image.tar init.sql register.xml
 	rm -f register.xml
