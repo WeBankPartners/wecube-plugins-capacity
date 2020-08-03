@@ -8,8 +8,8 @@
 
     <!-- 2.菜单注入 - 描述运行本插件包需要注入的菜单 -->
     <menus>
-        <menu code='CAPACITY_MODEL' cat='INTELLIGENCE' displayName="Capacity Model" localDisplayName="容量建模">/capacityModeling</menu>
-        <menu code='CAPACITY_FORECAST' cat='INTELLIGENCE' displayName="Capacity Forecast" localDisplayName="容量预测">/capacityForecast</menu>
+        <menu code='CAPACITY_MODEL' cat='INTELLIGENCE_OPS' displayName="Capacity Model" localDisplayName="容量建模">/capacityModeling</menu>
+        <menu code='CAPACITY_FORECAST' cat='INTELLIGENCE_OPS' displayName="Capacity Forecast" localDisplayName="容量预测">/capacityForecast</menu>
     </menus>
 
     <!-- 3.数据模型 - 描述本插件包的数据模型,并且描述和Framework数据模型的关系 -->
