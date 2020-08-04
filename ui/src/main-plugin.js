@@ -1,7 +1,6 @@
 import Vue from 'vue'
-import store from './store'
 import router from './router-plugin'
-import routerP from './router-plugin-p'
+// import routerP from './router-plugin-p'
 import '@/assets/css/local.bootstrap.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'font-awesome/css/font-awesome.css'
@@ -19,7 +18,6 @@ window.use(vuex)
 window.addOptions({
   $httpRequestEntrance: httpRequestEntrance,
   JQ: jquery,
-  $store: store,
   $validate: validate,
   $tableUtil: tableUtil,
   apiCenter: apiCenter,
@@ -29,7 +27,7 @@ window.addOptions({
 const implicitRoute = {
 }
 window.addImplicitRoute(implicitRoute)
-window.addRoutersWithoutPermission(routerP, 'capacity')
+// window.addRoutersWithoutPermission(routerP, 'capacity')
 window.addRoutes(router, 'capacity')
 
 import PageTable from '@/components/table-page/page'
