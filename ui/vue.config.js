@@ -1,5 +1,4 @@
 const path = require('path')
-
 module.exports = {
 	assetsDir: process.env.PLUGIN === 'plugin'? '':'capacity',
 	outputDir: process.env.PLUGIN === 'plugin'? 'plugin':'dist',

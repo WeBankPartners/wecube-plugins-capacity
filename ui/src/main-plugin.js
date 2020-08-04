@@ -30,9 +30,7 @@ window.addImplicitRoute(implicitRoute)
 // window.addRoutersWithoutPermission(routerP, 'capacity')
 window.addRoutes(router, 'capacity')
 
-import PageTable from '@/components/table-page/page'
 import ModalComponent from '@/components/modal'
-window.component('PageTable', PageTable)
 window.component('ModalComponent', ModalComponent)
 window.use(VeeValidate)
 
