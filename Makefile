@@ -6,6 +6,7 @@ clean:
 	rm -rf server/server
 	rm -rf server/public/*
 	rm -rf ui/dist
+	rm -rf ui/plugin
 
 build: clean
 	chmod +x ./build/*.sh
@@ -19,13 +20,18 @@ image: build
 	docker build -t $(project_name):$(version) .
 
 package: image
+	mkdir -p plugin
+	cp -r ui/plugin/* plugin/
+	zip -r ui.zip plugin
+	rm -rf plugin
 	cp build/register.xml ./
 	cp doc/init.sql ./
 	sed -i "s~{{PLUGIN_VERSION}}~$(version)~g" ./register.xml
 	docker save -o image.tar $(project_name):$(version)
-	zip  $(project_name)-$(version).zip image.tar init.sql register.xml
+	zip  $(project_name)-$(version).zip image.tar init.sql register.xml ui.zip
 	rm -f register.xml
 	rm -f init.sql
+	rm -f ui.zip
 	rm -rf ./*.tar
 	docker rmi $(project_name):$(version)
 
