@@ -7,23 +7,15 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 import 'font-awesome/css/font-awesome.css'
 import './plugins/iview.js'
 import httpRequestEntrance from '@/assets/js/httpRequestEntrance.js'
-import jquery from 'jquery'
 import { tableUtil } from '@/assets/js/tableUtil.js'
 import { validate } from '@/assets/js/validate.js'
 import VeeValidate from '@/assets/veeValidate/VeeValidate'
 import apiCenter from '@/assets/config/api-center.json'
-const eventBus = new Vue()
-Vue.prototype.$eventBus = eventBus
 Vue.prototype.$httpRequestEntrance = httpRequestEntrance
-Vue.prototype.JQ = jquery
 Vue.prototype.$validate = validate
 Vue.prototype.$tableUtil = tableUtil
 Vue.prototype.apiCenter = apiCenter
 
-import PageTable from '@/components/table-page/page'
-import ModalComponent from '@/components/modal'
-Vue.component('PageTable', PageTable)
-Vue.component('ModalComponent', ModalComponent)
 Vue.use(VeeValidate)
 
 Vue.config.productionTip = false

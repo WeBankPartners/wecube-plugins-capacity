@@ -230,8 +230,9 @@ export default {
   color: #3ba3ff;
 }
 .step-title {
+  font-size: 18px;
   padding: 8px;
-  font-weight: 400;
+  font-weight: 500;
 }
 .operation {
   background: #f0f2f5;
