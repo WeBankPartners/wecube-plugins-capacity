@@ -7,7 +7,7 @@
 *
  */
 // import router from '@/router'
-import httpRequest from '@/assets/js/axiosHttp'
+import httpRequest from '@/assets/js/axiosCapacity'
 import $ from 'jquery'
 import {Message} from 'view-design'
 
