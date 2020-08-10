@@ -10,30 +10,33 @@ import (
 )
 
 func MonitorEndpointSearch(search string) (err error,result []models.OptionModel) {
+	var response models.MonitorOptionResponse
 	err,data := requestMonitor(http.MethodGet, fmt.Sprintf("dashboard/search?page=1&size=1000&search=%s", search), nil)
 	if err != nil {
 		return err, result
 	}
-	err = json.Unmarshal(data, &result)
-	return err,result
+	err = json.Unmarshal(data, &response)
+	return err,response.Data
 }
 
 func MonitorMetricSearch(endpointType string) (err error,result []models.MetricOptionModel)  {
+	var response models.MonitorMetricResponse
 	err,data := requestMonitor(http.MethodGet, fmt.Sprintf("dashboard/config/metric/list?type=%s", endpointType), nil)
 	if err != nil {
 		return err, result
 	}
-	err = json.Unmarshal(data, &result)
-	return err,result
+	err = json.Unmarshal(data, &response)
+	return err,response.Data
 }
 
 func MonitorChart(param []models.ChartConfigObj) (err error,result models.EChartOption) {
+	var response models.MonitorChartResponse
 	err,data := requestMonitor(http.MethodPost, "dashboard/newchart", param)
 	if err != nil {
 		return err,result
 	}
-	err = json.Unmarshal(data, &result)
-	return err,result
+	err = json.Unmarshal(data, &response)
+	return err,response.Data
 }
 
 func requestMonitor(method,url string,postData interface{}) (err error,bodyData []byte) {

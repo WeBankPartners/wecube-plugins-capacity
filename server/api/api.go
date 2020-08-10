@@ -30,6 +30,6 @@ func handleWithLog(h http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter,r *http.Request) {
 		start := time.Now()
 		h.ServeHTTP(w,r)
-		log.Logger.Info("",log.String("url", r.RequestURI), log.String("method",r.Method), log.String("ip",strings.Split(r.RemoteAddr,":")[0]), log.Float64("cost_second",time.Now().Sub(start).Seconds()))
+		log.Logger.Info("Request",log.String("url", r.RequestURI), log.String("method",r.Method), log.String("ip",strings.Split(r.RemoteAddr,":")[0]), log.Float64("cost_second",time.Now().Sub(start).Seconds()))
 	})
 }

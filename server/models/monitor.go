@@ -1,5 +1,11 @@
 package models
 
+type MonitorOptionResponse struct {
+	Code  int  `json:"code"`
+	Message  string  `json:"message"`
+	Data  []OptionModel  `json:"data"`
+}
+
 type OptionModel struct {
 	Id  int  `json:"id"`
 	OptionValue  string  `json:"option_value"`
@@ -7,6 +13,12 @@ type OptionModel struct {
 	Active  bool  `json:"active"`
 	OptionType  string  `json:"type"`
 	OptionTypeName  string  `json:"option_type_name"`
+}
+
+type MonitorMetricResponse struct {
+	Code  int  `json:"code"`
+	Message  string  `json:"message"`
+	Data  []MetricOptionModel  `json:"data"`
 }
 
 type MetricOptionModel struct {
@@ -47,6 +59,12 @@ type DataSerialModel struct {
 
 type AxisModel struct {
 	Data  []float64  `json:"data"`
+}
+
+type MonitorChartResponse struct {
+	Code  int  `json:"code"`
+	Message  string  `json:"message"`
+	Data  EChartOption  `json:"data"`
 }
 
 type EChartOption struct {
