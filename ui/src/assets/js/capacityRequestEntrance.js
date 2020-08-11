@@ -42,7 +42,7 @@ function errorMessage(content) {
  *
  * @param 你懂得
  */
-function httpRequestEntrance (method, url, data, callback, customHttpConfig) {
+function capacityRequestEntrance (method, url, data, callback, customHttpConfig) {
   // 处理接口http请求个性化配置
   let config = mergeObj(customHttpConfig)
   if (config.isNeedloading) {
@@ -97,5 +97,5 @@ function mergeObj(config) {
   return res
 }
 export default {
-  httpRequestEntrance
+  capacityRequestEntrance
 }

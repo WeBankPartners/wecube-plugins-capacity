@@ -100,7 +100,7 @@ export default {
         legend_y: this.yValue
       }
       this.columns = []
-      this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.getRData, params, (responseData) => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getRData, params, (responseData) => {
         this.getDataParams = params
         this.columns.push({
           type: 'selection',

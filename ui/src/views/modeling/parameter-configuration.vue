@@ -123,7 +123,7 @@ export default {
         })
       })
       this.$parent.params = params
-      this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.getChart, params, (responseData) => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getChart, params, (responseData) => {
         this.chartData = responseData.data
         const chartConfig = {eye: false,clear:true, zoomCallback: true}
         readyToDraw(this,responseData.data, 1, chartConfig)
@@ -163,7 +163,7 @@ export default {
         search: query,
         search_type: 'endpoint'
       }
-      this.$root.$httpRequestEntrance.httpRequestEntrance('GET', this.$root.apiCenter.getEndpoint, params, (responseData) => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('GET', this.$root.capacityApiCenter.getEndpoint, params, (responseData) => {
         this.endpointList = responseData.data
       })
     },
@@ -180,7 +180,7 @@ export default {
         type: this.endpointObject.type,
         search_type: 'metric'
       }
-      this.$root.$httpRequestEntrance.httpRequestEntrance('GET', this.$root.apiCenter.getEndpoint, params, (responseData) => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('GET', this.$root.capacityApiCenter.getEndpoint, params, (responseData) => {
         this.metricList = responseData.data
       })
     },
