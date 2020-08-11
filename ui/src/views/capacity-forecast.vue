@@ -133,7 +133,7 @@ export default {
   },
   methods: {
     getFavoritesList () {
-      this.$root.$httpRequestEntrance.httpRequestEntrance('GET', this.$root.apiCenter.getFavoritesList, '', (responseData) => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('GET', this.$root.capacityApiCenter.getFavoritesList, '', (responseData) => {
         this.favoritesList = responseData.data
       })
     },
@@ -143,7 +143,7 @@ export default {
       const params = {
         guid: this.favorite
       }
-      this.$root.$httpRequestEntrance.httpRequestEntrance('GET', this.$root.apiCenter.favoriteDetail, params, (responseData) => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('GET', this.$root.capacityApiCenter.favoriteDetail, params, (responseData) => {
         this.result = responseData.data
         this.result.level = responseData.data.level + ''
         this.drawChart(responseData.data.chart)
@@ -197,7 +197,7 @@ export default {
       }
       this.columns = []
       this.tableData = []
-      this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.favoriteCalc, params, (responseData) => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.favoriteCalc, params, (responseData) => {
         this.drawChart(responseData.data.chart)
         responseData.data.table.title.forEach(i => {
           this.columns.push({

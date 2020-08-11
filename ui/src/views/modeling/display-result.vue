@@ -99,7 +99,7 @@ export default {
         y_real: this.result.chart.data_series[0].data,
         y_func: this.result.chart.data_series[1].data,
       }
-       this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.saveRAnalyze, params, () => {
+       this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.saveRAnalyze, params, () => {
         this.$Message.success('Success!')
       })
     },
@@ -107,7 +107,7 @@ export default {
       let params = {
         monitor: this.formulaParams
       }
-      this.$root.$httpRequestEntrance.httpRequestEntrance('POST', this.$root.apiCenter.getRAnalyze, params, (responseData) => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getRAnalyze, params, (responseData) => {
         this.result = responseData.data
         this.result.level = responseData.data.level + ''
         this.drawChart(responseData.data.chart)

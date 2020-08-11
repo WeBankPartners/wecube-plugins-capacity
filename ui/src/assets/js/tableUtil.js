@@ -24,7 +24,7 @@ const initTable = (that, method, url, pageConfig) =>{
     params[k] = filters[k]
   }
   let requestParams = adapterParamsForTabledata(that, params)
-  return that.$httpRequestEntrance.httpRequestEntrance(method, url, requestParams, (responseData) => {
+  return that.$capacityRequestEntrance.capacityRequestEntrance(method, url, requestParams, (responseData) => {
     that.pageConfig.pagination.total = responseData.num
     that.pageConfig.pagination.current = parseInt(params.page)
     let res = that.$root.$validate.isEmpty_reset(responseData.data) ? [] : responseData.data
@@ -96,7 +96,7 @@ const initDetailTable = (_this, indexx) =>{
       }
     }
   }
-  _this.$root.$httpRequestEntrance.httpRequestEntrance(methods, url, params, (responseData) => {
+  _this.$root.$capacityRequestEntrance.capacityRequestEntrance(methods, url, params, (responseData) => {
     _this.detailPageConfig.detailConfig[indexx].table.tableData = responseData[_this.detailPageConfig.detailConfig[indexx].pagination.getData.data]
     _this.detailPageConfig.detailConfig[indexx].pagination.total = responseData[_this.detailPageConfig.detailConfig[indexx].pagination.getData.count]
   })

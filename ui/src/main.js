@@ -6,17 +6,15 @@ import '@/assets/css/local.bootstrap.css'
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'font-awesome/css/font-awesome.css'
 import './plugins/iview.js'
-import httpRequestEntrance from '@/assets/js/httpRequestEntrance.js'
+import capacityRequestEntrance from '@/assets/js/capacityRequestEntrance.js'
 import { tableUtil } from '@/assets/js/tableUtil.js'
 import { validate } from '@/assets/js/validate.js'
-import VeeValidate from '@/assets/veeValidate/VeeValidate'
-import apiCenter from '@/assets/config/api-center.json'
-Vue.prototype.$httpRequestEntrance = httpRequestEntrance
+import capacityApiCenter from '@/assets/config/api-center.json'
+Vue.prototype.$capacityRequestEntrance = capacityRequestEntrance
 Vue.prototype.$validate = validate
 Vue.prototype.$tableUtil = tableUtil
-Vue.prototype.apiCenter = apiCenter
+Vue.prototype.capacityApiCenter = capacityApiCenter
 
-Vue.use(VeeValidate)
 
 Vue.config.productionTip = false
 
