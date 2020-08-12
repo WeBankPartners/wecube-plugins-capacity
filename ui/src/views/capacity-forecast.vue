@@ -107,6 +107,7 @@
 <script>
 require('echarts/lib/chart/line');
 const echarts = require('echarts/lib/echarts')
+require('echarts/lib/component/toolbox')
 export default {
   name: '',
   data() {
@@ -164,6 +165,13 @@ export default {
           bottom: 5,
           left: 'center',
           data: config.legend
+        },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            }
+          }
         },
         xAxis: config.xaxis,
         yAxis: {
