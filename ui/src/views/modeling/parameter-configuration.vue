@@ -148,9 +148,9 @@ export default {
         this.endpoint = ''
         this.endpointList = []
         this.getEndpointList('.')
-        this.$Message.success('OK')
+        this.$Message.success('OK !')
       } else {
-        this.$Message.error('error')
+        this.$Message.error('ERROR !')
       }
     },
     removeTag (index) {

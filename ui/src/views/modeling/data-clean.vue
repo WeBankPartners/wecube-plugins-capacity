@@ -129,7 +129,7 @@ export default {
       })
     },
     selectData (selection, row) {
-      this.selectedData.push(row.timestamp)
+      this.selectedData.push(Number(row.timestamp))
       this.getDataParams.remove_list = this.selectedData
       this.$parent.formulaParams = this.getDataParams
     },
