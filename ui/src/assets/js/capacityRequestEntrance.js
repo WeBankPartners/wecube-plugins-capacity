@@ -64,10 +64,10 @@ function capacityRequestEntrance (method, url, data, callback, customHttpConfig)
       },0)
     }
     if (window.request) {
-      return callback(response,response.msg)
+      return callback(response,response.message)
     } else {
       if (response.status < 400 && callback !== undefined) {
-        return callback(response.data,response.msg)
+        return callback(response.data,response.message)
       }
     }
   }).catch(function (error) {
@@ -77,7 +77,7 @@ function capacityRequestEntrance (method, url, data, callback, customHttpConfig)
         loading.end()
       },0)
     }
-    errorMessage(error.response.data.Message)
+    errorMessage(error.response.data.message)
   })
 }
 
