@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"time"
+	"strconv"
 )
 
 func MonitorSearchHandler(w http.ResponseWriter,r *http.Request)  {
@@ -65,15 +66,16 @@ func RJustifyDataHandler(w http.ResponseWriter,r *http.Request)  {
 		return
 	}
 	var tableData models.YXDataTable
-	tableData.Title = []string{"time"}
+	tableData.Title = []string{"index","time"}
 	for i,v := range result.Legend {
 		if i == 0 {
 			continue
 		}
 		tableData.Title = append(tableData.Title, v)
 	}
-	for _,v := range result.Data {
+	for index,v := range result.Data {
 		tmpMap := make(map[string]string)
+		tmpMap["index"] = strconv.Itoa(index+1)
 		for i,vv := range v {
 			if i == 0 {
 				tmpMap["time"] = time.Unix(int64(vv/1000), 0).Format("2006-01-02 15:04:05")
