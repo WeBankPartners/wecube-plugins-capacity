@@ -11,7 +11,7 @@ clean:
 build: clean
 	chmod +x ./build/*.sh
 	docker run --rm -v $(current_dir):/go/src/github.com/WeBankPartners/$(project_name) --name build_$(project_name) golang:1.12.5 /bin/bash /go/src/github.com/WeBankPartners/$(project_name)/build/build-server.sh
-	docker run --rm -v $(current_dir):/app/wecube-plugins-capacity --name node-build node /bin/bash /app/wecube-plugins-capacity/build/build-ui.sh
+	./build/build-ui.sh $(current_dir)
 	mv ui/dist/index.html server/public/
 	mv ui/dist/favicon.ico server/public/
 	mv ui/dist/capacity/* server/public/
