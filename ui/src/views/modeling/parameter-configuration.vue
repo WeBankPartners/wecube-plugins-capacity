@@ -52,17 +52,28 @@
       <Form :label-width="20">
         <FormItem class="param-inline">
           <DatePicker 
-            type="datetimerange" 
-            :value="dateRange" 
-            @on-change="datePick"
+            type="date" 
+            :value="startDate" 
+            @on-change="changeStartDate"
             format="yyyy-MM-dd HH:mm:ss" 
             placement="bottom-start" 
-            :placeholder="$t('placeholder.datePicker')" 
+            :placeholder="$t('startDatePlaceholder')" 
             style="width: 320px">
           </DatePicker>
         </FormItem>
         <FormItem class="param-inline">
-          <button :disabled="endpointWithMetric.length && !dateRange[0]" @click="getChart" type="button" class="btn btn-confirm-f">{{$t('queryView')}}</button>
+          <DatePicker 
+            type="date" 
+            :value="endDate" 
+            @on-change="changeEndDate"
+            format="yyyy-MM-dd HH:mm:ss" 
+            placement="bottom-start" 
+            :placeholder="$t('endDatePlaceholder')" 
+            style="width: 320px">
+          </DatePicker>
+        </FormItem>
+        <FormItem class="param-inline">
+          <button :disabled="endpointWithMetric.length === 0 || startDate === '' || endDate === ''" @click="getChart" type="button" class="btn btn-confirm-f">{{$t('queryView')}}</button>
         </FormItem>
       </Form>
       </Col>
@@ -87,6 +98,8 @@ export default {
 
       endpointWithMetric: [],
       dateRange: ['', ''],
+      startDate: '',
+      endDate: '',
 
       chartData: null,
       elId: '',
@@ -109,11 +122,15 @@ export default {
   },
   methods: {
     getChart () {
-      if (this.dateRange[0] === this.dateRange[1]) {
-        this.dateRange[1] = this.dateRange[1].replace('00:00:00', '23:59:59')
+      if (Date.parse(new Date(this.startDate)) > Date.parse(new Date(this.endDate))) {
+        this.$Message.error(this.$t('timeIntervalWarn'))
+        return
       }
-      const start = Date.parse(this.dateRange[0])/1000 + ''
-      const end = Date.parse(this.dateRange[1])/1000 + ''
+      if (this.startDate === this.endDate) {
+        this.endDate = this.endDate.replace('00:00:00', '23:59:59')
+      }
+      const start = Date.parse(this.startDate)/1000 + ''
+      const end = Date.parse(this.endDate)/1000 + ''
       let params = []
       this.endpointWithMetric.forEach(single => {
         params.push({
@@ -184,8 +201,11 @@ export default {
         this.metricList = responseData.data
       })
     },
-    datePick (data) {
-      this.dateRange = data
+    changeStartDate (data) {
+      this.startDate = data
+    },
+    changeEndDate (data) {
+      this.endDate = data
     }
   },
   components: {},
