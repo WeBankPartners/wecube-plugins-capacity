@@ -607,3 +607,24 @@ func AutoCleanWorkspace()  {
 		}
 	}
 }
+
+func SaveExcelFile(content []byte) (err error,result models.RCalcResult) {
+	result.Guid = models.GetWorkspaceName()
+	output,err := exec.Command("/bin/sh", "-c", fmt.Sprintf("mkdir -p %s/%s", models.WorkspaceDir, result.Guid)).Output()
+	if err != nil {
+		err = fmt.Errorf("Try to create workspce dir fail,output=%s,err=%s ", string(output), err.Error())
+		return err,result
+	}
+	err = ioutil.WriteFile(fmt.Sprintf("%s/%s/data.xlsx", models.WorkspaceDir, result.Guid), content, 0644)
+	if err != nil {
+		err = fmt.Errorf("Try to save excel file fail,%s ", err.Error())
+		return err,result
+	}
+	_,err = ioutil.ReadFile(fmt.Sprintf("%s/%s/data.xlsx", models.WorkspaceDir, result.Guid))
+	if err != nil {
+		err = fmt.Errorf("Try to read save file fail,%s ", err.Error())
+		return err,result
+	}
+
+	return err,result
+}
