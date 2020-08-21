@@ -22,8 +22,8 @@ import VueI18n from 'vue-i18n'
 import en from 'view-design/dist/locale/en-US'
 import zh from 'view-design/dist/locale/zh-CN'
 
-import en_local from '@/assets/locale/lang/en.json'
-import zh_local from '@/assets/locale/lang/zh-CN.json'
+import en_local from '@/assets/locale/lang/capacity-en.json'
+import zh_local from '@/assets/locale/lang/capacity-zh-CN.json'
 Vue.use(VueI18n)
 Vue.locale = () => {}
 const messages = {

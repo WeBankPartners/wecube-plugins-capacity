@@ -17,7 +17,7 @@ window.addOptions({
 
 window.addRoutes(router, 'capacity')
 
-import en_local from '@/assets/locale/lang/en.json'
-import zh_local from '@/assets/locale/lang/zh-CN.json'
+import en_local from '@/assets/locale/lang/capacity-en.json'
+import zh_local from '@/assets/locale/lang/capacity-zh-CN.json'
 window.locale('en-US',en_local)
 window.locale('zh-CN',zh_local)
