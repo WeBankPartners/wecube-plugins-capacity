@@ -62,7 +62,7 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 			}
 		}
 	}
-	err,result = runRscript(x,y,param.Guid)
+	err,result = runRscript(x,y,param.Guid,param.MinLevel)
 	if err != nil {
 		return err,result
 	}
@@ -125,7 +125,7 @@ func RChartData(param models.RRequestParam,x [][]float64,y []float64) (err error
 	return err,result
 }
 
-func runRscript(x [][]float64,y []float64,guid string) (err error,result models.RunScriptResult)  {
+func runRscript(x [][]float64,y []float64,guid string,minLevel int) (err error,result models.RunScriptResult)  {
 	if len(x) == 0 || len(y) == 0 {
 		err = fmt.Errorf("Run r script fail,x data and y data can not empty ")
 		return err,result
@@ -176,7 +176,7 @@ func runRscript(x [][]float64,y []float64,guid string) (err error,result models.
 		log.Logger.Error(fmt.Sprintf("Run Rscript %s/template.r fail", result.Workspace), log.String("output", string(b)), log.Error(err))
 		return err,result
 	}
-	output := dealWithScriptOutput(string(b))
+	output := dealWithScriptOutput(string(b), minLevel)
 	result.FuncX = output.FuncX
 	result.FuncB = output.FuncB
 	result.FuncExpr = output.FuncExpr
@@ -198,10 +198,13 @@ func turnFloatListToString(data []float64) string {
 	return strings.Join(s, ",")
 }
 
-func dealWithScriptOutput(output string) models.RunScriptResult {
+func dealWithScriptOutput(output string,minLevel int) models.RunScriptResult {
 	var result models.RunScriptResult
 	var funcBLevel int
 	var sortFuncList models.FuncXSortList
+	if minLevel > 3 {
+		minLevel = 0
+	}
 	expr := "y="
 	xCount := 0
 	for _,v := range strings.Split(output, "\n") {
@@ -212,7 +215,7 @@ func dealWithScriptOutput(output string) models.RunScriptResult {
 		if strings.HasPrefix(v, "x") {
 			xCount = xCount + 1
 			tmpEstimate,tmpP,tmpL := getEstimate(v)
-			if tmpL > 0 {
+			if tmpL >= minLevel {
 				sortFuncList = append(sortFuncList, &models.FuncXObj{PValue:tmpP, Estimate:tmpEstimate, FuncName:fmt.Sprintf("x%d", xCount), Level:tmpL, Index:xCount})
 			}
 		}

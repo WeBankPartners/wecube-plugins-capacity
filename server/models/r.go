@@ -61,6 +61,7 @@ type RRequestParam struct {
 	FuncX    []*FuncXObj  `json:"func_x"`
 	FuncB      float64  `json:"func_b"`
 	Excel     RRequestExcel  `json:"excel"`
+	MinLevel  int  `json:"min_level"`
 }
 
 type SaveWorkParam struct{
