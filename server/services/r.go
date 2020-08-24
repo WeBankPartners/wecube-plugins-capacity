@@ -13,6 +13,7 @@ import (
 	"time"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/util/log"
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScriptResult) {
@@ -620,10 +621,43 @@ func SaveExcelFile(content []byte) (err error,result models.RCalcResult) {
 		err = fmt.Errorf("Try to save excel file fail,%s ", err.Error())
 		return err,result
 	}
-	_,err = ioutil.ReadFile(fmt.Sprintf("%s/%s/data.xlsx", models.WorkspaceDir, result.Guid))
+	excelObj,err := excelize.OpenFile(fmt.Sprintf("%s/%s/data.xlsx", models.WorkspaceDir, result.Guid))
 	if err != nil {
-		err = fmt.Errorf("Try to read save file fail,%s ", err.Error())
+		err = fmt.Errorf("Try to read excel file fail,%s ", err.Error())
 		return err,result
+	}
+	sheetList := excelObj.GetSheetList()
+	if len(sheetList) == 0 {
+		err = fmt.Errorf("Excel sheet is empty ")
+		return err,result
+	}
+	rows,err := excelObj.GetRows(sheetList[0])
+	if err != nil {
+		err = fmt.Errorf("Excel get rows fail,%s ", err.Error())
+		return err,result
+	}
+	for i,v := range rows {
+		if i == 0 {
+			result.Table.Title = v
+		}else{
+			if len(v) != len(result.Table.Title) {
+				err = fmt.Errorf("Excel sheet 1 row %d width is not equal the title ", i+1)
+				break
+			}
+			rowMap := make(map[string]string)
+			for ii,vv := range v {
+				vFloat,err := strconv.ParseFloat(vv, 64)
+				if err != nil {
+					err = fmt.Errorf("Excel sheet 1 row %d num %d data validate fail ", i+1, ii+1)
+					break
+				}
+				rowMap[result.Table.Title[ii]] = fmt.Sprintf("%.3f", vFloat)
+			}
+			if err != nil {
+				break
+			}
+			result.Table.Data = append(result.Table.Data, rowMap)
+		}
 	}
 
 	return err,result
