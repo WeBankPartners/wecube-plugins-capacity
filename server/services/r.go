@@ -288,9 +288,16 @@ func getEstimate(s string) (estimate,pValue float64, level int) {
 
 func checkRParam(param models.RRequestParam) error {
 	var err error
-	if len(param.Monitor.Config) == 0 && (len(param.YData) == 0 || len(param.XData) == 0 ) {
-		err = fmt.Errorf("param validate fail,monitor config and data is empty")
-		return err
+	if param.Excel.Enable {
+		if param.Excel.LegendY == "" || len(param.Excel.LegendX) == 0 || param.Guid == "" {
+			err = fmt.Errorf("param validate fail,excel guid,legend_x and legend_y can not empty")
+			return err
+		}
+	}else {
+		if len(param.Monitor.Config) == 0 && (len(param.YData) == 0 || len(param.XData) == 0) {
+			err = fmt.Errorf("param validate fail,monitor config and data can not empty")
+			return err
+		}
 	}
 	return nil
 }
