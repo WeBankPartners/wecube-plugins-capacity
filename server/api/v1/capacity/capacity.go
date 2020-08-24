@@ -59,27 +59,6 @@ func ExcelUploadHandler(w http.ResponseWriter,r *http.Request)  {
 		returnJson(r,w,fmt.Errorf("Read upload file fail,%s ", err.Error()), nil)
 		return
 	}
-	//mReader,err := r.MultipartReader()
-	//if err != nil {
-	//	returnJson(r,w,err,nil)
-	//	return
-	//}
-	//if mReader == nil {
-	//	returnJson(r,w,fmt.Errorf("can not read multipart file"),nil)
-	//	return
-	//}
-	//for {
-	//	readFile, err := mReader.NextPart()
-	//	if err == io.EOF || len(uploadBytes) > 0 {
-	//		break
-	//	}
-	//	log.Logger.Info("Upload excel file", log.String("FileName", readFile.FileName()), log.String("FormName", readFile.FormName()))
-	//	uploadBytes, err = ioutil.ReadAll(readFile)
-	//	if err != nil {
-	//		returnJson(r,w,fmt.Errorf("Read upload file fail,%s ", err.Error()), nil)
-	//		return
-	//	}
-	//}
 	if len(uploadBytes) == 0 {
 		returnJson(r,w,fmt.Errorf("Upload file is empty "), nil)
 		return
