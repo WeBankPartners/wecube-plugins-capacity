@@ -23,6 +23,25 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 	}
 	var x [][]float64
 	var y []float64
+	if param.Excel.Enable {
+		err,yxData := getExcelData(param.Guid, param.Excel)
+		if err != nil {
+			return err,result
+		}
+		for _,v := range yxData.Data {
+			for vi,vv := range v {
+				if vi == 0 {
+					y = append(y, vv)
+				}else{
+					if len(x) < vi {
+						x = append(x, []float64{vv})
+					}else{
+						x[vi-1] = append(x[vi-1], vv)
+					}
+				}
+			}
+		}
+	}
 	if len(param.Monitor.Config) > 0 {
 		err,yXData := AutoJustifyData(param.Monitor)
 		if err != nil {
@@ -51,7 +70,11 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 		return err,result
 	}
 	for i,v := range result.FuncX {
-		result.FuncX[i].Legend = param.Monitor.LegendX[v.Index-1]
+		if param.Excel.Enable {
+			result.FuncX[i].Legend = param.Excel.LegendX[v.Index-1]
+		}else {
+			result.FuncX[i].Legend = param.Monitor.LegendX[v.Index-1]
+		}
 	}
 	param.FuncX = result.FuncX
 	param.FuncB = result.FuncB
@@ -621,7 +644,24 @@ func SaveExcelFile(content []byte) (err error,result models.RCalcResult) {
 		err = fmt.Errorf("Try to save excel file fail,%s ", err.Error())
 		return err,result
 	}
-	excelObj,err := excelize.OpenFile(fmt.Sprintf("%s/%s/data.xlsx", models.WorkspaceDir, result.Guid))
+	err,yxData := getExcelData(result.Guid, models.RRequestExcel{})
+	if err != nil {
+		return err,result
+	}
+	result.Table.Title = append([]string{"index"}, yxData.Legend...)
+	for i,v := range yxData.Data {
+		rowMap := make(map[string]string)
+		rowMap["index"] = strconv.Itoa(i+1)
+		for ii,vv := range v {
+			rowMap[yxData.Legend[ii]] = fmt.Sprintf("%.3f", vv)
+		}
+		result.Table.Data = append(result.Table.Data, rowMap)
+	}
+	return err,result
+}
+
+func getExcelData(guid string,config models.RRequestExcel) (err error,result models.YXDataObj) {
+	excelObj,err := excelize.OpenFile(fmt.Sprintf("%s/%s/data.xlsx", models.WorkspaceDir, guid))
 	if err != nil {
 		err = fmt.Errorf("Try to read excel file fail,%s ", err.Error())
 		return err,result
@@ -636,29 +676,69 @@ func SaveExcelFile(content []byte) (err error,result models.RCalcResult) {
 		err = fmt.Errorf("Excel get rows fail,%s ", err.Error())
 		return err,result
 	}
+	var indexList []int
 	for i,v := range rows {
 		if i == 0 {
-			result.Table.Title = v
-		}else{
-			if len(v) != len(result.Table.Title) {
-				err = fmt.Errorf("Excel sheet 1 row %d width is not equal the title ", i+1)
-				break
+			if config.Enable {
+				for ii,vv := range v {
+					if vv == config.LegendY {
+						indexList = []int{ii}
+						break
+					}
+				}
+				for _,vx := range config.LegendX {
+					for ii,vv := range v {
+						if vv == vx {
+							indexList = append(indexList, ii)
+							break
+						}
+					}
+				}
+				result.Legend = append([]string{config.LegendY}, config.LegendX...)
+			}else{
+				result.Legend = v
 			}
-			rowMap := make(map[string]string)
-			for ii,vv := range v {
-				vFloat,err := strconv.ParseFloat(vv, 64)
-				if err != nil {
-					err = fmt.Errorf("Excel sheet 1 row %d num %d data validate fail ", i+1, ii+1)
+		}else{
+			var rowData []float64
+			if config.Enable {
+				removeFlag := false
+				for _,removeIndex := range config.RemoveList {
+					if removeIndex == i {
+						removeFlag = true
+						break
+					}
+				}
+				if removeFlag {
+					continue
+				}
+				for _,indexY := range indexList {
+					for ii,vv := range v {
+						if ii == indexY {
+							vFloat,_ := strconv.ParseFloat(vv, 64)
+							rowData = append(rowData, vFloat)
+							break
+						}
+					}
+				}
+			}else{
+				if len(v) != len(result.Legend) {
+					err = fmt.Errorf("Excel sheet 1 row %d width is not equal the title ", i+1)
 					break
 				}
-				rowMap[result.Table.Title[ii]] = fmt.Sprintf("%.3f", vFloat)
+				for ii,vv := range v {
+					vFloat,parseErr := strconv.ParseFloat(vv, 64)
+					if parseErr != nil {
+						err = fmt.Errorf("Excel sheet 1 row %d num %d data validate fail ", i+1, ii+1)
+						break
+					}
+					rowData = append(rowData, vFloat)
+				}
+				if err != nil {
+					break
+				}
 			}
-			if err != nil {
-				break
-			}
-			result.Table.Data = append(result.Table.Data, rowMap)
+			result.Data = append(result.Data, rowData)
 		}
 	}
-
 	return err,result
 }

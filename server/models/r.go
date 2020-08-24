@@ -46,6 +46,13 @@ type RRequestMonitor struct {
 	RemoveList  []float64  `json:"remove_list"`
 }
 
+type RRequestExcel struct {
+	Enable    bool      `json:"enable"`
+	LegendY   string    `json:"legend_y"`
+	LegendX   []string    `json:"legend_x"`
+	RemoveList  []int  `json:"remove_list"`
+}
+
 type RRequestParam struct {
 	Guid      string    `json:"guid"`
 	Monitor   RRequestMonitor `json:"monitor"`
@@ -53,6 +60,7 @@ type RRequestParam struct {
 	YData    []float64  `json:"y_data"`
 	FuncX    []*FuncXObj  `json:"func_x"`
 	FuncB      float64  `json:"func_b"`
+	Excel     RRequestExcel  `json:"excel"`
 }
 
 type SaveWorkParam struct{
