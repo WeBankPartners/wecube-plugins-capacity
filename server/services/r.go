@@ -61,9 +61,6 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 				}
 			}
 		}
-	}else{
-		x = param.XData
-		y = param.YData
 	}
 	err,result = runRscript(x,y,param.Guid)
 	if err != nil {
@@ -129,6 +126,10 @@ func RChartData(param models.RRequestParam,x [][]float64,y []float64) (err error
 }
 
 func runRscript(x [][]float64,y []float64,guid string) (err error,result models.RunScriptResult)  {
+	if len(x) == 0 || len(y) == 0 {
+		err = fmt.Errorf("Run r script fail,x data and y data can not empty ")
+		return err,result
+	}
 	var b []byte
 	// build workspace
 	if guid == "" {
