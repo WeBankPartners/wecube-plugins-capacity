@@ -65,7 +65,7 @@ func Transaction(actions []*Action) error {
 func saveRWorkTable(param models.RWorkTable) error {
 	var actions []*Action
 	actions = append(actions, &Action{Sql:"delete from r_work where guid=?", Param:[]interface{}{param.Guid}})
-	actions = append(actions, &Action{Sql:"insert into r_work value (?,?,?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.Output,param.Expr,param.FuncX,param.FuncXName,param.FuncB,param.Level,param.LegendX,param.LegendY}})
+	actions = append(actions, &Action{Sql:"insert into r_work(guid,name,workspace,output,expr,func_x,func_x_name,func_b,level,legend_x,legend_y,update_at) value (?,?,?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.Output,param.Expr,param.FuncX,param.FuncXName,param.FuncB,param.Level,param.LegendX,param.LegendY}})
 	return Transaction(actions)
 }
 
