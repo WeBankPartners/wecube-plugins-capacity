@@ -76,6 +76,7 @@ type SaveWorkParam struct{
 	FuncB      float64  `json:"func_b"`
 	YReal      []float64 `json:"y_real"`
 	YFunc      []float64 `json:"y_func"`
+	Monitor    RRequestMonitor `json:"monitor"`
 }
 
 type RWorkTable struct {
@@ -88,6 +89,8 @@ type RWorkTable struct {
 	FuncXName  string  `json:"func_x_name"`
 	FuncB      string  `json:"func_b"`
 	Level      int     `json:"level"`
+	LegendX    string  `json:"legend_x"`
+	LegendY    string  `json:"legend_y"`
 	UpdateAt   time.Time  `json:"update_at"`
 }
 
@@ -110,6 +113,17 @@ type RChartTable struct {
 	Guid  string  `json:"guid"`
 	YReal  string  `json:"y_real"`
 	YFunc  string  `json:"y_func"`
+	UpdateAt   time.Time  `json:"update_at"`
+}
+
+type RMonitorTable struct {
+	Id  int  `json:"id"`
+	Guid  string  `json:"guid"`
+	Endpoint  string  `json:"endpoint"`
+	Metric  string  `json:"metric"`
+	Agg     string  `json:"agg"`
+	Start   string  `json:"start"`
+	End     string  `json:"end"`
 	UpdateAt   time.Time  `json:"update_at"`
 }
 

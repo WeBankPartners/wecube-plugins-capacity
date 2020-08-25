@@ -117,7 +117,10 @@ func RChartData(param models.RRequestParam,x [][]float64,y []float64) (err error
 			}
 		}
 	}
-	newAxis.Data = newYData
+	for _,v := range newYData {
+		tmpV,_ := strconv.ParseFloat(fmt.Sprintf("%.3f", v), 64)
+		newAxis.Data = append(newAxis.Data, tmpV)
+	}
 	newAxis.Name = "func(y)"
 	newAxis.Type = "line"
 	result.DataSeries = []*models.DataSerialModel{&yAxis, &newAxis}
@@ -433,7 +436,8 @@ func offsetYXData(yData,xData [][]float64,step float64) map[float64][]float64 {
 
 func SaveRWork(param models.SaveWorkParam) error {
 	var err error
-	workTable := models.RWorkTable{Guid:param.Guid, Name:param.Name, Workspace:param.Workspace, Output:param.Output, Expr:param.FuncExpr, FuncB:fmt.Sprintf("%.4f",param.FuncB), Level:param.Level}
+	// Save r_work
+	workTable := models.RWorkTable{Guid:param.Guid, Name:param.Name, Workspace:param.Workspace, Output:param.Output, Expr:param.FuncExpr, FuncB:fmt.Sprintf("%.4f",param.FuncB), Level:param.Level, LegendX:strings.Join(param.Monitor.LegendX, "^"), LegendY:param.Monitor.LegendY}
 	var workFuncX,workFuncXName []string
 	for _,v := range param.FuncX {
 		workFuncX = append(workFuncX, fmt.Sprintf("%.4f", v.Estimate))
@@ -445,11 +449,13 @@ func SaveRWork(param models.SaveWorkParam) error {
 	if err != nil {
 		return err
 	}
+	// Save r_chart
 	chartTable := models.RChartTableInput{Guid:param.Guid, YReal:param.YReal, YFunc:param.YFunc}
 	err = saveRChartTable(chartTable)
 	if err != nil {
 		return err
 	}
+	// Save r_images
 	var imagesTable []*models.RImagesTable
 	for i:=1;i<=4;i++ {
 		tmpFilePath := fmt.Sprintf("%s/rp00%d.png", param.Workspace, i)
@@ -465,6 +471,11 @@ func SaveRWork(param models.SaveWorkParam) error {
 		return err
 	}
 	err = saveRImagesTable(imagesTable)
+	if err != nil {
+		return err
+	}
+	// Save r_monitor
+	err = saveRMonitorTable(param.Guid, param.Monitor)
 	return err
 }
 

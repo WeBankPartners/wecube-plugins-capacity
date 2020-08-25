@@ -20,6 +20,7 @@ func InitHttpServer(port int) {
 	http.Handle("/capacity/api/v1/r/get", handleWithLog(capacity.GetAnalyzeConfig))
 	http.Handle("/capacity/api/v1/r/delete", handleWithLog(capacity.DeleteAnalyzeConfig))
 	http.Handle("/capacity/api/v1/r/excel", handleWithLog(capacity.ExcelUploadHandler))
+	http.Handle("/capacity/api/v1/plugin/compare", handleWithLog(capacity.ComparePluginHandler))
 	fs := http.FileServer(http.Dir("public"))
 	http.Handle("/capacity/", http.StripPrefix("/capacity/", fs))
 	listenPort := fmt.Sprintf(":%d", port)
