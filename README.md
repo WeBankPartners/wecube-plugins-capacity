@@ -30,7 +30,7 @@
 
 
 ## 版权声明
-WeCMDB是基于 Apache License 2.0 协议， 详情请参考
+Wecube-Plugins-Capacity是基于 Apache License 2.0 协议， 详情请参考
 [LICENSE](LICENSE)
 
 ## 社区
