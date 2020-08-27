@@ -3,8 +3,8 @@
     <div style="background:white">
       <div class="modeling-steps">
         <Row style="text-align: center">
-          <Col span="3">
-            <span class="step-title">{{$t('menu.capacityForecast')}}</span>
+          <Col span="4">
+            <span class="step-title">{{$t('capacityForecast')}}</span>
           </Col>
         </Row>
       </div>
@@ -72,7 +72,7 @@
             </template>
           </div>
           <div>
-            <div id="graph" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:40px"></div>
+            <div id="graph" class="echart" style="height:500px;width:1020px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:40px"></div>
           </div>
           <div v-if="tableData.length" style="margin: 16px 20px 16px 0">
             <Table 

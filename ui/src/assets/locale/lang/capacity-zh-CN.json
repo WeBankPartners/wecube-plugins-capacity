@@ -2,11 +2,9 @@
   "common": {
     "changeLanguage": "中文"
   },
-  "menu": {
-    "systemName": "WeCube-Plugins-Capacity (功能演示版)",
-    "capacityModeling": "容量建模",
-    "capacityForecast": "容量预测"
-  },
+  "systemName": "WeCube-Plugins-Capacity (功能演示版)",
+  "capacityModeling": "容量建模",
+  "capacityForecast": "容量预测",
   "tips": {
     "required": " 必填",
     "inputRequired": "必填,2-60字符",
