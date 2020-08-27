@@ -4,16 +4,15 @@ import (
 	"net/http"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/services"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
+	"github.com/WeBankPartners/wecube-plugins-capacity/server/util/log"
 	"encoding/json"
-	"log"
-	"strings"
 	"fmt"
 	"io/ioutil"
+	"time"
+	"strconv"
 )
 
 func MonitorSearchHandler(w http.ResponseWriter,r *http.Request)  {
-	var err error
-	var result []models.OptionModel
 	searchText := r.FormValue("search")
 	searchType := r.FormValue("search_type")
 	endpointType := r.FormValue("type")
@@ -26,11 +25,12 @@ func MonitorSearchHandler(w http.ResponseWriter,r *http.Request)  {
 			returnJson(r,w,fmt.Errorf("validate fail,param type can not empty "),nil)
 			return
 		}
-		err,result = services.MonitorMetricSearch(endpointType)
+		err,result := services.MonitorMetricSearch(endpointType)
+		returnJson(r,w,err,result)
 	}else {
-		err, result = services.MonitorEndpointSearch(searchText)
+		err, result := services.MonitorEndpointSearch(searchText)
+		returnJson(r,w,err,result)
 	}
-	returnJson(r,w,err,result)
 }
 
 func MonitorDataHandler(w http.ResponseWriter,r *http.Request)  {
@@ -43,6 +43,27 @@ func MonitorDataHandler(w http.ResponseWriter,r *http.Request)  {
 		return
 	}
 	err,result := services.MonitorChart(param)
+	returnJson(r,w,err,result)
+}
+
+func ExcelUploadHandler(w http.ResponseWriter,r *http.Request)  {
+	var uploadBytes []byte
+	multipartFile,_,err := r.FormFile("file")
+	if err != nil {
+		log.Logger.Error("accept form file fail", log.Error(err))
+		returnJson(r,w,err,nil)
+		return
+	}
+	uploadBytes, err = ioutil.ReadAll(multipartFile)
+	if err != nil {
+		returnJson(r,w,fmt.Errorf("Read upload file fail,%s ", err.Error()), nil)
+		return
+	}
+	if len(uploadBytes) == 0 {
+		returnJson(r,w,fmt.Errorf("Upload file is empty "), nil)
+		return
+	}
+	err,result := services.SaveExcelFile(uploadBytes)
 	returnJson(r,w,err,result)
 }
 
@@ -61,7 +82,32 @@ func RJustifyDataHandler(w http.ResponseWriter,r *http.Request)  {
 		return
 	}
 	err,result := services.AutoJustifyData(param)
-	returnJson(r,w,err,result)
+	if err != nil {
+		returnJson(r,w,err,result)
+		return
+	}
+	var tableData models.YXDataTable
+	tableData.Title = []string{"index","time"}
+	for i,v := range result.Legend {
+		if i == 0 {
+			continue
+		}
+		tableData.Title = append(tableData.Title, v)
+	}
+	for index,v := range result.Data {
+		tmpMap := make(map[string]string)
+		tmpMap["index"] = strconv.Itoa(index+1)
+		for i,vv := range v {
+			if i == 0 {
+				tmpMap["time"] = time.Unix(int64(vv/1000), 0).Format("2006-01-02 15:04:05")
+				tmpMap[result.Legend[i]] = fmt.Sprintf("%.0f", vv)
+			}else {
+				tmpMap[result.Legend[i]] = fmt.Sprintf("%.4f", vv)
+			}
+		}
+		tableData.Data = append(tableData.Data, tmpMap)
+	}
+	returnJson(r,w,err,tableData)
 }
 
 func RAnalyzeHandler(w http.ResponseWriter,r *http.Request)  {
@@ -137,23 +183,21 @@ func DeleteAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
 
 func returnJson(r *http.Request,w http.ResponseWriter,err error,result interface{})  {
 	w.Header().Set("Content-Type", "application/json")
+	//w.Header().Set("Access-Control-Allow-Origin", r.Header.Get("Origin"))
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Add("Access-Control-Allow-Headers", "Origin, Content-Length, Content-Type, Authorization, authorization, Token, X-Auth-Token")
+	w.Header().Add("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
 	var response models.RespJson
 	if err != nil {
-		log.Printf(" %s  fail,error:%s \n", r.URL.String(), err.Error())
+		log.Logger.Error("Request fail", log.String("url", r.URL.String()), log.Error(err))
 		response.Code = 1
 		response.Msg = err.Error()
-		if strings.Contains(response.Msg, "validate") {
-			w.WriteHeader(http.StatusBadRequest)
-		}else {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
 	}else{
-		log.Printf(" %s success! \n", r.URL.String())
 		response.Code = 0
 		response.Msg = "success"
-		response.Data = result
-		w.WriteHeader(http.StatusOK)
 	}
+	response.Data = result
+	w.WriteHeader(http.StatusOK)
 	d,_ := json.Marshal(response)
 	w.Write(d)
 }

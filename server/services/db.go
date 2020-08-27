@@ -2,12 +2,12 @@ package services
 
 import (
 	"fmt"
-	"log"
 	"time"
 	"github.com/go-xorm/xorm"
 	"github.com/go-xorm/core"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
+	"github.com/WeBankPartners/wecube-plugins-capacity/server/util/log"
 	"strings"
 	"strconv"
 )
@@ -15,11 +15,11 @@ import (
 var mysqlEngine *xorm.Engine
 
 func InitDbEngine() (err error) {
-	connectStr := fmt.Sprintf("%s:%s@%s(%s:%d)/%s?collation=utf8mb4_unicode_ci&allowNativePasswords=true",
+	connectStr := fmt.Sprintf("%s:%s@%s(%s:%s)/%s?collation=utf8mb4_unicode_ci&allowNativePasswords=true",
 		models.Config().Mysql.User, models.Config().Mysql.Password, "tcp", models.Config().Mysql.Server, models.Config().Mysql.Port, models.Config().Mysql.DataBase)
 	mysqlEngine,err = xorm.NewEngine("mysql", connectStr)
 	if err != nil {
-		log.Printf("init mysql fail with connect: %s error: %v \n", connectStr, err)
+		log.Logger.Error("Init mysql fail", log.String("connectStr",connectStr), log.Error(err))
 	}else{
 		mysqlEngine.SetMaxIdleConns(models.Config().Mysql.MaxIdle)
 		mysqlEngine.SetMaxOpenConns(models.Config().Mysql.MaxOpen)
@@ -27,7 +27,7 @@ func InitDbEngine() (err error) {
 		mysqlEngine.Charset("utf8")
 		// 使用驼峰式映射
 		mysqlEngine.SetMapper(core.SnakeMapper{})
-		log.Println("init mysql success ")
+		log.Logger.Info("Init mysql success")
 	}
 	return err
 }
@@ -65,7 +65,7 @@ func Transaction(actions []*Action) error {
 func saveRWorkTable(param models.RWorkTable) error {
 	var actions []*Action
 	actions = append(actions, &Action{Sql:"delete from r_work where guid=?", Param:[]interface{}{param.Guid}})
-	actions = append(actions, &Action{Sql:"insert into r_work value (?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.Output,param.Expr,param.FuncX,param.FuncXName,param.FuncB,param.Level}})
+	actions = append(actions, &Action{Sql:"insert into r_work(guid,name,workspace,output,expr,func_x,func_x_name,func_b,level,legend_x,legend_y,update_at) value (?,?,?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.Output,param.Expr,param.FuncX,param.FuncXName,param.FuncB,param.Level,param.LegendX,param.LegendY}})
 	return Transaction(actions)
 }
 
@@ -139,4 +139,26 @@ func DeleteRConfig(guid string) error {
 	actions = append(actions, &Action{Sql:"delete from r_images where guid=?", Param:[]interface{}{guid}})
 	actions = append(actions, &Action{Sql:"delete from r_chart where guid=?", Param:[]interface{}{guid}})
 	return Transaction(actions)
+}
+
+func saveRMonitorTable(guid string,param models.RRequestMonitor) error {
+	if len(param.Config) == 0 {
+		return nil
+	}
+	var actions []*Action
+	actions = append(actions, &Action{Sql:"DELETE FROM r_monitor WHERE guid=?", Param:[]interface{}{guid}})
+	insertSql := "INSERT INTO r_monitor(guid,endpoint,metric,agg,start,end) values "
+	for i,v := range param.Config {
+		insertSql += fmt.Sprintf("('%s','%s','%s','%s','%s','%s')", guid, v.Endpoint, v.Metric, v.Aggregate, v.Start, v.End)
+		if i != len(param.Config)-1 {
+			insertSql += ","
+		}
+	}
+	actions = append(actions, &Action{Sql:insertSql})
+	return Transaction(actions)
+}
+
+func getRMonitorTable(guid string) (err error,result []*models.RMonitorTable) {
+	err = mysqlEngine.SQL("select * from r_monitor where guid=?", guid).Find(&result)
+	return err,result
 }

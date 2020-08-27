@@ -3,9 +3,17 @@
     "port": 9096,
     "token": "default-token-used-in-server-side"
   },
+  "log": {
+    "level": "debug",
+    "file": "logs/capacity.log",
+    "archive_max_size": 64,
+    "archive_max_backup": 10,
+    "archive_max_day": 15,
+    "compress": true
+  },
   "mysql": {
     "server": "127.0.0.1",
-    "port": 3306,
+    "port": "3306",
     "user": "root",
     "password": "wecube",
     "database": "capacity",
@@ -21,7 +29,8 @@
     "monitor": {
       "enable": true,
       "base_url": "http://127.0.0.1:8080",
-      "token": "default-token-used-in-server-side"
+      "token_key": "X-Auth-Token",
+      "token_value": "default-token-used-in-server-side"
     }
   }
 }

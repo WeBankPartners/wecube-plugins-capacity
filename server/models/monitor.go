@@ -1,5 +1,11 @@
 package models
 
+type MonitorOptionResponse struct {
+	Code  int  `json:"code"`
+	Message  string  `json:"message"`
+	Data  []OptionModel  `json:"data"`
+}
+
 type OptionModel struct {
 	Id  int  `json:"id"`
 	OptionValue  string  `json:"option_value"`
@@ -9,9 +15,21 @@ type OptionModel struct {
 	OptionTypeName  string  `json:"option_type_name"`
 }
 
+type MonitorMetricResponse struct {
+	Code  int  `json:"code"`
+	Message  string  `json:"message"`
+	Data  []MetricOptionModel  `json:"data"`
+}
+
+type MetricOptionModel struct {
+	Id  int  `json:"id"`
+	Metric  string  `json:"metric"`
+	PromQl  string  `json:"prom_ql"`
+}
+
 type RespJson struct {
 	Code  int  `json:"code"`
-	Msg   string    `json:"msg"`
+	Msg   string    `json:"message"`
 	Data  interface{}  `json:"data"`
 }
 
@@ -20,7 +38,7 @@ type ChartConfigObj struct {
 	Metric   string    `form:"metric" json:"metric"`
 	Start  string  `form:"start" json:"start"`
 	End  string  `form:"end" json:"end"`
-	Aggregate  string  `form:"aggregate" json:"aggregate"`
+	Aggregate  string  `form:"aggregate" json:"agg"`
 }
 
 type YaxisModel struct {
@@ -41,6 +59,12 @@ type DataSerialModel struct {
 
 type AxisModel struct {
 	Data  []float64  `json:"data"`
+}
+
+type MonitorChartResponse struct {
+	Code  int  `json:"code"`
+	Message  string  `json:"message"`
+	Data  EChartOption  `json:"data"`
 }
 
 type EChartOption struct {

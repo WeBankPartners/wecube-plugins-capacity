@@ -22,7 +22,8 @@ type CacheConfig struct {
 type MonitorConfig struct {
 	Enable  bool  `json:"enable"`
 	BaseUrl  string  `json:"base_url"`
-	Token  string  `json:"token"`
+	TokenKey  string  `json:"token_key"`
+	TokenValue string  `json:"token_value"`
 }
 
 type DataSourceConfig struct {
@@ -32,7 +33,7 @@ type DataSourceConfig struct {
 type MysqlConfig struct {
 	Type  string  `json:"type"`
 	Server  string  `json:"server"`
-	Port  int     `json:"port"`
+	Port  string     `json:"port"`
 	User  string  `json:"user"`
 	Password   string  `json:"password"`
 	DataBase  string  `json:"database"`
@@ -41,8 +42,18 @@ type MysqlConfig struct {
 	Timeout  int  `json:"timeout"`
 }
 
+type LogConfig struct {
+	Level   string  `json:"level"`
+	File    string  `json:"file"`
+	ArchiveMaxSize int `json:"archive_max_size"`
+	ArchiveMaxBackup int `json:"archive_max_backup"`
+	ArchiveMaxDay int `json:"archive_max_day"`
+	Compress  bool  `json:"compress"`
+}
+
 type GlobalConfig struct {
-	Http  *HttpConfig  `json:"http"`
+	Http  HttpConfig  `json:"http"`
+	Log   LogConfig     `json:"log"`
 	Mysql  MysqlConfig  `json:"mysql"`
 	Cache  CacheConfig  `json:"cache"`
 	DataSource  DataSourceConfig  `json:"data_source"`

@@ -1,2 +1,9 @@
 # IDEA
 .idea
+ui/node_modules/*
+ui/package-lock.json
+ui/dist
+ui/plugin
+server/public/r_images/*
+server/server
+server/app.log

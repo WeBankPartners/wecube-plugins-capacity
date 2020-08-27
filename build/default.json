@@ -1,0 +1,36 @@
+{
+  "http": {
+    "port": 9096,
+    "token": "default-token-used-in-server-side"
+  },
+  "log": {
+    "level": "{{CAPACITY_LOG_LEVEL}}",
+    "file": "logs/capacity.log",
+    "archive_max_size": 64,
+    "archive_max_backup": 10,
+    "archive_max_day": 15,
+    "compress": true
+  },
+  "mysql": {
+    "server": "{{CAPACITY_MYSQL_HOST}}",
+    "port": "{{CAPACITY_MYSQL_PORT}}",
+    "user": "{{CAPACITY_MYSQL_USER}}",
+    "password": "{{CAPACITY_MYSQL_PWD}}",
+    "database": "capacity",
+    "maxOpen": 20,
+    "maxIdle": 10,
+    "timeout": 60
+  },
+  "cache": {
+    "workspace_dir": "public/r_images",
+    "clean_interval": 1440
+  },
+  "data_source": {
+    "monitor": {
+      "enable": true,
+      "base_url": "{{GATEWAY_URL}}",
+      "token_key": "Authorization",
+      "token_value": "default-token-used-in-server-side"
+    }
+  }
+}

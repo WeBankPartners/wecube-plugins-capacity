@@ -1,0 +1,10 @@
+{
+  "getEndpoint": "monitor/search",
+  "getChart": "monitor/chart",
+  "getRData": "r/data",
+  "getRAnalyze": "r/analyze",
+  "saveRAnalyze": "r/save",
+  "getFavoritesList": "r/list",
+  "favoriteDetail": "r/get",
+  "favoriteCalc": "r/calc"
+}

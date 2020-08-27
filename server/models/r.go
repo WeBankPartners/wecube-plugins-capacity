@@ -46,6 +46,13 @@ type RRequestMonitor struct {
 	RemoveList  []float64  `json:"remove_list"`
 }
 
+type RRequestExcel struct {
+	Enable    bool      `json:"enable"`
+	LegendY   string    `json:"legend_y"`
+	LegendX   []string    `json:"legend_x"`
+	RemoveList  []int  `json:"remove_list"`
+}
+
 type RRequestParam struct {
 	Guid      string    `json:"guid"`
 	Monitor   RRequestMonitor `json:"monitor"`
@@ -53,6 +60,8 @@ type RRequestParam struct {
 	YData    []float64  `json:"y_data"`
 	FuncX    []*FuncXObj  `json:"func_x"`
 	FuncB      float64  `json:"func_b"`
+	Excel     RRequestExcel  `json:"excel"`
+	MinLevel  int  `json:"min_level"`
 }
 
 type SaveWorkParam struct{
@@ -67,6 +76,7 @@ type SaveWorkParam struct{
 	FuncB      float64  `json:"func_b"`
 	YReal      []float64 `json:"y_real"`
 	YFunc      []float64 `json:"y_func"`
+	Monitor    RRequestMonitor `json:"monitor"`
 }
 
 type RWorkTable struct {
@@ -79,6 +89,8 @@ type RWorkTable struct {
 	FuncXName  string  `json:"func_x_name"`
 	FuncB      string  `json:"func_b"`
 	Level      int     `json:"level"`
+	LegendX    string  `json:"legend_x"`
+	LegendY    string  `json:"legend_y"`
 	UpdateAt   time.Time  `json:"update_at"`
 }
 
@@ -101,6 +113,17 @@ type RChartTable struct {
 	Guid  string  `json:"guid"`
 	YReal  string  `json:"y_real"`
 	YFunc  string  `json:"y_func"`
+	UpdateAt   time.Time  `json:"update_at"`
+}
+
+type RMonitorTable struct {
+	Id  int  `json:"id"`
+	Guid  string  `json:"guid"`
+	Endpoint  string  `json:"endpoint"`
+	Metric  string  `json:"metric"`
+	Agg     string  `json:"agg"`
+	Start   string  `json:"start"`
+	End     string  `json:"end"`
 	UpdateAt   time.Time  `json:"update_at"`
 }
 
@@ -128,6 +151,11 @@ func (s FuncXSortList) Less(i,j int) bool {
 	return s[i].PValue < s[j].PValue
 }
 
+type YXDataTable struct {
+	Title  []string  `json:"title"`
+	Data   []map[string]string `json:"data"`
+}
+
 type YXDataObj struct {
 	Legend  []string  `json:"legend"`
 	Data  [][]float64 `json:"data"`
@@ -141,5 +169,5 @@ type RCalcParam struct {
 type RCalcResult struct {
 	Guid  string  `json:"guid"`
 	Chart EChartOption `json:"chart"`
-	Table YXDataObj `json:"table"`
+	Table YXDataTable `json:"table"`
 }
