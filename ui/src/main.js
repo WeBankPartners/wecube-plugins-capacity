@@ -9,7 +9,7 @@ import './plugins/iview.js'
 import capacityRequestEntrance from '@/assets/js/capacityRequestEntrance.js'
 import { tableUtil } from '@/assets/js/tableUtil.js'
 import { validate } from '@/assets/js/validate.js'
-import capacityApiCenter from '@/assets/config/api-center.json'
+import capacityApiCenter from '@/assets/config/capacity-api-center.json'
 Vue.prototype.$capacityRequestEntrance = capacityRequestEntrance
 Vue.prototype.$validate = validate
 Vue.prototype.$tableUtil = tableUtil
