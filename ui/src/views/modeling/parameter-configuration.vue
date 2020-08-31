@@ -78,7 +78,7 @@
       </Form>
       </Col>
     </Row>
-    <div :id="elId" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:20px;margin-bottom:80px;"></div>
+    <div :id="elId" class="echart" style="height:500px;width:1020px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:20px;margin-bottom:80px;"></div>
   </div>
 </template>
 

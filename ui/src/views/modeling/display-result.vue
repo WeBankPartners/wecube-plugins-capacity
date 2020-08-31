@@ -68,6 +68,7 @@ export default {
   name: '',
   data() {
     return {
+      isImportData: false,
       result: {
         level: '0'
       },
@@ -85,6 +86,7 @@ export default {
     }
   },
   activated () {
+    this.isImportData = this.$parent.isImportData
     this.formulaParams = this.$parent.formulaParams
     this.getRAnalyze()
   },
@@ -105,14 +107,19 @@ export default {
       })
     },
     getRAnalyze () {
-      let params = {
-        monitor: this.formulaParams
-      }
-      this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getRAnalyze, params, (responseData) => {
-        this.result = responseData.data
-        this.result.level = responseData.data.level + ''
-        this.drawChart(responseData.data.chart)
-      })
+      // let params = {}
+      // if (this.isImportData) {
+      //   params.excel = this.formulaParams
+      //   params.guid = this.formulaParams.guid
+      //   params.excel.enable = true
+      // } else {
+      //   params.monitor = this.formulaParams
+      // }
+      // this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getRAnalyze, params, (responseData) => {
+      //   this.result = responseData.data
+      //   this.result.level = responseData.data.level + ''
+      //   this.drawChart(responseData.data.chart)
+      // })
     },
     drawChart (config) {
       let myChart = echarts.init(document.getElementById('graph'))

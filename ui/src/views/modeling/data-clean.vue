@@ -1,41 +1,48 @@
 <template>
   <div class="data-clean">
-    <Row>
-      <Col span="3">
-        <span class="param-title">{{$t('axisCoordinates')}}</span>
-      </Col>
-      <Col span="21">
-        <Form :label-width="20">
-          <FormItem class="param-inline">
-            <Select v-model="xValue" style="width:320px" :placeholder="$t('placeholder.xAxis')" filterable multiple>
-              <Option v-for="item in xOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem class="param-inline">
-            <Select 
-              v-model="yValue" 
-              style="width:320px" 
-              :placeholder="$t('placeholder.yAxis')" 
-              filterable
-              clearable
-              @on-clear="clearYValue">
-              <Option v-for="item in yOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
-            </Select>
-          </FormItem>
-          <FormItem class="param-inline">
-            <Select v-model="aggregateValue" style="width:90px" :placeholder="$t('placeholder.aggregate')" filterable>
-              <Option v-for="item in aggregateOption" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
-          </FormItem>
-        </Form>
-      </Col>
-    </Row>
-    <Row>
-      <Col span="21" offset="3">
-        <button :disabled="!(xValue.length && yValue)" @click="getData" type="button" class="btn btn-confirm-f margin-left">{{$t('searchData')}}</button>
-      </Col>
-    </Row>
-    <div style="height:500px;margin-top:20px;margin-bottom:125px">
+    <template v-if="isImportData">
+      <Upload :on-success="importSuccess" action="http://129.204.99.160:19696/capacity/api/v1/r/excel">
+        <Button icon="ios-cloud-upload-outline">Upload files</Button>
+      </Upload>
+    </template>
+    <template>
+      <Row>
+        <Col span="3">
+          <span class="param-title">{{$t('axisCoordinates')}}</span>
+        </Col>
+        <Col span="21">
+          <Form :label-width="20">
+            <FormItem class="param-inline">
+              <Select v-model="getDataParams.legend_x" style="width:320px" :placeholder="$t('placeholder.xAxis')" filterable multiple>
+                <Option v-for="item in xOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
+              </Select>
+            </FormItem>
+            <FormItem class="param-inline">
+              <Select 
+                v-model="getDataParams.legend_y" 
+                style="width:320px" 
+                :placeholder="$t('placeholder.yAxis')" 
+                filterable
+                clearable
+                @on-clear="clearYValue">
+                <Option v-for="item in yOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
+              </Select>
+            </FormItem>
+            <FormItem class="param-inline" v-if="!isImportData">
+              <Select v-model="aggregateValue" style="width:90px" :placeholder="$t('placeholder.aggregate')" filterable>
+                <Option v-for="item in aggregateOption" :value="item.value" :key="item.value">{{ item.label }}</Option>
+              </Select>
+            </FormItem>
+          </Form>
+        </Col>
+      </Row>
+      <Row v-if="!isImportData">
+        <Col span="21" offset="3">
+          <button :disabled="!(getDataParams.legend_x.length && getDataParams.legend_y)" @click="getData" type="button" class="btn btn-confirm-f margin-left">{{$t('searchData')}}</button>
+        </Col>
+      </Row>
+    </template>
+    <div style="height:500px;margin-top:40px;margin-bottom:125px">
       <Table 
         border 
         size="small"
@@ -63,9 +70,7 @@ export default {
       xyAxis: [],
       params: [],
 
-      xValue: [],
       xOptions: [],
-      yValue: null,
       yOptions: [],
       aggregateValue: 'none',
       aggregateOption: [
@@ -76,14 +81,22 @@ export default {
         {label: 'Min', value: 'min'}
       ],
       
-      getDataParams: null,
+      getDataParams: {
+        config: [],
+        legend_x: [],
+        legend_y: [],
+        remove_list: []
+      },
       columns: [],
       originData: [],
       data: [],
-      selectedData: []
+      selectedData: [],
+
+      isImportData: false
     }
   },
   activated () {
+    this.isImportData = this.$parent.isImportData
     this.xyAxis = this.$parent.xyAxis
     this.params = this.$parent.params
     this.xOptions = JSON.parse(JSON.stringify(this.xyAxis))
@@ -94,14 +107,9 @@ export default {
       this.params.forEach(p => {
         p.agg = this.aggregateValue
       })
-      let params = {
-        config: this.params,
-        legend_x: this.xValue,
-        legend_y: this.yValue
-      }
+      this.getDataParams.config = this.params
       this.columns = []
-      this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getRData, params, (responseData) => {
-        this.getDataParams = params
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getRData, this.getDataParams, (responseData) => {
         this.columns.push({
           type: 'selection',
           width: 60,
@@ -123,19 +131,19 @@ export default {
       this.data = this.originData.slice((current -1) * 10, current * 10)
       this.data.forEach(row => {
         row._checked = false
-        if (this.selectedData.includes(row.timestamp)) {
+        if (this.selectedData.includes(row.id)) {
           row._checked = true
         }
       })
     },
     selectData (selection, row) {
-      this.selectedData.push(Number(row.timestamp))
+      this.selectedData.push(Number(row.id))
       this.getDataParams.remove_list = this.selectedData
       this.$parent.formulaParams = this.getDataParams
     },
     selectCancle (selection, row) {
       const index = this.selectedData.findIndex(i => {
-        return i === row.timestamp
+        return i === row.id
       })
       this.selectedData.splice(index, 1)
       this.getDataParams.remove_list = this.selectedData
@@ -144,7 +152,7 @@ export default {
     selectAllData (selection) {
       let arr = []
       selection.forEach(item => {
-        arr.push(item.timestamp)
+        arr.push(item.id)
       })
       let aa = new Set(this.selectedData)
       let bb = new Set(arr)
@@ -154,16 +162,50 @@ export default {
     selectAllCancle () {
       this.data.forEach(item => {
         const index = this.selectedData.findIndex(i => {
-          return i === item.timestamp
+          return i === item.id
         })
         this.selectedData.splice(index, 1)
       })
     },
     clearYValue () {
       this.yValue = ''
+    },
+    importSuccess (response, file, fileList) {
+      this.$Message.success('Success !')
+      console.log(response, file, fileList)
+      this.columns = []
+      this.xyAxis = []
+      this.columns.push({
+        type: 'selection',
+        width: 60,
+        align: 'center'
+      })
+      response.data.table.title.forEach(val => {
+        this.columns.push({
+          title: val,
+          key: val
+        })
+        if (val !== 'index') {
+          this.xyAxis.push({
+            label: val,
+            value: val
+        })
+        }
+      })
+      this.getDataParams = {
+        guid: response.data.guid,
+        config: {},
+        legend_x: [],
+        legend_y: [],
+        remove_list: []
+      }
+      this.$parent.formulaParams = this.getDataParams
+      this.xOptions = JSON.parse(JSON.stringify(this.xyAxis))
+      this.yOptions = JSON.parse(JSON.stringify(this.xyAxis))
+      this.originData = response.data.table.data
+      this.data = this.originData.slice(0, 10)
     }
   },
-  components: {},
 }
 </script>
 

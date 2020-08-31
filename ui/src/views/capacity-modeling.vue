@@ -8,6 +8,14 @@
               <span slot="title" class="step-title">
                 {{$t(steps[0])}}
               </span>
+              <div slot="content" style="float: left">
+                <template v-if="isImportData">
+                  <button @click="configData" type="button" class="btn btn-cancle-f">数据配置</button>
+                </template>
+                <template v-else>
+                  <button @click="exportData" type="button" class="btn btn-cancle-f">导入数据</button>
+                </template>
+              </div>
             </Step>
             <Step>
               <span slot="title" class="step-title">
@@ -30,7 +38,7 @@
         </keep-alive>
         
         <div class="step-control">
-          <button v-if="current != 0" @click="upStep"  type="button" class="btn btn-cancle-f">{{$t('previous')}}:{{$t(steps[current-1])}}</button>
+          <button v-if="current != 0 && !(current === 1 && isImportData)" @click="upStep"  type="button" class="btn btn-cancle-f">{{$t('previous')}}:{{$t(steps[current-1])}}</button>
           <button v-if="current != 2" @click="downStep" type="button" class="btn btn-confirm-f">{{$t('nextStep')}}:{{$t(steps[current+1])}}</button>
         </div>
       </div>
@@ -56,7 +64,9 @@ export default {
       xyAxis: null,
 
       formulaParams: null,
-      removeList: []
+      removeList: [],
+
+      isImportData: false
     }
   },
   methods: {
@@ -72,6 +82,16 @@ export default {
     },
     downStep () {
       this.current++
+      this.currentComponent = this.whiteList[this.current]
+    },
+    exportData () {
+      this.isImportData = true
+      this.current = 1
+      this.currentComponent = this.whiteList[this.current]
+    },
+    configData () {
+      this.isImportData = false
+      this.current = 0
       this.currentComponent = this.whiteList[this.current]
     }
   },
