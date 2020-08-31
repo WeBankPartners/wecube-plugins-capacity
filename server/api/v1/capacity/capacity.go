@@ -153,6 +153,7 @@ func SaveAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
 	if param.Guid == "" || param.Name == "" || param.Workspace == "" {
 		err = fmt.Errorf("Param validate fail,guid name workspace can not empty ")
 	}else {
+		param.Name = fmt.Sprintf("%s-%s", param.Name, time.Now().Format("20060102150405"))
 		err = services.SaveRWork(param)
 	}
 	returnJson(r,w,err,nil)
