@@ -1,6 +1,6 @@
 import axios from 'axios'
-import {baseURL_config} from './baseURL'
-const baseURL = `${baseURL_config}/api/v1`
+import {capacityURL_config} from './capacityURL'
+const baseURL = `${capacityURL_config}/api/v1`
 export default function ajax (options) {
   const ajaxObj = {
     method: options.method,
