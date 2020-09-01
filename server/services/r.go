@@ -674,6 +674,7 @@ func SaveExcelFile(content []byte) (err error,result models.RCalcResult) {
 	for i,v := range yxData.Data {
 		rowMap := make(map[string]string)
 		rowMap["index"] = strconv.Itoa(i+1)
+		rowMap["id"] = strconv.Itoa(i+1)
 		for ii,vv := range v {
 			rowMap[yxData.Legend[ii]] = fmt.Sprintf("%.3f", vv)
 		}
