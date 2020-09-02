@@ -36,10 +36,9 @@
             </Col>
             <Col span="21">
               <RadioGroup v-model="result.level" type="button">
-                <Radio label="0" :disabled="result.level!='0'">{{$t('level0')}}</Radio>
-                <Radio label="1" :disabled="result.level!='1'">{{$t('level1')}}</Radio>
-                <Radio label="2" :disabled="result.level!='2'">{{$t('level2')}}</Radio>
-                <Radio label="3" :disabled="result.level!='3'">{{$t('level3')}}</Radio>
+                <template v-for="item in ['0','1','2','3']">
+                  <Radio :label="item" :style="{color: ['#dcdee2', '#19be6b', '#f90', '#ed4014'][item]}" :key="item">{{$t('level'+item)}}</Radio>
+                </template>
               </RadioGroup>
             </Col>
           </Row>
@@ -58,7 +57,9 @@
               <span class="param-title">{{$t('formula')}}</span>
             </Col>
             <Col span="21">
-              {{result.func_expr}}
+              <Badge :text="$t('level'+result.level)" :type="['normal', 'success', 'warning', 'error'][result.level] || 'normal'">
+                <div style="padding-right:16px">{{result.func_expr}}</div>
+              </Badge>
             </Col>
           </Row>
           <div style="text-align: center">
