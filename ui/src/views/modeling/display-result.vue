@@ -6,8 +6,8 @@
       </Col>
       <Col span="21">
         <RadioGroup v-model="diyLevel" type="button">
-          <template v-for="item in ['0','1','2','3']">
-            <Radio :label="item" :style="{color: ['#dcdee2', '#19be6b', '#f90', '#ed4014'][item]}" :key="item">{{$t('level'+item)}}</Radio>
+          <template v-for="item in ['1','2','3']">
+            <Radio :label="item" :style="{color: ['#19be6b', '#f90', '#ed4014'][item]}" :key="item">{{$t('level'+item)}}</Radio>
           </template>
         </RadioGroup>
         <span style="float:right">
@@ -93,6 +93,7 @@ export default {
     }
   },
   activated () {
+    this.$parent.cachedCom.push(this.$vnode)
     this.isImportData = this.$parent.isImportData
     this.formulaParams = this.$parent.formulaParams
     this.getRAnalyze()

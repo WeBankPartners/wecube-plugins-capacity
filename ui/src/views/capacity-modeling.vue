@@ -66,7 +66,8 @@ export default {
       formulaParams: null,
       removeList: [],
 
-      isImportData: false
+      isImportData: false,
+      cachedCom: []
     }
   },
   methods: {
@@ -85,14 +86,24 @@ export default {
       this.currentComponent = this.whiteList[this.current]
     },
     exportData () {
+      this.cleanCacheCom()
       this.isImportData = true
       this.current = 1
       this.currentComponent = this.whiteList[this.current]
     },
     configData () {
+      this.cleanCacheCom()
       this.isImportData = false
       this.current = 0
       this.currentComponent = this.whiteList[this.current]
+    },
+    cleanCacheCom () {
+      this.xyAxis = null
+      this.cachedCom.forEach(cacheVNode => {
+        cacheVNode.parent.componentInstance.cache = {}
+        cacheVNode.parent.componentInstance.keys = []
+      })
+      this.cachedCom = []
     }
   },
   components: {

@@ -120,6 +120,9 @@ export default {
   mounted () {
     this.getEndpointList('.')
   },
+  activated () {
+    this.$parent.cachedCom.push(this.$vnode)
+  },
   methods: {
     getChart () {
       if (Date.parse(new Date(this.startDate)) > Date.parse(new Date(this.endDate))) {

@@ -96,6 +96,7 @@ export default {
     }
   },
   activated () {
+    this.$parent.cachedCom.push(this.$vnode)
     this.isImportData = this.$parent.isImportData
     this.xyAxis = this.$parent.xyAxis
     this.params = this.$parent.params
