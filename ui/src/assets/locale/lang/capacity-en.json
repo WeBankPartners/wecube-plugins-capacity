@@ -2,11 +2,9 @@
   "common": {
     "changeLanguage": "English"
   },
-  "menu": {
-    "systemName": "WeCube-Plugins-Capacity (Demo Version)",
-    "capacityModeling": "Capacity Modeling",
-    "capacityForecast": "Capacity Forecast"
-  },
+  "systemName": "WeCube-Plugins-Capacity (Demo Version)",
+  "capacityModeling": "Capacity Modeling",
+  "capacityForecast": "Capacity Forecast",
   "tips": {
     "required": " Required!",
     "inputRequired": "Required,2-60",

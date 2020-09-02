@@ -13,6 +13,7 @@ import (
 	"time"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/util/log"
+	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
 func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScriptResult) {
@@ -22,6 +23,25 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 	}
 	var x [][]float64
 	var y []float64
+	if param.Excel.Enable {
+		err,yxData := getExcelData(param.Guid, param.Excel)
+		if err != nil {
+			return err,result
+		}
+		for _,v := range yxData.Data {
+			for vi,vv := range v {
+				if vi == 0 {
+					y = append(y, vv)
+				}else{
+					if len(x) < vi {
+						x = append(x, []float64{vv})
+					}else{
+						x[vi-1] = append(x[vi-1], vv)
+					}
+				}
+			}
+		}
+	}
 	if len(param.Monitor.Config) > 0 {
 		err,yXData := AutoJustifyData(param.Monitor)
 		if err != nil {
@@ -41,16 +61,17 @@ func RAnalyzeData(param models.RRequestParam) (err error,result models.RunScript
 				}
 			}
 		}
-	}else{
-		x = param.XData
-		y = param.YData
 	}
-	err,result = runRscript(x,y,param.Guid)
+	err,result = runRscript(x,y,param.Guid,param.MinLevel)
 	if err != nil {
 		return err,result
 	}
 	for i,v := range result.FuncX {
-		result.FuncX[i].Legend = param.Monitor.LegendX[v.Index-1]
+		if param.Excel.Enable {
+			result.FuncX[i].Legend = param.Excel.LegendX[v.Index-1]
+		}else {
+			result.FuncX[i].Legend = param.Monitor.LegendX[v.Index-1]
+		}
 	}
 	param.FuncX = result.FuncX
 	param.FuncB = result.FuncB
@@ -96,7 +117,10 @@ func RChartData(param models.RRequestParam,x [][]float64,y []float64) (err error
 			}
 		}
 	}
-	newAxis.Data = newYData
+	for _,v := range newYData {
+		tmpV,_ := strconv.ParseFloat(fmt.Sprintf("%.3f", v), 64)
+		newAxis.Data = append(newAxis.Data, tmpV)
+	}
 	newAxis.Name = "func(y)"
 	newAxis.Type = "line"
 	result.DataSeries = []*models.DataSerialModel{&yAxis, &newAxis}
@@ -104,7 +128,11 @@ func RChartData(param models.RRequestParam,x [][]float64,y []float64) (err error
 	return err,result
 }
 
-func runRscript(x [][]float64,y []float64,guid string) (err error,result models.RunScriptResult)  {
+func runRscript(x [][]float64,y []float64,guid string,minLevel int) (err error,result models.RunScriptResult)  {
+	if len(x) == 0 || len(y) == 0 {
+		err = fmt.Errorf("Run r script fail,x data and y data can not empty ")
+		return err,result
+	}
 	var b []byte
 	// build workspace
 	if guid == "" {
@@ -151,7 +179,7 @@ func runRscript(x [][]float64,y []float64,guid string) (err error,result models.
 		log.Logger.Error(fmt.Sprintf("Run Rscript %s/template.r fail", result.Workspace), log.String("output", string(b)), log.Error(err))
 		return err,result
 	}
-	output := dealWithScriptOutput(string(b))
+	output := dealWithScriptOutput(string(b), minLevel)
 	result.FuncX = output.FuncX
 	result.FuncB = output.FuncB
 	result.FuncExpr = output.FuncExpr
@@ -173,10 +201,13 @@ func turnFloatListToString(data []float64) string {
 	return strings.Join(s, ",")
 }
 
-func dealWithScriptOutput(output string) models.RunScriptResult {
+func dealWithScriptOutput(output string,minLevel int) models.RunScriptResult {
 	var result models.RunScriptResult
 	var funcBLevel int
 	var sortFuncList models.FuncXSortList
+	if minLevel > 3 {
+		minLevel = 0
+	}
 	expr := "y="
 	xCount := 0
 	for _,v := range strings.Split(output, "\n") {
@@ -187,7 +218,7 @@ func dealWithScriptOutput(output string) models.RunScriptResult {
 		if strings.HasPrefix(v, "x") {
 			xCount = xCount + 1
 			tmpEstimate,tmpP,tmpL := getEstimate(v)
-			if tmpL > 0 {
+			if tmpL >= minLevel {
 				sortFuncList = append(sortFuncList, &models.FuncXObj{PValue:tmpP, Estimate:tmpEstimate, FuncName:fmt.Sprintf("x%d", xCount), Level:tmpL, Index:xCount})
 			}
 		}
@@ -264,9 +295,16 @@ func getEstimate(s string) (estimate,pValue float64, level int) {
 
 func checkRParam(param models.RRequestParam) error {
 	var err error
-	if len(param.Monitor.Config) == 0 && (len(param.YData) == 0 || len(param.XData) == 0 ) {
-		err = fmt.Errorf("param validate fail,monitor config and data is empty")
-		return err
+	if param.Excel.Enable {
+		if param.Excel.LegendY == "" || len(param.Excel.LegendX) == 0 || param.Guid == "" {
+			err = fmt.Errorf("param validate fail,excel guid,legend_x and legend_y can not empty")
+			return err
+		}
+	}else {
+		if len(param.Monitor.Config) == 0 && (len(param.YData) == 0 || len(param.XData) == 0) {
+			err = fmt.Errorf("param validate fail,monitor config and data can not empty")
+			return err
+		}
 	}
 	return nil
 }
@@ -398,7 +436,8 @@ func offsetYXData(yData,xData [][]float64,step float64) map[float64][]float64 {
 
 func SaveRWork(param models.SaveWorkParam) error {
 	var err error
-	workTable := models.RWorkTable{Guid:param.Guid, Name:param.Name, Workspace:param.Workspace, Output:param.Output, Expr:param.FuncExpr, FuncB:fmt.Sprintf("%.4f",param.FuncB), Level:param.Level}
+	// Save r_work
+	workTable := models.RWorkTable{Guid:param.Guid, Name:param.Name, Workspace:param.Workspace, Output:param.Output, Expr:param.FuncExpr, FuncB:fmt.Sprintf("%.4f",param.FuncB), Level:param.Level, LegendX:strings.Join(param.Monitor.LegendX, "^"), LegendY:param.Monitor.LegendY}
 	var workFuncX,workFuncXName []string
 	for _,v := range param.FuncX {
 		workFuncX = append(workFuncX, fmt.Sprintf("%.4f", v.Estimate))
@@ -410,11 +449,13 @@ func SaveRWork(param models.SaveWorkParam) error {
 	if err != nil {
 		return err
 	}
+	// Save r_chart
 	chartTable := models.RChartTableInput{Guid:param.Guid, YReal:param.YReal, YFunc:param.YFunc}
 	err = saveRChartTable(chartTable)
 	if err != nil {
 		return err
 	}
+	// Save r_images
 	var imagesTable []*models.RImagesTable
 	for i:=1;i<=4;i++ {
 		tmpFilePath := fmt.Sprintf("%s/rp00%d.png", param.Workspace, i)
@@ -430,6 +471,11 @@ func SaveRWork(param models.SaveWorkParam) error {
 		return err
 	}
 	err = saveRImagesTable(imagesTable)
+	if err != nil {
+		return err
+	}
+	// Save r_monitor
+	err = saveRMonitorTable(param.Guid, param.Monitor)
 	return err
 }
 
@@ -606,4 +652,116 @@ func AutoCleanWorkspace()  {
 			}
 		}
 	}
+}
+
+func SaveExcelFile(content []byte) (err error,result models.RCalcResult) {
+	result.Guid = models.GetWorkspaceName()
+	output,err := exec.Command("/bin/sh", "-c", fmt.Sprintf("mkdir -p %s/%s", models.WorkspaceDir, result.Guid)).Output()
+	if err != nil {
+		err = fmt.Errorf("Try to create workspce dir fail,output=%s,err=%s ", string(output), err.Error())
+		return err,result
+	}
+	err = ioutil.WriteFile(fmt.Sprintf("%s/%s/data.xlsx", models.WorkspaceDir, result.Guid), content, 0644)
+	if err != nil {
+		err = fmt.Errorf("Try to save excel file fail,%s ", err.Error())
+		return err,result
+	}
+	err,yxData := getExcelData(result.Guid, models.RRequestExcel{})
+	if err != nil {
+		return err,result
+	}
+	result.Table.Title = append([]string{"index"}, yxData.Legend...)
+	for i,v := range yxData.Data {
+		rowMap := make(map[string]string)
+		rowMap["index"] = strconv.Itoa(i+1)
+		rowMap["id"] = strconv.Itoa(i+1)
+		for ii,vv := range v {
+			rowMap[yxData.Legend[ii]] = fmt.Sprintf("%.3f", vv)
+		}
+		result.Table.Data = append(result.Table.Data, rowMap)
+	}
+	return err,result
+}
+
+func getExcelData(guid string,config models.RRequestExcel) (err error,result models.YXDataObj) {
+	excelObj,err := excelize.OpenFile(fmt.Sprintf("%s/%s/data.xlsx", models.WorkspaceDir, guid))
+	if err != nil {
+		err = fmt.Errorf("Try to read excel file fail,%s ", err.Error())
+		return err,result
+	}
+	sheetList := excelObj.GetSheetList()
+	if len(sheetList) == 0 {
+		err = fmt.Errorf("Excel sheet is empty ")
+		return err,result
+	}
+	rows,err := excelObj.GetRows(sheetList[0])
+	if err != nil {
+		err = fmt.Errorf("Excel get rows fail,%s ", err.Error())
+		return err,result
+	}
+	var indexList []int
+	for i,v := range rows {
+		if i == 0 {
+			if config.Enable {
+				for ii,vv := range v {
+					if vv == config.LegendY {
+						indexList = []int{ii}
+						break
+					}
+				}
+				for _,vx := range config.LegendX {
+					for ii,vv := range v {
+						if vv == vx {
+							indexList = append(indexList, ii)
+							break
+						}
+					}
+				}
+				result.Legend = append([]string{config.LegendY}, config.LegendX...)
+			}else{
+				result.Legend = v
+			}
+		}else{
+			var rowData []float64
+			if config.Enable {
+				removeFlag := false
+				for _,removeIndex := range config.RemoveList {
+					if removeIndex == i {
+						removeFlag = true
+						break
+					}
+				}
+				if removeFlag {
+					continue
+				}
+				for _,indexY := range indexList {
+					for ii,vv := range v {
+						if ii == indexY {
+							vFloat,_ := strconv.ParseFloat(vv, 64)
+							rowData = append(rowData, vFloat)
+							break
+						}
+					}
+				}
+			}else{
+				if len(v) != len(result.Legend) {
+					err = fmt.Errorf("Excel sheet 1 row %d width is not equal the title ", i+1)
+					break
+				}
+				for ii,vv := range v {
+					vFloat,parseErr := strconv.ParseFloat(vv, 64)
+					if parseErr != nil {
+						err = fmt.Errorf("Excel sheet 1 row %d num %d data validate fail ", i+1, ii+1)
+						break
+					}
+					rowData = append(rowData, vFloat)
+				}
+				if err != nil {
+					break
+				}
+			}
+			result.Data = append(result.Data, rowData)
+		}
+	}
+	return err,result
 }

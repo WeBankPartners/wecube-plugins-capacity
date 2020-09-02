@@ -46,6 +46,27 @@ func MonitorDataHandler(w http.ResponseWriter,r *http.Request)  {
 	returnJson(r,w,err,result)
 }
 
+func ExcelUploadHandler(w http.ResponseWriter,r *http.Request)  {
+	var uploadBytes []byte
+	multipartFile,_,err := r.FormFile("file")
+	if err != nil {
+		log.Logger.Error("accept form file fail", log.Error(err))
+		returnJson(r,w,err,nil)
+		return
+	}
+	uploadBytes, err = ioutil.ReadAll(multipartFile)
+	if err != nil {
+		returnJson(r,w,fmt.Errorf("Read upload file fail,%s ", err.Error()), nil)
+		return
+	}
+	if len(uploadBytes) == 0 {
+		returnJson(r,w,fmt.Errorf("Upload file is empty "), nil)
+		return
+	}
+	err,result := services.SaveExcelFile(uploadBytes)
+	returnJson(r,w,err,result)
+}
+
 func RJustifyDataHandler(w http.ResponseWriter,r *http.Request)  {
 	var param models.RRequestMonitor
 	b,_ := ioutil.ReadAll(r.Body)
@@ -79,6 +100,7 @@ func RJustifyDataHandler(w http.ResponseWriter,r *http.Request)  {
 		for i,vv := range v {
 			if i == 0 {
 				tmpMap["time"] = time.Unix(int64(vv/1000), 0).Format("2006-01-02 15:04:05")
+				tmpMap["id"] = fmt.Sprintf("%.0f", vv)
 				tmpMap[result.Legend[i]] = fmt.Sprintf("%.0f", vv)
 			}else {
 				tmpMap[result.Legend[i]] = fmt.Sprintf("%.4f", vv)
@@ -132,6 +154,7 @@ func SaveAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
 	if param.Guid == "" || param.Name == "" || param.Workspace == "" {
 		err = fmt.Errorf("Param validate fail,guid name workspace can not empty ")
 	}else {
+		param.Name = fmt.Sprintf("%s-%s", param.Name, time.Now().Format("20060102150405"))
 		err = services.SaveRWork(param)
 	}
 	returnJson(r,w,err,nil)

@@ -2,15 +2,15 @@
   <Menu mode="horizontal" theme="dark" @on-select="menuChange">
     <div class="logo">
       <img src="../assets/logo.png" />
-      <span>{{$t('menu.systemName')}}</span>
+      <span>{{$t('systemName')}}</span>
     </div>
     <MenuItem name="capacityModeling">
       <i class="fa fa-gears" aria-hidden="true"></i>
-      {{$t("menu.capacityModeling")}}
+      {{$t("capacityModeling")}}
     </MenuItem>
     <MenuItem name="capacityForecast">
       <i class="fa fa-coffee" aria-hidden="true"></i>
-      {{$t("menu.capacityForecast")}}
+      {{$t("capacityForecast")}}
     </MenuItem>
   </Menu>
 </template>

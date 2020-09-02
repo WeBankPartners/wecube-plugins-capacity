@@ -65,7 +65,7 @@ func Transaction(actions []*Action) error {
 func saveRWorkTable(param models.RWorkTable) error {
 	var actions []*Action
 	actions = append(actions, &Action{Sql:"delete from r_work where guid=?", Param:[]interface{}{param.Guid}})
-	actions = append(actions, &Action{Sql:"insert into r_work value (?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.Output,param.Expr,param.FuncX,param.FuncXName,param.FuncB,param.Level}})
+	actions = append(actions, &Action{Sql:"insert into r_work(guid,name,workspace,output,expr,func_x,func_x_name,func_b,level,legend_x,legend_y,update_at) value (?,?,?,?,?,?,?,?,?,?,?,NOW())", Param:[]interface{}{param.Guid,param.Name,param.Workspace,param.Output,param.Expr,param.FuncX,param.FuncXName,param.FuncB,param.Level,param.LegendX,param.LegendY}})
 	return Transaction(actions)
 }
 
@@ -139,4 +139,26 @@ func DeleteRConfig(guid string) error {
 	actions = append(actions, &Action{Sql:"delete from r_images where guid=?", Param:[]interface{}{guid}})
 	actions = append(actions, &Action{Sql:"delete from r_chart where guid=?", Param:[]interface{}{guid}})
 	return Transaction(actions)
+}
+
+func saveRMonitorTable(guid string,param models.RRequestMonitor) error {
+	if len(param.Config) == 0 {
+		return nil
+	}
+	var actions []*Action
+	actions = append(actions, &Action{Sql:"DELETE FROM r_monitor WHERE guid=?", Param:[]interface{}{guid}})
+	insertSql := "INSERT INTO r_monitor(guid,endpoint,metric,agg,start,end) values "
+	for i,v := range param.Config {
+		insertSql += fmt.Sprintf("('%s','%s','%s','%s','%s','%s')", guid, v.Endpoint, v.Metric, v.Aggregate, v.Start, v.End)
+		if i != len(param.Config)-1 {
+			insertSql += ","
+		}
+	}
+	actions = append(actions, &Action{Sql:insertSql})
+	return Transaction(actions)
+}
+
+func getRMonitorTable(guid string) (err error,result []*models.RMonitorTable) {
+	err = mysqlEngine.SQL("select * from r_monitor where guid=?", guid).Find(&result)
+	return err,result
 }
