@@ -1,1 +1,1 @@
-export const capacityURL_config = '/capacity'
+export const capacityURL_config = ''
