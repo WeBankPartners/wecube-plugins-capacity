@@ -2,14 +2,13 @@
   <div class="display-result">
     <Row style="margin-bottom:16px">
       <Col span="3">
-        <span class="param-title">Level</span>
+        <span class="param-title">Change Level</span>
       </Col>
       <Col span="21">
-        <RadioGroup v-model="result.level" type="button">
-          <Radio label="0" :disabled="result.level!='0'">{{$t('level0')}}</Radio>
-          <Radio label="1" :disabled="result.level!='1'">{{$t('level1')}}</Radio>
-          <Radio label="2" :disabled="result.level!='2'">{{$t('level2')}}</Radio>
-          <Radio label="3" :disabled="result.level!='3'">{{$t('level3')}}</Radio>
+        <RadioGroup v-model="diyLevel" type="button">
+          <template v-for="item in ['1','2','3']">
+            <Radio :label="item" :style="{color: ['#47cb89', '#ffad33', '#f16643'][Number(item) - 1]}" :key="item">{{$t('level'+item)}}</Radio>
+          </template>
         </RadioGroup>
         <span style="float:right">
           <button type="button" class="btn btn-confirm-f" @click="saveFormula" :disabled="result.level === '0'">{{$t('save')}}</button>
@@ -21,17 +20,19 @@
         <span class="param-title">Output</span>
       </Col>
       <Col span="21">
-        <div  style="height: 200px;overflow: auto;padding:8px;background: #586b73;color:white">
+        <div style="height: 200px;overflow: auto;padding:8px;background: #586b73;color:white">
           <div v-html="result.output"></div>
         </div>
       </Col>
     </Row>
     <Row style="margin-bottom:16px">
       <Col span="3">
-        <span class="param-title">公式</span>
+        <span class="param-title">{{$t('formula')}}</span>
       </Col>
       <Col span="21">
-        {{result.func_expr}}
+        <Badge :text="$t('level'+result.level)" :type="['normal', 'success', 'warning', 'error'][result.level] || 'normal'">
+          <div style="padding-right:16px">{{result.func_expr}}</div>
+        </Badge>
       </Col>
     </Row>
     <div style="text-align: center">
@@ -48,7 +49,7 @@
       <div id="graph" class="echart" style="height:500px;width:1000px;box-shadow: 0 2px 20px 0 rgba(0,0,0,.11);margin-top:40px"></div>
     </div>
     <Modal
-      v-model="modal1"
+      v-model="collectModel"
       :title="$t('favorite')"
       @on-ok="save">
       <Form :model="formInline" :rules="ruleInline" :label-width="80">
@@ -68,12 +69,13 @@ export default {
   name: '',
   data() {
     return {
+      isImportData: false,
+      diyLevel: '0',
       result: {
         level: '0'
       },
-
       imgTips: ['photoTipsOne', 'photoTipsTwo', 'photoTipsThree', 'photoTipsFour'],
-      modal1: false,
+      collectModel: false,
       formInline: {
         name: ''
       },
@@ -84,13 +86,21 @@ export default {
       }
     }
   },
+  watch: {
+    diyLevel: function (val) {
+      this.diyLevel = val
+      this.getRAnalyze()
+    }
+  },
   activated () {
+    this.$parent.cachedCom.push(this.$vnode)
+    this.isImportData = this.$parent.isImportData
     this.formulaParams = this.$parent.formulaParams
     this.getRAnalyze()
   },
   methods: {
     saveFormula () {
-      this.modal1 = true
+      this.collectModel = true
     },
     save () {
       this.result.level = Number(this.result.level)
@@ -106,11 +116,17 @@ export default {
     },
     getRAnalyze () {
       let params = {
-        monitor: this.formulaParams
+        min_level: Number(this.diyLevel)
+      }
+      if (this.isImportData) {
+        params.excel = this.formulaParams
+        params.guid = this.formulaParams.guid
+        params.excel.enable = true
+      } else {
+        params.monitor = this.formulaParams
       }
       this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getRAnalyze, params, (responseData) => {
         this.result = responseData.data
-        this.result.level = responseData.data.level + ''
         this.drawChart(responseData.data.chart)
       })
     },

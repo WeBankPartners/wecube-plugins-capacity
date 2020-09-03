@@ -31,6 +31,8 @@
   "indicatorConfiguration": "Indicator Configuration",
   "dataCleaning": "Data Cleaning",
   "resultDisplay": "Result Display",
+  "data_configuration": "Data configuration",
+  "import_data": "Import data",
   "previous": "Previous",
   "nextStep": "Next Step",
   "endpointAndMetric": "Endpoint & Metric",
@@ -53,5 +55,6 @@
   "favoritesList": "Favorites List",
   "formula": "Formula",
   "predictedValue": "Enter predicted value",
-  "prediction": "Prediction"
+  "prediction": "Prediction",
+  "uploadFileTip": "Upload file must be in Excel format, less than 10M"
 }

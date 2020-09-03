@@ -8,6 +8,14 @@
               <span slot="title" class="step-title">
                 {{$t(steps[0])}}
               </span>
+              <div slot="content" style="float: left">
+                <template v-if="isImportData">
+                  <button @click="configData" type="button" class="btn btn-cancle-f">{{ $t('data_configuration') }}</button>
+                </template>
+                <template v-else>
+                  <button @click="importData" type="button" class="btn btn-cancle-f">{{ $t('import_data') }}</button>
+                </template>
+              </div>
             </Step>
             <Step>
               <span slot="title" class="step-title">
@@ -30,7 +38,7 @@
         </keep-alive>
         
         <div class="step-control">
-          <button v-if="current != 0" @click="upStep"  type="button" class="btn btn-cancle-f">{{$t('previous')}}:{{$t(steps[current-1])}}</button>
+          <button v-if="current != 0 && !(current === 1 && isImportData)" @click="upStep"  type="button" class="btn btn-cancle-f">{{$t('previous')}}:{{$t(steps[current-1])}}</button>
           <button v-if="current != 2" @click="downStep" type="button" class="btn btn-confirm-f">{{$t('nextStep')}}:{{$t(steps[current+1])}}</button>
         </div>
       </div>
@@ -56,7 +64,10 @@ export default {
       xyAxis: null,
 
       formulaParams: null,
-      removeList: []
+      removeList: [],
+
+      isImportData: false,
+      cachedCom: []
     }
   },
   methods: {
@@ -73,6 +84,26 @@ export default {
     downStep () {
       this.current++
       this.currentComponent = this.whiteList[this.current]
+    },
+    importData () {
+      this.cleanCacheCom()
+      this.isImportData = true
+      this.current = 1
+      this.currentComponent = this.whiteList[this.current]
+    },
+    configData () {
+      this.cleanCacheCom()
+      this.isImportData = false
+      this.current = 0
+      this.currentComponent = this.whiteList[this.current]
+    },
+    cleanCacheCom () {
+      this.xyAxis = null
+      this.cachedCom.forEach(cacheVNode => {
+        cacheVNode.parent.componentInstance.cache = {}
+        cacheVNode.parent.componentInstance.keys = []
+      })
+      this.cachedCom = []
     }
   },
   components: {
