@@ -31,6 +31,8 @@
   "indicatorConfiguration": "Indicator Configuration",
   "dataCleaning": "Data Cleaning",
   "resultDisplay": "Result Display",
+  "data_configuration": "Data configuration",
+  "import_data": "Import data",
   "previous": "Previous",
   "nextStep": "Next Step",
   "endpointAndMetric": "Endpoint & Metric",

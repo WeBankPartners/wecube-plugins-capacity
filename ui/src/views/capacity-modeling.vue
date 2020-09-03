@@ -10,10 +10,10 @@
               </span>
               <div slot="content" style="float: left">
                 <template v-if="isImportData">
-                  <button @click="configData" type="button" class="btn btn-cancle-f">数据配置</button>
+                  <button @click="configData" type="button" class="btn btn-cancle-f">{{ $t('data_configuration') }}</button>
                 </template>
                 <template v-else>
-                  <button @click="exportData" type="button" class="btn btn-cancle-f">导入数据</button>
+                  <button @click="importData" type="button" class="btn btn-cancle-f">{{ $t('import_data') }}</button>
                 </template>
               </div>
             </Step>
@@ -85,7 +85,7 @@ export default {
       this.current++
       this.currentComponent = this.whiteList[this.current]
     },
-    exportData () {
+    importData () {
       this.cleanCacheCom()
       this.isImportData = true
       this.current = 1

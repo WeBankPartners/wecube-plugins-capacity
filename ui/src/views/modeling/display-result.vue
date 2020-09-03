@@ -7,7 +7,7 @@
       <Col span="21">
         <RadioGroup v-model="diyLevel" type="button">
           <template v-for="item in ['1','2','3']">
-            <Radio :label="item" :style="{color: ['#19be6b', '#f90', '#ed4014'][item]}" :key="item">{{$t('level'+item)}}</Radio>
+            <Radio :label="item" :style="{color: ['#47cb89', '#ffad33', '#f16643'][Number(item) - 1]}" :key="item">{{$t('level'+item)}}</Radio>
           </template>
         </RadioGroup>
         <span style="float:right">
@@ -127,7 +127,6 @@ export default {
       }
       this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.getRAnalyze, params, (responseData) => {
         this.result = responseData.data
-        this.result.level = responseData.data.level + ''
         this.drawChart(responseData.data.chart)
       })
     },

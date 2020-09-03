@@ -171,9 +171,8 @@ export default {
     clearYValue () {
       this.yValue = ''
     },
-    importSuccess (response, file, fileList) {
+    importSuccess (response) {
       this.$Message.success('Success !')
-      console.log(response, file, fileList)
       this.columns = []
       this.xyAxis = []
       this.columns.push({
@@ -201,6 +200,7 @@ export default {
         remove_list: []
       }
       this.$parent.formulaParams = this.getDataParams
+      this.$parent.xyAxis = this.xyAxis
       this.xOptions = JSON.parse(JSON.stringify(this.xyAxis))
       this.yOptions = JSON.parse(JSON.stringify(this.xyAxis))
       this.originData = response.data.table.data

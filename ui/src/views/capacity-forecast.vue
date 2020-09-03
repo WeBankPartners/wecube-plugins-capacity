@@ -32,18 +32,6 @@
         <div>
           <Row style="margin-bottom:16px">
             <Col span="3">
-              <span class="param-title">Level</span>
-            </Col>
-            <Col span="21">
-              <RadioGroup v-model="result.level" type="button">
-                <template v-for="item in ['0','1','2','3']">
-                  <Radio :label="item" :style="{color: ['#dcdee2', '#19be6b', '#f90', '#ed4014'][item]}" :key="item">{{$t('level'+item)}}</Radio>
-                </template>
-              </RadioGroup>
-            </Col>
-          </Row>
-          <Row style="margin-bottom:16px">
-            <Col span="3">
               <span class="param-title">Output</span>
             </Col>
             <Col span="21">

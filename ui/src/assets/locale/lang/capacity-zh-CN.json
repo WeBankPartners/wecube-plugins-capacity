@@ -31,6 +31,8 @@
   "indicatorConfiguration": "指标配置",
   "dataCleaning": "坏点剔除",
   "resultDisplay": "结果展示",
+  "data_configuration": "配置数据",
+  "import_data": "导入数据",
   "previous": "上一步",
   "nextStep": "下一步",
   "endpointAndMetric": "对象与指标",
