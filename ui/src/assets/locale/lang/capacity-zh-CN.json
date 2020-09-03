@@ -55,5 +55,6 @@
   "favoritesList": "收藏列表",
   "formula": "公式",
   "predictedValue": "输入预测值",
-  "prediction": "预测"
+  "prediction": "预测",
+  "uploadFileTip": "上传文件需为Excel格式、小于10M"
 }

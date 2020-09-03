@@ -1,7 +1,12 @@
 <template>
   <div class="data-clean">
     <template v-if="isImportData">
-      <Upload :on-success="importSuccess" action="http://129.204.99.160:19696/capacity/api/v1/r/excel">
+      <Alert>{{$t('uploadFileTip')}}</Alert>
+      <Upload 
+        :on-success="importSuccess"
+        :format="fileType"
+        :max-size=10240
+        action="/capacity/api/v1/r/excel">
         <Button icon="ios-cloud-upload-outline">Upload files</Button>
       </Upload>
     </template>
@@ -67,6 +72,7 @@ export default {
   name: '',
   data() {
     return {
+      fileType: ['xls', 'xlsx'],
       xyAxis: [],
       params: [],
 
@@ -172,7 +178,7 @@ export default {
       this.yValue = ''
     },
     importSuccess (response) {
-      this.$Message.success('Success !')
+      this.$Message.success(response.message)
       this.columns = []
       this.xyAxis = []
       this.columns.push({
