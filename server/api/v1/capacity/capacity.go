@@ -100,6 +100,7 @@ func RJustifyDataHandler(w http.ResponseWriter,r *http.Request)  {
 		for i,vv := range v {
 			if i == 0 {
 				tmpMap["time"] = time.Unix(int64(vv/1000), 0).Format("2006-01-02 15:04:05")
+				tmpMap["id"] = fmt.Sprintf("%.0f", vv)
 				tmpMap[result.Legend[i]] = fmt.Sprintf("%.0f", vv)
 			}else {
 				tmpMap[result.Legend[i]] = fmt.Sprintf("%.4f", vv)
@@ -153,6 +154,7 @@ func SaveAnalyzeConfig(w http.ResponseWriter,r *http.Request)  {
 	if param.Guid == "" || param.Name == "" || param.Workspace == "" {
 		err = fmt.Errorf("Param validate fail,guid name workspace can not empty ")
 	}else {
+		param.Name = fmt.Sprintf("%s-%s", param.Name, time.Now().Format("20060102150405"))
 		err = services.SaveRWork(param)
 	}
 	returnJson(r,w,err,nil)

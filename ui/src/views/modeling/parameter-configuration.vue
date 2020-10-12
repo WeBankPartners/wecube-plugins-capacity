@@ -120,6 +120,9 @@ export default {
   mounted () {
     this.getEndpointList('.')
   },
+  activated () {
+    this.$parent.cachedCom.push(this.$vnode)
+  },
   methods: {
     getChart () {
       if (Date.parse(new Date(this.startDate)) > Date.parse(new Date(this.endDate))) {
@@ -145,6 +148,7 @@ export default {
         const chartConfig = {eye: false,clear:true, zoomCallback: true}
         readyToDraw(this,responseData.data, 1, chartConfig)
         let xyAxis = []
+        if (!responseData.data.legend) return
         responseData.data.legend.forEach(_ => {
           xyAxis.push({
             label: _,
