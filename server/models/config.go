@@ -91,6 +91,7 @@ func InitConfig(cfg string) error {
 		log.Println("parse config file:", cfg, "fail:", err)
 		return err
 	}
+	c.Mysql.Password = DecryptRsa(c.Mysql.Password)
 	lock.Lock()
 	config = &c
 	log.Println("read config file:", cfg, "successfully")
