@@ -162,3 +162,8 @@ func getRMonitorTable(guid string) (err error,result []*models.RMonitorTable) {
 	err = mysqlEngine.SQL("select * from r_monitor where guid=?", guid).Find(&result)
 	return err,result
 }
+
+func getRWorkByName(name string) (err error,result []*models.RWorkTable) {
+	err = mysqlEngine.SQL("select * from r_work where name=?", name).Find(&result)
+	return err,result
+}

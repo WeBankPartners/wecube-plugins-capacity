@@ -20,8 +20,8 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 		output.CallbackParameter = input.CallbackParameter
 	}()
 	// Check param
-	if input.TemplateGuid == "" {
-		err = fmt.Errorf("Parameter template_guid can not empty ")
+	if input.TemplateName == "" {
+		err = fmt.Errorf("Parameter template_name can not empty ")
 		return
 	}
 	if input.Start == "" || input.End == "" {
@@ -40,12 +40,12 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 	}
 
 	// Load template work
-	cErr,rWorks := ListRConfig(input.TemplateGuid)
+	cErr,rWorks := getRWorkByName(input.TemplateName)
 	if len(rWorks) == 0 {
 		if cErr != nil {
 			err = fmt.Errorf("Get r_work table data fail,%s ", cErr.Error())
 		}else{
-			err = fmt.Errorf("Get empty data from r_work when guid=%s ", input.TemplateGuid)
+			err = fmt.Errorf("Get empty data from r_work when name=%s ", input.TemplateName)
 		}
 		return
 	}
@@ -56,7 +56,7 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 	output.FuncOld = rWorks[0].Expr
 
 	// Load template monitor
-	cErr,rMonitor := getRMonitorTable(input.TemplateGuid)
+	cErr,rMonitor := getRMonitorTable(rWorks[0].Guid)
 	if cErr != nil {
 		err = fmt.Errorf("Get r_monitor table data fail,%s ", cErr.Error())
 		return
@@ -106,6 +106,7 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 		}
 		tmpName += fmt.Sprintf("-%d", time.Now().Unix())
 		saveParam.Name = tmpName
+		output.TemplateName = tmpName
 		err = SaveRWork(saveParam)
 	}
 	return
