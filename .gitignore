@@ -7,3 +7,4 @@ ui/plugin
 server/public/r_images/*
 server/server
 server/app.log
+.vscode
