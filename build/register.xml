@@ -3,7 +3,7 @@
 
     <!-- 1.依赖分析 - 描述运行本插件包需要的其他插件包 -->
     <packageDependencies>
-        <packageDependency name="wecube-monitor" version="v1.6.0"/>
+        <packageDependency name="monitor" version="v1.6.0"/>
         <packageDependency name="platform" version="v2.5.0"/>
     </packageDependencies>
 
@@ -38,6 +38,25 @@
 
     <!-- 7.插件列表 - 描述插件包中单个插件的输入和输出 -->
     <plugins>
+        <plugin name="compare" targetPackage="" targetEntity="" registerName="" targetEntityFilterRule="">
+            <interface action="add" path="/capacity/api/v1/plugin/compare" filterRule="">
+                <inputParameters>
+                    <parameter datatype="string" required="N" sensitiveData="N" mappingType="entity" mappingEntityExpression="">guid</parameter>
+                    <parameter datatype="string" required="Y" sensitiveData="N" mappingType="entity" mappingEntityExpression="">templateName</parameter>
+                    <parameter datatype="string" required="Y" sensitiveData="N" mappingType="entity" mappingEntityExpression="">start</parameter>
+                    <parameter datatype="string" required="Y" sensitiveData="N" mappingType="entity" mappingEntityExpression="">end</parameter>
+                    <parameter datatype="string" required="N" sensitiveData="N" mappingType="entity" mappingEntityExpression="">save</parameter>
+                </inputParameters>
+                <outputParameters>
+                    <parameter datatype="string" sensitiveData="N" mappingType="context">errorCode</parameter>
+                    <parameter datatype="string" sensitiveData="N" mappingType="context">errorMessage</parameter>
+                    <parameter datatype="string" sensitiveData="N" mappingType="context">guid</parameter>
+                    <parameter datatype="string" sensitiveData="N" mappingType="context">funcOld</parameter>
+                    <parameter datatype="string" sensitiveData="N" mappingType="context">funcNew</parameter>
+                    <parameter datatype="string" sensitiveData="N" mappingType="context">templateName</parameter>
+                </outputParameters>
+            </interface>
+        </plugin>
     </plugins>
 
 </package>

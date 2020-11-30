@@ -8,7 +8,7 @@ type PluginRequest struct {
 type PluginRequestInput struct {
 	CallbackParameter  string  `json:"callbackParameter"`
 	Guid  string  `json:"guid"`
-	TemplateGuid  string  `json:"template_guid"`
+	TemplateName  string  `json:"templateName"`
 	Start string  `json:"start"`
 	End   string  `json:"end"`
 	Save  string  `json:"save"`
@@ -29,6 +29,7 @@ type PluginResponseOutput struct {
 	Guid  string  `json:"guid"`
 	ErrorCode  string  `json:"errorCode"`
 	ErrorMessage  string  `json:"errorMessage"`
-	FuncOld  string  `json:"func_old"`
-	FuncNew  string  `json:"func_new"`
+	FuncOld  string  `json:"funcOld"`
+	FuncNew  string  `json:"funcNew"`
+	TemplateName  string  `json:"templateName"`
 }
