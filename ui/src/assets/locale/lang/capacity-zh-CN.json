@@ -20,8 +20,8 @@
     "endpointSearch": "请输入后选择对象",
     "metric": "请选择指标",
     "datePicker": "请选择日期",
-    "xAxis": "选择X轴数据",
-    "yAxis": "选择Y轴数据",
+    "xAxis": "选择自变量",
+    "yAxis": "选择因变量",
     "aggregate": "选择聚合类型"
   },
   "photoTipsOne": "这张图横轴是y值，纵轴是残差(实际值和估计值之间的差)希望看到的是分布均匀的残差(线比较直，点从左到右比较均匀的分布在线两边，说的专业点就是正态分布)如果这个图的线呈现个弧形，那极有可能是个二次关系(二次方程是弧形...)",
@@ -56,5 +56,7 @@
   "formula": "公式",
   "predictedValue": "输入预测值",
   "prediction": "预测",
-  "uploadFileTip": "上传文件需为Excel格式、小于10M"
+  "uploadFileTip": "上传文件需为Excel格式、小于10M",
+  "independent_variable": "自变量",
+  "dependent_variable": "因变量"
 }

@@ -12,20 +12,13 @@
     </template>
     <template>
       <Row>
-        <Col span="3">
-          <span class="param-title">{{$t('axisCoordinates')}}</span>
-        </Col>
-        <Col span="21">
-          <Form :label-width="20">
+        <Col>
+          <Form>
             <FormItem class="param-inline">
-              <Select v-model="getDataParams.legend_x" style="width:320px" :placeholder="$t('placeholder.xAxis')" filterable multiple>
-                <Option v-for="item in xOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
-              </Select>
-            </FormItem>
-            <FormItem class="param-inline">
+              <span style="margin-right:8px;">{{$t('dependent_variable')}}:</span>
               <Select 
-                v-model="getDataParams.legend_y" 
-                style="width:320px" 
+                v-model="getDataParams.legend_y"
+                style="width:320px"
                 :placeholder="$t('placeholder.yAxis')" 
                 filterable
                 clearable
@@ -33,17 +26,21 @@
                 <Option v-for="item in yOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
               </Select>
             </FormItem>
+            <FormItem class="param-inline">
+              <span style="vertical-align: top;margin-right:8px;">{{$t('independent_variable')}}:</span>
+              <Select v-model="getDataParams.legend_x" style="width:320px" :placeholder="$t('placeholder.xAxis')" filterable multiple>
+                <Option v-for="item in xOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
+              </Select>
+            </FormItem>
             <FormItem class="param-inline" v-if="!isImportData">
               <Select v-model="aggregateValue" style="width:90px" :placeholder="$t('placeholder.aggregate')" filterable>
                 <Option v-for="item in aggregateOption" :value="item.value" :key="item.value">{{ item.label }}</Option>
               </Select>
             </FormItem>
+            <FormItem class="param-inline" v-if="!isImportData">
+              <button :disabled="!(getDataParams.legend_x.length && getDataParams.legend_y)" @click="getData" type="button" class="btn btn-confirm-f margin-left">{{$t('searchData')}}</button>
+            </FormItem>
           </Form>
-        </Col>
-      </Row>
-      <Row v-if="!isImportData">
-        <Col span="21" offset="3">
-          <button :disabled="!(getDataParams.legend_x.length && getDataParams.legend_y)" @click="getData" type="button" class="btn btn-confirm-f margin-left">{{$t('searchData')}}</button>
         </Col>
       </Row>
     </template>
@@ -228,6 +225,7 @@ export default {
 }
 .param-inline {
   display: inline-block;
+  margin-right: 16px;
 }
 .margin-left {
   margin-left: 20px;
