@@ -109,6 +109,7 @@ export default {
         name: this.formInline.name,
         y_real: this.result.chart.data_series[0].data,
         y_func: this.result.chart.data_series[1].data,
+        monitor: this.formulaParams
       }
        this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.saveRAnalyze, params, () => {
         this.$Message.success('Success!')
