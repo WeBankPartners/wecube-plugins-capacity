@@ -104,7 +104,7 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 		if strings.Contains(rWorks[0].Name, "-") {
 			tmpName = tmpName[:strings.LastIndex(tmpName, "-")]
 		}
-		tmpName += fmt.Sprintf("-%d", time.Now().Unix())
+		tmpName += fmt.Sprintf("-%s", time.Now().Format("20060102150405"))
 		saveParam.Name = tmpName
 		output.TemplateName = tmpName
 		err = SaveRWork(saveParam)
