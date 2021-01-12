@@ -54,6 +54,7 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 		return
 	}
 	output.FuncOld = rWorks[0].Expr
+	output.LevelOld = fmt.Sprintf("%d", rWorks[0].Level)
 
 	// Load template monitor
 	cErr,rMonitor := getRMonitorTable(rWorks[0].Guid)
@@ -79,6 +80,7 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 		return
 	}
 	output.FuncNew = analyzeResult.FuncExpr
+	output.LevelNew = fmt.Sprintf("%d", analyzeResult.Level)
 
 	// Save
 	isSave := strings.ToLower(input.Save)

@@ -20,4 +20,4 @@ Wecube-Plugins-Capacity插件主要有两个菜单功能，一是容量建模，
 
 ## <span id="capacity_calc"></span>容量预测  
 容量预测是使用容量建模保存后的模型公式，通过输入自定义的自变量，来计算对应的因变量并展示。
-![容量预测](images/user_guide_04.png)
+![容量预测](images/user_guide_05.png)

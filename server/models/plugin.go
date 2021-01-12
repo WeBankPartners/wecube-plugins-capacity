@@ -31,5 +31,7 @@ type PluginResponseOutput struct {
 	ErrorMessage  string  `json:"errorMessage"`
 	FuncOld  string  `json:"funcOld"`
 	FuncNew  string  `json:"funcNew"`
+	LevelOld string  `json:"levelOld"`
+	LevelNew string  `json:"levelNew"`
 	TemplateName  string  `json:"templateName"`
 }
