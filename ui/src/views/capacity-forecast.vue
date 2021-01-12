@@ -77,9 +77,18 @@
               <span class="param-title">{{$t('predictedValue')}}</span>
             </Col>
             <Col span="21">
+               <Tag v-if="targetObject" color="primary">{{targetObject}}</Tag>
               <div v-for="(item, intemIndex) in inputArray" :key="intemIndex" class="user-array">
                 <template v-for="(key, keyIndex) in Object.keys(item)">
-                  <InputNumber :min="0" :step="0.1" v-model="item[key]" :key="key + intemIndex + keyIndex" class="user-input"></InputNumber>
+                  <InputNumber 
+                    :min="0" 
+                    :step="0.1" 
+                    v-model="item[key]" 
+                    :placeholder="inputPlaceholder[keyIndex]"
+                    :key="key + intemIndex + keyIndex" 
+                    class="user-input"
+                    >
+                  </InputNumber>
                 </template>
                 <Icon type="md-trash" @click="deleteRow(intemIndex)" v-if="inputArray.length != 1" class="operation-icon-delete" />
                 <Icon type="ios-add" @click="addRow" v-if="intemIndex + 1 === inputArray.length" class="operation-icon-add" />
@@ -112,7 +121,9 @@ export default {
       },
 
       inputTmp: null,
-      inputArray: [],
+      inputArray: [], // 预测值
+      inputPlaceholder: [], // 预测值提示信息
+      targetObject: null, // 待预测机器
 
       columns: [],
       tableData: []
@@ -138,6 +149,10 @@ export default {
         this.result.level = responseData.data.level + ''
         this.drawChart(responseData.data.chart)
         const len = responseData.data.func_x.length
+        this.inputPlaceholder = responseData.data.legend_x.map(item => {
+          return item.split(':')[1]
+        })
+        this.targetObject = responseData.data.legend_x[0].split(':')[0]
         let tmp = {}
         for (let i = 0; i < len; i++) {
           tmp['key' + i] = null
@@ -267,6 +282,7 @@ export default {
 // }
 .user-input {
   margin-right: 8px;
+  width: 270px;
 }
 .operation-icon-delete {
   font-size: 18px;
