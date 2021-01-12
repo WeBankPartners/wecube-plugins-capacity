@@ -18,7 +18,7 @@
           <Col span="21">
             <Form>
               <FormItem class="param-inline">
-                <Select v-model="favorite" style="width:320px" :placeholder="$t('placeholder.metric')" filterable>
+                <Select v-model="favorite" style="width:320px" :placeholder="$t('placeholder.metric')" @on-change="changeFavorite" filterable>
                   <Option v-for="item in favoritesList" :value="item.guid" :key="item.guid">{{ item.name }}</Option>
                 </Select>
               </FormItem>
@@ -149,10 +149,16 @@ export default {
         this.result.level = responseData.data.level + ''
         this.drawChart(responseData.data.chart)
         const len = responseData.data.func_x.length
-        this.inputPlaceholder = responseData.data.legend_x.map(item => {
-          return item.split(':')[1]
-        })
-        this.targetObject = responseData.data.legend_x[0].split(':')[0]
+        const index = responseData.data.legend_x[0].indexOf(':')
+        if (index > -1) {
+          this.targetObject = responseData.data.legend_x[0].split(':')[0]
+          this.inputPlaceholder = responseData.data.legend_x.map(item => {
+            return item.split(':')[1]
+          })
+        } else {
+          this.targetObject = null
+          this.inputPlaceholder = responseData.data.legend_x
+        }
         let tmp = {}
         for (let i = 0; i < len; i++) {
           tmp['key' + i] = null
@@ -161,6 +167,10 @@ export default {
         this.inputArray.push(tmp)
         this.showResult = true
       })
+    },
+    changeFavorite () {
+      this.columns = []
+      this.tableData = []
     },
     drawChart (config) {
       let myChart = echarts.init(document.getElementById('graph'))
