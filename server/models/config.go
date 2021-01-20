@@ -62,6 +62,8 @@ type GlobalConfig struct {
 var (
 	config     *GlobalConfig
 	lock       = new(sync.RWMutex)
+	SubSystemCode string
+	SubSystemKey  string
 )
 
 func Config() *GlobalConfig {
@@ -97,5 +99,12 @@ func InitConfig(cfg string) error {
 	log.Println("read config file:", cfg, "successfully")
 	lock.Unlock()
 	initWorkspaceDir()
+	SubSystemCode = os.Getenv("SUB_SYSTEM_CODE")
+	SubSystemKey = os.Getenv("SUB_SYSTEM_KEY")
+	if config.DataSource.Monitor.BaseUrl != "" && SubSystemCode != "" && SubSystemKey != "" {
+		InitCoreToken()
+	}else{
+		log.Printf("Init core token fail,coreUrl & subSystemCode & subSystemKey can not empty")
+	}
 	return nil
 }

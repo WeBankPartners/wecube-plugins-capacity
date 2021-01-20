@@ -32,7 +32,7 @@
 
     <!-- 6.运行资源 - 描述部署运行本插件包需要的基础资源(如主机、虚拟机、容器、数据库等) -->
     <resourceDependencies>
-        <docker imageName="wecube-plugins-capacity:{{PLUGIN_VERSION}}" containerName="wecube-plugins-capacity-{{PLUGIN_VERSION}}" portBindings="{{ALLOCATE_PORT}}:9096" volumeBindings="{{BASE_MOUNT_PATH}}/capacity/logs:/app/capacity/logs,/etc/localtime:/etc/localtime,{{BASE_MOUNT_PATH}}/certs:/data/certs" envVariables="CAPACITY_MYSQL_HOST={{DB_HOST}},CAPACITY_MYSQL_PORT={{DB_PORT}},CAPACITY_MYSQL_SCHEMA={{DB_SCHEMA}},CAPACITY_MYSQL_USER={{DB_USER}},CAPACITY_MYSQL_PWD={{DB_PWD}},CAPACITY_LOG_LEVEL={{CAPACITY_LOG_LEVEL}},GATEWAY_URL={{GATEWAY_URL}}"/>
+        <docker imageName="wecube-plugins-capacity:{{PLUGIN_VERSION}}" containerName="wecube-plugins-capacity-{{PLUGIN_VERSION}}" portBindings="{{ALLOCATE_PORT}}:9096" volumeBindings="{{BASE_MOUNT_PATH}}/capacity/logs:/app/capacity/logs,/etc/localtime:/etc/localtime,{{BASE_MOUNT_PATH}}/certs:/data/certs" envVariables="CAPACITY_MYSQL_HOST={{DB_HOST}},CAPACITY_MYSQL_PORT={{DB_PORT}},CAPACITY_MYSQL_SCHEMA={{DB_SCHEMA}},CAPACITY_MYSQL_USER={{DB_USER}},CAPACITY_MYSQL_PWD={{DB_PWD}},CAPACITY_LOG_LEVEL={{CAPACITY_LOG_LEVEL}},GATEWAY_URL={{GATEWAY_URL}},SUB_SYSTEM_CODE={{SUB_SYSTEM_CODE}},SUB_SYSTEM_KEY={{SUB_SYSTEM_KEY}}"/>
         <mysql schema="capacity" initFileName="init.sql" upgradeFileName=""/>
     </resourceDependencies>
 

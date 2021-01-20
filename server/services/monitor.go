@@ -50,10 +50,9 @@ func requestMonitor(method,url string,postData interface{}) (err error,bodyData 
 	request,_ := http.NewRequest(method, fmt.Sprintf("%s/monitor/api/v1/%s", models.Config().DataSource.Monitor.BaseUrl, url), bytes.NewBuffer(postBytes))
 	tokenValue := models.Config().DataSource.Monitor.TokenValue
 	if models.Config().DataSource.Monitor.TokenKey == "Authorization" {
-		tokenValue = "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJTWVNfTU9OSVRPUiIsImlhdCI6MTU5MDExNzM5NSwidHlwZSI6ImFjY2Vzc1Rva2VuIiwiY2xpZW50VHlwZSI6IlNVQl9TWVNURU0iLCJleHAiOjE3NDU2MzczOTUsImF1dGhvcml0eSI6IltTVUJfU1lTVEVNXSJ9.soBixGZNfZKJTsm-augwGsu-fOoPuTYvZNc_VlxS8oAcZsRn4-ccSjEeAvVAso-7y0dxvzz5c_gw9iUE9LVK2w"
+		tokenValue = models.GetCoreToken()
 	}
 	request.Header.Set(models.Config().DataSource.Monitor.TokenKey, tokenValue)
-	request.Header.Set("X-Auth-Token", "default-token-used-in-server-side")
 	request.Header.Set("Content-Type", "application/json")
 	response,err := http.DefaultClient.Do(request)
 	if err != nil {
