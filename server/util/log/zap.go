@@ -1,22 +1,28 @@
 package log
 
 import (
+	"encoding/json"
+	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
-	"time"
 	"os"
-	"encoding/json"
-	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
 	"strings"
+	"time"
 )
 
 var (
 	Logger *zap.Logger
+	AccessLogger *zap.Logger
 	levelStringList = []string{"debug","info","warn","error"}
 )
 
-func InitArchiveZapLogger()  {
+func InitLogger()  {
+	Logger = InitArchiveZapLogger(models.Config().Log.File)
+	AccessLogger = InitArchiveZapLogger(models.Config().Log.AccessFile)
+}
+
+func InitArchiveZapLogger(logFile string) *zap.Logger {
 	logLevel := strings.ToLower(models.Config().Log.Level)
 	var level int
 	for i,v := range levelStringList {
@@ -28,7 +34,7 @@ func InitArchiveZapLogger()  {
 	zapLevel := zap.NewAtomicLevel()
 	zapLevel.SetLevel(zapcore.Level(level))
 	hook := lumberjack.Logger{
-		Filename:   models.Config().Log.File,
+		Filename:   logFile,
 		MaxSize:    models.Config().Log.ArchiveMaxSize,
 		MaxBackups: models.Config().Log.ArchiveMaxBackup,
 		MaxAge:     models.Config().Log.ArchiveMaxDay,
@@ -50,8 +56,9 @@ func InitArchiveZapLogger()  {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 	core := zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout),zapcore.AddSync(&hook)), zapLevel)
-	Logger = zap.New(core, zap.AddCaller(), zap.Development())
-	Logger.Info("success init zap log !!")
+	logger := zap.New(core, zap.AddCaller(), zap.Development())
+	logger.Info("success init zap log !!")
+	return logger
 }
 
 func Error(err error) zap.Field {

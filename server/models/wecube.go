@@ -13,6 +13,11 @@ import (
 	"time"
 )
 
+const (
+	SystemRole = `SUB_SYSTEM`
+	PlatformUser = `SYS_PLATFORM`
+)
+
 var (
 	coreRefreshToken string
 	coreRefreshTokenExpTime time.Time
@@ -20,6 +25,12 @@ var (
 	coreRequestTokenExpTime time.Time
 	requestCoreNonce = "capacity"
 )
+
+type CoreJwtToken struct {
+	User    string    `json:"user"`
+	Expire  int64     `json:"expire"`
+	Roles   []string  `json:"roles"`
+}
 
 type requestToken struct {
 	Password  string  `json:"password"`

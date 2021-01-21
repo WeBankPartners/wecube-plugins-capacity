@@ -41,3 +41,24 @@ func ComparePluginHandler(w http.ResponseWriter,r *http.Request)  {
 	d,_ := json.Marshal(result)
 	w.Write(d)
 }
+
+type pluginInterfaceResultObj struct {
+	ResultCode  string  `json:"resultCode"`
+	ResultMessage  string  `json:"resultMessage"`
+	Results  pluginInterfaceResultOutput  `json:"results"`
+}
+
+type pluginInterfaceResultOutput struct {
+	Outputs  []string  `json:"outputs"`
+}
+
+func ReturnPluginAuthFail(r *http.Request,w http.ResponseWriter)  {
+	w.Header().Set("Content-Type", "application/json")
+	var response pluginInterfaceResultObj
+	response.ResultCode = "1"
+	response.ResultMessage = "Token authority validate fail"
+	response.Results = pluginInterfaceResultOutput{Outputs: []string{}}
+	w.WriteHeader(http.StatusOK)
+	d,_ := json.Marshal(response)
+	w.Write(d)
+}

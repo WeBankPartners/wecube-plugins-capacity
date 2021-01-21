@@ -12,6 +12,7 @@ import (
 type HttpConfig struct {
 	Port  int  `json:"port"`
 	Token  string  `json:"token"`
+	AuthDisable string `json:"auth_disable"`
 }
 
 type CacheConfig struct {
@@ -45,6 +46,7 @@ type MysqlConfig struct {
 type LogConfig struct {
 	Level   string  `json:"level"`
 	File    string  `json:"file"`
+	AccessFile string `json:"access_file"`
 	ArchiveMaxSize int `json:"archive_max_size"`
 	ArchiveMaxBackup int `json:"archive_max_backup"`
 	ArchiveMaxDay int `json:"archive_max_day"`
@@ -62,6 +64,7 @@ type GlobalConfig struct {
 var (
 	config     *GlobalConfig
 	lock       = new(sync.RWMutex)
+	CoreJwtKey string
 	SubSystemCode string
 	SubSystemKey  string
 )
@@ -99,6 +102,7 @@ func InitConfig(cfg string) error {
 	log.Println("read config file:", cfg, "successfully")
 	lock.Unlock()
 	initWorkspaceDir()
+	CoreJwtKey = DecryptRsa(os.Getenv("JWT_SIGNING_KEY"))
 	SubSystemCode = os.Getenv("SUB_SYSTEM_CODE")
 	SubSystemKey = os.Getenv("SUB_SYSTEM_KEY")
 	if config.DataSource.Monitor.BaseUrl != "" && SubSystemCode != "" && SubSystemKey != "" {
