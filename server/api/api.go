@@ -37,7 +37,7 @@ func InitHttpServer(port int) {
 func handleWithLog(h http.HandlerFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter,r *http.Request) {
 		start := time.Now()
-		var coreToken models.CoreJwtToken
+		coreToken := models.CoreJwtToken{User: ""}
 		requestLegal := true
 		if models.Config().Http.AuthDisable != "true" {
 			tokenString := r.Header.Get("Authorization")
