@@ -68,7 +68,7 @@ func handleWithLog(h http.HandlerFunc) http.Handler {
 				capacity.ReturnAuthFail(r, w)
 			}
 		}
-		log.AccessLogger.Info("Request",log.String("url", r.RequestURI), log.String("method",r.Method), log.String("ip",strings.Split(r.RemoteAddr,":")[0]), log.Int("code", r.Response.StatusCode), log.String("operator", coreToken.User), log.Float64("cost_second",time.Now().Sub(start).Seconds()))
+		log.AccessLogger.Info("Request",log.String("url", r.RequestURI), log.String("method",r.Method), log.String("ip",strings.Split(r.RemoteAddr,":")[0]), log.String("operator", coreToken.User), log.Float64("cost_second",time.Now().Sub(start).Seconds()))
 	})
 }
 
