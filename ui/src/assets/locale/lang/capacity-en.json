@@ -20,8 +20,8 @@
     "endpointSearch": "Please input",
     "metric": "Select metric",
     "datePicker": "Please select",
-    "xAxis": "Select X axis data",
-    "yAxis": "Select Y axis data",
+    "xAxis": "Select independent variable",
+    "yAxis": "Select dependent variable",
     "aggregate": "Select aggregate type"
   },
   "photoTipsOne": "The horizontal axis of this picture is the y value, and the vertical axis is the residual error (the difference between the actual value and the estimated value). What you want to see is a uniformly distributed residual error (the line is relatively straight, and the points are more evenly distributed from left to right online On both sides, the professional point is the normal distribution) If the line of this graph appears to be an arc, it is very likely to be a quadratic relationship (the quadratic equation is an arc...)",
@@ -56,5 +56,7 @@
   "formula": "Formula",
   "predictedValue": "Enter predicted value",
   "prediction": "Prediction",
-  "uploadFileTip": "Upload file must be in Excel format, less than 10M"
+  "uploadFileTip": "Upload file must be in Excel format, less than 10M",
+  "independent_variable": "Independent",
+  "dependent_variable": "Dependent"
 }

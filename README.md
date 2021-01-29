@@ -28,6 +28,8 @@
 如何安装， 请查看以下文档
 [Wecube-Plugins-Capacity部署文档](doc/install_guide.md)
 
+## 用户手册
+关于Wecube-Plugins-Capacity的使用和操作说明，请查看文档[Wecube-Plugins-Capacity用户手册](doc/user_guide.md)
 
 ## 版权声明
 Wecube-Plugins-Capacity是基于 Apache License 2.0 协议， 详情请参考

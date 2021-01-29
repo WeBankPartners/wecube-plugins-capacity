@@ -104,13 +104,18 @@ export default {
     },
     save () {
       this.result.level = Number(this.result.level)
+      let monitor = JSON.parse(JSON.stringify(this.formulaParams))
+      if (this.isImportData) {
+        monitor.config = []
+      }
       let params = {
         ...this.result,
         name: this.formInline.name,
         y_real: this.result.chart.data_series[0].data,
         y_func: this.result.chart.data_series[1].data,
+        monitor: monitor
       }
-       this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.saveRAnalyze, params, () => {
+      this.$root.$capacityRequestEntrance.capacityRequestEntrance('POST', this.$root.capacityApiCenter.saveRAnalyze, params, () => {
         this.$Message.success('Success!')
       })
     },

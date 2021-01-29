@@ -17,7 +17,7 @@ func main() {
 		fmt.Printf("Init config fail : %v \n", err)
 		return
 	}
-	log.InitArchiveZapLogger()
+	log.InitLogger()
 	services.InitDbEngine()
 	go services.AutoCleanWorkspace()
 	api.InitHttpServer(models.Config().Http.Port)

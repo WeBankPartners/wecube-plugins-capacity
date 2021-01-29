@@ -492,6 +492,8 @@ func GetRWork(guid string) (err error,result models.RunScriptResult) {
 	result.Output = rWorkTables[0].Output
 	result.FuncExpr = rWorkTables[0].Expr
 	result.Level = rWorkTables[0].Level
+	result.LegendX = strings.Split(rWorkTables[0].FuncXName, "^")
+	result.LegendY = rWorkTables[0].LegendY
 	pngDir := strings.Replace(result.Workspace, "public/", "", -1)
 	result.Images = []string{pngDir+"/rp001.png",pngDir+"/rp002.png",pngDir+"/rp003.png",pngDir+"/rp004.png"}
 	for _,v := range strings.Split(rWorkTables[0].FuncXName, "^") {

@@ -54,6 +54,7 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 		return
 	}
 	output.FuncOld = rWorks[0].Expr
+	output.LevelOld = fmt.Sprintf("%d", rWorks[0].Level)
 
 	// Load template monitor
 	cErr,rMonitor := getRMonitorTable(rWorks[0].Guid)
@@ -79,6 +80,7 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 		return
 	}
 	output.FuncNew = analyzeResult.FuncExpr
+	output.LevelNew = fmt.Sprintf("%d", analyzeResult.Level)
 
 	// Save
 	isSave := strings.ToLower(input.Save)
@@ -104,7 +106,7 @@ func CompareModels(input *models.PluginRequestInput) (err error,output models.Pl
 		if strings.Contains(rWorks[0].Name, "-") {
 			tmpName = tmpName[:strings.LastIndex(tmpName, "-")]
 		}
-		tmpName += fmt.Sprintf("-%d", time.Now().Unix())
+		tmpName += fmt.Sprintf("-%s", time.Now().Format("20060102150405"))
 		saveParam.Name = tmpName
 		output.TemplateName = tmpName
 		err = SaveRWork(saveParam)

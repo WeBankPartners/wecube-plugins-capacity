@@ -1,11 +1,13 @@
 {
   "http": {
     "port": 9096,
-    "token": "default-token-used-in-server-side"
+    "token": "default-token-used-in-server-side",
+    "auth_disable": "true"
   },
   "log": {
     "level": "debug",
     "file": "logs/capacity.log",
+    "access_file": "logs/capacity-access.log",
     "archive_max_size": 64,
     "archive_max_backup": 10,
     "archive_max_day": 15,

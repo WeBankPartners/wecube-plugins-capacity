@@ -37,6 +37,8 @@ type RunScriptResult struct {
 	FuncX      []*FuncXObj  `json:"func_x"`
 	FuncB      float64  `json:"func_b"`
 	Chart      EChartOption `json:"chart"`
+	LegendX    []string  `json:"legend_x"`
+	LegendY    string   `json:"legend_y"`
 }
 
 type RRequestMonitor struct {

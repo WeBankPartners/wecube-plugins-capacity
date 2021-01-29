@@ -203,3 +203,14 @@ func returnJson(r *http.Request,w http.ResponseWriter,err error,result interface
 	d,_ := json.Marshal(response)
 	w.Write(d)
 }
+
+func ReturnAuthFail(r *http.Request,w http.ResponseWriter)  {
+	w.Header().Set("Content-Type", "application/json")
+	var response models.RespJson
+	response.Code = 1
+	response.Msg = "Token validate fail"
+	response.Data = "Token validate fail"
+	w.WriteHeader(http.StatusUnauthorized)
+	d,_ := json.Marshal(response)
+	w.Write(d)
+}
