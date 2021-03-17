@@ -4,14 +4,10 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 import 'font-awesome/css/font-awesome.css'
 import './plugins/iview.js'
 import capacityRequestEntrance from '@/assets/js/capacityRequestEntrance.js'
-import {tableUtil} from '@/assets/js/tableUtil.js'
-import {validate} from '@/assets/js/validate.js'
 import capacityApiCenter from '@/assets/config/capacity-api-center.json'
 
 window.addOptions({
   $capacityRequestEntrance: capacityRequestEntrance,
-  $validate: validate,
-  $tableUtil: tableUtil,
   capacityApiCenter: capacityApiCenter,
 })
 
