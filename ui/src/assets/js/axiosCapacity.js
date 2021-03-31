@@ -1,10 +1,9 @@
 import axios from 'axios'
 import {capacityURL_config} from './capacityURL'
-const baseURL = `${capacityURL_config}/capacity/api/v1`
 export default function ajax (options) {
   const ajaxObj = {
     method: options.method,
-    baseURL: baseURL,
+    baseURL: capacityURL_config,
     url: options.url,
     timeout: 30000,
     params: options.params,
