@@ -1,10 +1,10 @@
 <template>
   <div class="parameter-configuration">
     <Row>
-      <Col span="3">
+      <Col span="4">
         <span class="param-title">{{$t('endpointAndMetric')}}</span>
       </Col>
-      <Col span="21">
+      <Col span="20">
         <Form :label-width="20">
           <FormItem class="param-inline">
             <Select
@@ -45,10 +45,10 @@
       </Col>
     </Row>
     <Row>
-      <Col span="3">
+      <Col span="4">
         <span class="param-title">{{$t('timeInterval')}}</span>
       </Col>
-      <Col span="21">
+      <Col span="20">
       <Form :label-width="20">
         <FormItem class="param-inline">
           <DatePicker 
@@ -185,7 +185,7 @@ export default {
         search_type: 'endpoint'
       }
       this.$root.$capacityRequestEntrance.capacityRequestEntrance('GET', this.$root.capacityApiCenter.getEndpoint, params, (responseData) => {
-        this.endpointList = responseData.data
+        this.endpointList = responseData.data.filter(item => item.id !== -1)
       })
     },
     clearMetric () {

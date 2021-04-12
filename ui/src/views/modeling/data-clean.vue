@@ -18,7 +18,7 @@
               <span style="margin-right:8px;">{{$t('dependent_variable')}}:</span>
               <Select 
                 v-model="getDataParams.legend_y"
-                style="width:320px"
+                style="width:300px"
                 :placeholder="$t('placeholder.yAxis')" 
                 filterable
                 clearable
@@ -28,7 +28,7 @@
             </FormItem>
             <FormItem class="param-inline">
               <span style="vertical-align: top;margin-right:8px;">{{$t('independent_variable')}}:</span>
-              <Select v-model="getDataParams.legend_x" style="width:320px" :placeholder="$t('placeholder.xAxis')" filterable multiple>
+              <Select v-model="getDataParams.legend_x" style="width:300px" :placeholder="$t('placeholder.xAxis')" filterable multiple>
                 <Option v-for="item in xOptions" :value="item.value" :key="item.value">{{ item.value }}</Option>
               </Select>
             </FormItem>
