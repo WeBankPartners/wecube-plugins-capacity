@@ -100,7 +100,7 @@ func ExportExprResult(endpoints []string, metric string) (result []*models.Expor
 				continue
 			}
 		}
-		tmpResultObj := models.ExportResultObj{Endpoint: rMonitor.Endpoint, FuncExpr: rWorkMap[rMonitor.Guid].Expr, UpdateTime: rWorkMap[rMonitor.Guid].UpdateAt.Format(models.DatetimeFormat)}
+		tmpResultObj := models.ExportResultObj{RWorkName: rWorkMap[rMonitor.Guid].Name, Endpoint: rMonitor.Endpoint, FuncExpr: rWorkMap[rMonitor.Guid].Expr, UpdateTime: rWorkMap[rMonitor.Guid].UpdateAt.Format(models.DatetimeFormat)}
 		tmpResultObj.YFunc = models.ExportResultParamObj{Metric: tmpLegendY}
 		tmpResultObj.XParams = buildExportLegendX(rWorkMap[rMonitor.Guid].FuncX, rWorkMap[rMonitor.Guid].FuncXName, rWorkMap[rMonitor.Guid].FuncB, rMonitor.Endpoint)
 		result = append(result, &tmpResultObj)

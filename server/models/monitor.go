@@ -89,9 +89,10 @@ type ExportResultParamObj struct {
 }
 
 type ExportResultObj struct {
+	RWorkName  string                  `json:"r_work_name"`
 	Endpoint   string                  `json:"endpoint"`
-	XParams    []*ExportResultParamObj `json:"xParams"`
-	YFunc      ExportResultParamObj    `json:"yFunc"`
+	XParams    []*ExportResultParamObj `json:"x_params"`
+	YFunc      ExportResultParamObj    `json:"y_func"`
 	FuncExpr   string                  `json:"func_expr"`
 	UpdateTime string                  `json:"update_time"`
 }
