@@ -81,7 +81,7 @@ func ExportExprResult(endpoints []string, metric string) (result []*models.Expor
 		rMonitorGuidList = append(rMonitorGuidList, v.Guid)
 	}
 	var rWorkTables []*models.RWorkTable
-	err = mysqlEngine.SQL("select guid,name,expr,func_x,func_x_name,func_b,legend_x,legend_y from r_work where guid in ('" + strings.Join(rMonitorGuidList, "','") + "')").Find(&rWorkTables)
+	err = mysqlEngine.SQL("select guid,name,expr,func_x,func_x_name,func_b,legend_x,legend_y,update_at from r_work where guid in ('" + strings.Join(rMonitorGuidList, "','") + "')").Find(&rWorkTables)
 	if err != nil {
 		err = fmt.Errorf("Try to query rWork table fail,%s ", err.Error())
 		return
@@ -100,7 +100,7 @@ func ExportExprResult(endpoints []string, metric string) (result []*models.Expor
 				continue
 			}
 		}
-		tmpResultObj := models.ExportResultObj{Endpoint: rMonitor.Endpoint, FuncExpr: rWorkMap[rMonitor.Guid].Expr}
+		tmpResultObj := models.ExportResultObj{Endpoint: rMonitor.Endpoint, FuncExpr: rWorkMap[rMonitor.Guid].Expr, UpdateTime: rWorkMap[rMonitor.Guid].UpdateAt.Format(models.DatetimeFormat)}
 		tmpResultObj.YFunc = models.ExportResultParamObj{Metric: tmpLegendY}
 		tmpResultObj.XParams = buildExportLegendX(rWorkMap[rMonitor.Guid].FuncX, rWorkMap[rMonitor.Guid].FuncXName, rWorkMap[rMonitor.Guid].FuncB, rMonitor.Endpoint)
 		result = append(result, &tmpResultObj)

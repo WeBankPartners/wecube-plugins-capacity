@@ -1,5 +1,9 @@
 package models
 
+const (
+	DatetimeFormat = `2006-01-02 15:04:05`
+)
+
 type MonitorOptionResponse struct {
 	Code    int           `json:"code"`
 	Message string        `json:"message"`
@@ -85,8 +89,9 @@ type ExportResultParamObj struct {
 }
 
 type ExportResultObj struct {
-	Endpoint string                  `json:"endpoint"`
-	XParams  []*ExportResultParamObj `json:"xParams"`
-	YFunc    ExportResultParamObj    `json:"yFunc"`
-	FuncExpr string                  `json:"func_expr"`
+	Endpoint   string                  `json:"endpoint"`
+	XParams    []*ExportResultParamObj `json:"xParams"`
+	YFunc      ExportResultParamObj    `json:"yFunc"`
+	FuncExpr   string                  `json:"func_expr"`
+	UpdateTime string                  `json:"update_time"`
 }
