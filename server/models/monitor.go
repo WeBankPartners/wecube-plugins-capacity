@@ -83,9 +83,9 @@ type EChartOption struct {
 }
 
 type ExportResultParamObj struct {
-	Name     string `json:"name"`
-	Metric   string `json:"metric"`
-	Estimate string `json:"estimate"`
+	Name     string  `json:"name"`
+	Metric   string  `json:"metric"`
+	Estimate float64 `json:"estimate"`
 }
 
 type ExportResultObj struct {

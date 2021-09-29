@@ -7,6 +7,7 @@ import (
 	"github.com/WeBankPartners/wecube-plugins-capacity/server/models"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -120,11 +121,13 @@ func buildExportLegendX(estimate, funcX, funcB, endpoint string) []*models.Expor
 	result := []*models.ExportResultParamObj{}
 	funcXList := strings.Split(funcX, "^")
 	for i, v := range strings.Split(estimate, ",") {
-		tmpObj := models.ExportResultParamObj{Name: fmt.Sprintf("x%d", i+1), Estimate: v}
+		tmpFloatV, _ := strconv.ParseFloat(v, 64)
+		tmpObj := models.ExportResultParamObj{Name: fmt.Sprintf("x%d", i+1), Estimate: tmpFloatV}
 		tmpObj.Metric = getLegendMetric(endpoint, funcXList[i])
 		result = append(result, &tmpObj)
 	}
-	result = append(result, &models.ExportResultParamObj{Name: "b", Estimate: funcB})
+	floatB, _ := strconv.ParseFloat(funcB, 64)
+	result = append(result, &models.ExportResultParamObj{Name: "b", Estimate: floatB})
 	return result
 }
 
