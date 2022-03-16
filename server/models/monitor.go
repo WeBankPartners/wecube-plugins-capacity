@@ -96,3 +96,24 @@ type ExportResultObj struct {
 	FuncExpr   string                  `json:"func_expr"`
 	UpdateTime string                  `json:"update_time"`
 }
+
+type ChartQueryParam struct {
+	ChartId    int                    `json:"chart_id"`
+	Title      string                 `json:"title"`
+	Unit       string                 `json:"unit"`
+	Start      int64                  `json:"start"`
+	End        int64                  `json:"end"`
+	TimeSecond int64                  `json:"time_second"`
+	Aggregate  string                 `json:"aggregate"`
+	AggStep    int64                  `json:"agg_step"`
+	Step       int                    `json:"step"`
+	Data       []*ChartQueryConfigObj `json:"data"`
+}
+
+type ChartQueryConfigObj struct {
+	Endpoint     string `json:"endpoint"`
+	Metric       string `json:"metric"`
+	PromQl       string `json:"prom_ql"`
+	AppObject    string `json:"app_object"`
+	EndpointType string `json:"endpoint_type"`
+}

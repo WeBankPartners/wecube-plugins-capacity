@@ -33,12 +33,27 @@ func MonitorMetricSearch(endpointType string) (err error, result []models.Metric
 
 func MonitorChart(param []models.ChartConfigObj) (err error, result models.EChartOption) {
 	var response models.MonitorChartResponse
-	err, data := requestMonitor(http.MethodPost, "dashboard/newchart", param)
+	err, data := requestMonitor(http.MethodPost, "dashboard/chart", transChartConfig(param))
 	if err != nil {
 		return err, result
 	}
 	err = json.Unmarshal(data, &response)
 	return err, response.Data
+}
+
+func transChartConfig(param []models.ChartConfigObj) (output models.ChartQueryParam) {
+	output = models.ChartQueryParam{}
+	if len(param) == 0 {
+		return
+	}
+	startInt, _ := strconv.Atoi(param[0].Start)
+	endInt, _ := strconv.Atoi(param[0].End)
+	output.Start = int64(startInt)
+	output.End = int64(endInt)
+	for _, v := range param {
+		output.Data = append(output.Data, &models.ChartQueryConfigObj{Endpoint: v.Endpoint, Metric: v.Metric})
+	}
+	return
 }
 
 func requestMonitor(method, url string, postData interface{}) (err error, bodyData []byte) {
