@@ -1,4 +1,4 @@
-FROM r-base
+FROM r-base:4.0.3
 
 ENV BASE_HOME=/app/capacity
 

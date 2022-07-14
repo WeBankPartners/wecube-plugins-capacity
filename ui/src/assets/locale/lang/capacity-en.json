@@ -58,5 +58,6 @@
   "prediction": "Prediction",
   "uploadFileTip": "Upload file must be in Excel format, less than 10M",
   "independent_variable": "Independent",
-  "dependent_variable": "Dependent"
+  "dependent_variable": "Dependent",
+  "c_require_name": "Please fill in the name"
 }

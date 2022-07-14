@@ -54,7 +54,7 @@
       @on-ok="save">
       <Form :model="formInline" :rules="ruleInline" :label-width="80">
         <FormItem :label="$t('name')" prop="name">
-          <Input v-model="formInline.name" placeholder="Enter something..."></Input>
+          <Input v-model="formInline.name" placeholder=""></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -81,7 +81,7 @@ export default {
       },
       ruleInline: {
         name: [
-          { required: true, message: 'Please fill in the name', trigger: 'blur' }
+          { required: true, message: this.$t('c_require_name'), trigger: 'blur' }
         ]
       }
     }
