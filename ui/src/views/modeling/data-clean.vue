@@ -6,6 +6,7 @@
         :on-success="importSuccess"
         :format="fileType"
         :max-size=10240
+        :headers="headers"
         action="/capacity/api/v1/r/excel">
         <Button icon="ios-cloud-upload-outline">Upload files</Button>
       </Upload>
@@ -65,10 +66,14 @@
   </div>
 </template>
 <script>
+import { getToken, getPlatFormToken } from '@/assets/js/cookies.ts'
 export default {
   name: '',
   data() {
     return {
+      headers: {
+        Authorization: ''
+      },
       fileType: ['xls', 'xlsx'],
       xyAxis: [],
       params: [],
@@ -99,6 +104,7 @@ export default {
     }
   },
   activated () {
+    this.headers.Authorization = (window.request ? 'Bearer ' + getPlatFormToken() : getToken())|| null
     this.$parent.cachedCom.push(this.$vnode)
     this.isImportData = this.$parent.isImportData
     this.xyAxis = this.$parent.xyAxis
